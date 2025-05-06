@@ -53,6 +53,59 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Nexrender Cloud",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "cloud/introduction",
+              "cloud/quickstart"
+            ]
+          },
+          {
+            "group": "Templates",
+            "pages": [
+              "cloud/templates/creating",
+              "cloud/templates/uploading",
+              "cloud/templates/listing",
+              "cloud/templates/deleting"
+            ]
+          },
+          {
+            "group": "Jobs",
+            "pages": [
+              "cloud/jobs/creating",
+              "cloud/jobs/status",
+              "cloud/jobs/webhooks"
+            ]
+          },
+          {
+            "group": "Fonts",
+            "pages": [
+              "cloud/fonts/upload",
+              "cloud/fonts/list",
+              "cloud/fonts/delete"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "cloud/troubleshooting/errors",
+              "cloud/troubleshooting/retries",
+              "cloud/troubleshooting/rate-limits"
+            ]
+          },
+          {
+            "group": "Recipes",
+            "pages": [
+              "cloud/recipes/batch-render",
+              "cloud/recipes/add-tts",
+              "cloud/recipes/personalized-titles"
+            ]
+          }
+        ]
       }
     ],
     "global": {
