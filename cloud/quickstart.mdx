@@ -28,7 +28,6 @@ You’ll use:
 To ensure your `.zip` template works properly in Nexrender Cloud, make sure the archive is structured **flat**, with no extra subfolder wrapping the project.
 
 
-
 #### Correct `.zip` Structure
 
 The root of the archive should contain the `.aep` or `.mogrt` file, plus any asset folders (e.g. images, fonts, videos):
@@ -41,8 +40,6 @@ project.zip
 │   ├── audio.mp3
 └── ...
 ```
-
-
 
 #### Common Mistake on macOS
 
@@ -58,7 +55,6 @@ project.zip
 > This extra folder layer will break relative file paths inside After Effects, causing missing asset errors or silent render failures.
 
 
-
 ### Option 1: Zip Correctly via Finder (GUI)
 
 If you prefer using the graphical interface:
@@ -70,7 +66,6 @@ If you prefer using the graphical interface:
 5. Rename it to `project.zip`.
 
 > **Do not compress the parent folder itself** — always compress the files inside the folder.
-
 
 
 ### Option 2: Zip Correctly via Terminal (Advanced)
@@ -146,9 +141,19 @@ This returns:
 
 ## Step 2: Upload the AE File
 
+In case of .zip archive, make sure you have created a 
+
 After you add your template in [Step 1](#step-1-upload-your-template), the API will return a `uploadInfo` object that includes a **presigned URL**, HTTP method, and recommended headers for uploading your actual template file.
 
+This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
 
+---
+
+> ⚠️ **Important:**  
+> Your archive must be structured correctly, or rendering will fail.  
+> On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.
+>
+> 👉 [Learn how to prepare your archive correctly →](#️-preparing-your-template-for-upload)
 
 ```bash
 curl --location --request PUT \
