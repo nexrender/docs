@@ -23,6 +23,82 @@ You’ll use:
 - A valid After Effects template in `.aep`, `.zip`, or `.mogrt` format with assets and fonts
 - Custom fonts in TTF format
 
+### Preparing Your Template for Upload
+
+To ensure your `.zip` template works properly in Nexrender Cloud, make sure the archive is structured **flat**, with no extra subfolder wrapping the project.
+
+---
+
+#### Correct `.zip` Structure
+
+The root of the archive should contain the `.aep` or `.mogrt` file, plus any asset folders (e.g. images, fonts, videos):
+
+```
+project.zip
+├── MyProject.aep
+├── assets/
+│   ├── image.jpg
+│   ├── audio.mp3
+└── ...
+```
+
+---
+
+#### Common Mistake on macOS
+
+If you right-click a folder and choose **“Compress”**, macOS will zip the entire folder and include it as a top-level directory:
+
+```
+project.zip
+└── MyProjectFolder/
+    ├── MyProject.aep
+    └── assets/
+```
+
+> This extra folder layer will break relative file paths inside After Effects, causing missing asset errors or silent render failures.
+
+---
+
+### Option 1: Zip Correctly via Finder (GUI)
+
+If you prefer using the graphical interface:
+
+1. **Open the folder** that contains your `.aep` and asset folders.
+2. **Select all items inside** (Command ⌘ + A).
+3. Right-click the selected files and choose **“Compress X Items”**.
+4. This will create an archive named `Archive.zip` with the correct structure.
+5. Rename it to `project.zip`.
+
+> **Do not compress the parent folder itself** — always compress the files inside the folder.
+
+---
+
+### Option 2: Zip Correctly via Terminal (Advanced)
+
+1. Open **Terminal**
+2. Navigate to your project folder:
+   ```bash
+   cd /path/to/MyProjectFolder
+   ```
+3. Create the zip **from inside the folder**:
+   ```bash
+   zip -r ../project.zip ./*
+   ```
+
+> This will include only the contents of the folder, not the folder itself.
+
+---
+
+### 💡 For `.mogrt` Templates
+
+If you're using a `.mogrt` file:
+- You **do not need to zip it**
+- Just upload the raw `.mogrt` file directly via the presigned URL
+
+---
+
+> For best results, unzip your archive before uploading and confirm the `.aep` file is located at the root level (not buried inside a folder).
+
 ---
 
 ## Step 1: Upload Your Template
@@ -71,6 +147,8 @@ This returns:
 ## Step 2: Upload the AE File
 
 After you add your template in [Step 1](#step-1-upload-your-template), the API will return a `uploadInfo` object that includes a **presigned URL**, HTTP method, and recommended headers for uploading your actual template file.
+
+
 
 ```bash
 curl --location --request PUT \
@@ -134,6 +212,120 @@ If you prefer to upload your template file via Postman instead of `curl`, you mu
 
 ---
 
+## Step 3: Submit a Render Job
+
+Now that your template is uploaded and ready, it's time to create a **render job**.
+
+The job defines:
+- Which template to use
+- Which composition inside the template to render
+- Which assets (text, image, audio, etc.) to inject dynamically
+
+The rendering process will begin once the job is submitted and validated.
+
+---
+
+### ✅ Example `curl` Request
+
+```bash
+curl -X POST https://api.nexrender.com/api/v2/jobs \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "template": {
+      "id": "01JTGM9GCR71JV7EJYDF45QAFD",
+      "composition": "main"
+    },
+    "assets": [
+      {
+        "type": "data",
+        "layerName": "title",
+        "property": "Source Text",
+        "value": "Hello World!"
+      },
+      {
+        "type": "data",
+        "layerName": "subtitle",
+        "property": "Source Text",
+        "value": "Powered by Nexrender Cloud"
+      }
+    ],
+    "webhook": {
+      "url": "https://yourdomain.com/webhooks/render-complete",
+      "method": "POST"
+    },
+    "preview": false
+  }'
+```
+
+---
+
+### 🧱 Job Payload Breakdown
+
+| Field                     | Type     | Description                                                  |
+|---------------------------|----------|--------------------------------------------------------------|
+| `template.id`             | string   | The ID of the uploaded template (from Step 1)                |
+| `template.composition`    | string   | The composition to render (e.g., `"main"` or `"intro"`)      |
+| `assets`                  | array    | List of dynamic layer overrides (text, images, audio, video) |
+| `preview`                 | boolean  | If `true`, renders lower-res preview (default is `false`)    |
+| `webhook.url`             | string   | URL to receive job status updates                            |
+| `webhook.method`          | string   | HTTP method to use in the webhook (usually `"POST"`)         |
+
+> You can get the list of editable layer names via the `layers` field when you fetch a template.
+
+---
+
+### 💡 Example: Minimal Job
+
+```json
+{
+  "template": {
+    "id": "TEMPLATE_ID",
+    "composition": "main"
+  }
+}
+```
+
+This will use default values and no dynamic asset injection.
+
+---
+
+### 📡 Example: Webhook Response
+
+Your webhook endpoint will receive a payload like:
+
+```json
+{
+  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
+  "status": "done",
+  "output": {
+    "url": "https://nexrender-delivery.s3.amazonaws.com/job-output.mp4"
+  }
+}
+```
+
+You can download the final rendered video via the `output.url`.
+
+---
+
+### 🕒 Checking Job Status (Optional)
+
+If you prefer polling over webhooks, use:
+
+```bash
+curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+The response includes `status`, `progress`, and error info if rendering failed.
+
+---
+
+### ✅ Next Steps
+
+➡️ [Check Job Status](#checking-job-status-optional)  
+➡️ [Render Webhooks →](../jobs/webhooks)  
+➡️ [Common Errors →](../troubleshooting/errors)
 
 
 
