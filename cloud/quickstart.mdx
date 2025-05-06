@@ -27,7 +27,7 @@ You’ll use:
 
 To ensure your `.zip` template works properly in Nexrender Cloud, make sure the archive is structured **flat**, with no extra subfolder wrapping the project.
 
----
+
 
 #### Correct `.zip` Structure
 
@@ -42,7 +42,7 @@ project.zip
 └── ...
 ```
 
----
+
 
 #### Common Mistake on macOS
 
@@ -57,7 +57,7 @@ project.zip
 
 > This extra folder layer will break relative file paths inside After Effects, causing missing asset errors or silent render failures.
 
----
+
 
 ### Option 1: Zip Correctly via Finder (GUI)
 
@@ -71,7 +71,7 @@ If you prefer using the graphical interface:
 
 > **Do not compress the parent folder itself** — always compress the files inside the folder.
 
----
+
 
 ### Option 2: Zip Correctly via Terminal (Advanced)
 
@@ -87,7 +87,7 @@ If you prefer using the graphical interface:
 
 > This will include only the contents of the folder, not the folder itself.
 
----
+
 
 ### 💡 For `.mogrt` Templates
 
@@ -95,7 +95,7 @@ If you're using a `.mogrt` file:
 - You **do not need to zip it**
 - Just upload the raw `.mogrt` file directly via the presigned URL
 
----
+
 
 > For best results, unzip your archive before uploading and confirm the `.aep` file is located at the root level (not buried inside a folder).
 
