@@ -11,50 +11,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "introduction",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Essentials",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint Examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Nexrender Cloud",
         "groups": [
           {
@@ -68,16 +24,41 @@
             "group": "Templates",
             "pages": [
               "cloud/templates/creating",
-              "cloud/templates/inspecting",
+              "cloud/templates/uploading",
+              "cloud/templates/listing",
               "cloud/templates/deleting"
             ]
           },
           {
             "group": "Jobs",
             "pages": [
-              "cloud/jobs/creating-jobs",
+              "cloud/jobs/creating",
+              "cloud/jobs/status",
               "cloud/jobs/tracking",
               "cloud/jobs/errors"
+            ]
+          },
+          {
+            "group": "Fonts",
+            "pages": [
+              "cloud/fonts/upload",
+              "cloud/fonts/list",
+              "cloud/fonts/delete"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "cloud/troubleshooting/errors",
+              "cloud/troubleshooting/retries",
+              "cloud/troubleshooting/rate-limits",
+              "cloud/troubleshooting/ip-whitelist"
+            ]
+          },
+          {
+            "group": "Recipes",
+            "pages": [
+              "cloud/recipes/automation-recipes"
             ]
           }
         ]
