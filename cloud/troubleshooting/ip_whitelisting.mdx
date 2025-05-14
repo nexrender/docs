@@ -1,0 +1,60 @@
+---
+title: "Whitelisting Nexrender IPs"
+description: "Static outbound IP addresses used by Nexrender Cloud for uploads and downloads."
+keywords: ["nexrender ip", "whitelist storage", "upload error", "firewall s3"]
+---
+
+# Whitelisting Nexrender IPs
+
+If you use firewall rules, S3 bucket policies, or other storage restrictions that require whitelisting specific IPs, you'll need to allow outbound traffic from Nexrender Cloud.
+
+---
+
+## Current IP Addresses
+
+Please add the following IPs to your storage service whitelist:
+
+```
+135.181.174.228
+135.181.227.75
+37.27.119.110
+37.27.119.95
+37.27.119.97
+37.27.226.101
+```
+
+These IPs are used by Nexrender Cloud's rendering workers to:
+
+- Upload `.aep`, `.mogrt`, or `.zip` files to object storage
+- Fetch dynamic assets from `src` URLs in your job payload
+- Deliver rendered outputs or webhook events to external systems
+
+---
+
+## 🔐 Services Affected
+
+You may need this for:
+
+- **Amazon S3** buckets with IP-based IAM policies
+- **Cloudflare R2** if access is restricted
+- **Google Cloud Storage** with signed URL validation
+- **Webhooks** secured behind firewalls or proxies
+- **Private Storages** 
+
+---
+
+## IP Rotation Policy
+
+These IPs are **stable** and tied to our reserved network blocks. If infrastructure changes require new IPs:
+
+- You'll be notified **7 days in advance** via email and changelog
+- We’ll update this documentation with revised ranges
+
+> For mission-critical pipelines, monitor logs for any 403/blocked upload issues that could be tied to firewall policies.
+
+---
+
+## Next Steps
+
+➡️ [Upload Templates →](../templates/creating)  
+➡️ [Troubleshoot Upload Errors →](../troubleshooting/errors)
