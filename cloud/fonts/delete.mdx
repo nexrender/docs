@@ -1,0 +1,72 @@
+---
+title: "Deleting Fonts"
+description: "How to delete fonts from your Nexrender Cloud account."
+keywords: ["nexrender fonts", "delete font", "font cleanup"]
+---
+
+# Deleting Fonts
+
+Remove fonts you no longer use to keep your Nexrender Cloud environment clean and organized.
+
+---
+
+## Why Delete Fonts?
+
+- Reduce clutter in your font list
+- Avoid confusion from similarly named fonts
+- Clean up test uploads or duplicates
+
+Deleting fonts does **not** affect jobs that are already rendered. However, future jobs referencing that font may fail if it's not re-uploaded.
+
+---
+
+## Endpoint
+
+```http
+DELETE /api/v2/fonts/:id
+```
+
+You must provide the font ID from the listing endpoint.
+
+---
+
+### Example `curl`
+
+```bash
+curl -X DELETE https://api.nexrender.com/api/v2/fonts/font-01JTX5VRSCK11DZ8AQT90F6BRP \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Response
+
+```json
+{
+  "status": "deleted"
+}
+```
+
+> Attempting to delete a nonexistent or unauthorized font will return a `404` or `403` error.
+
+---
+
+## Testing in Postman
+
+1. Set method to `DELETE`
+2. URL: `https://api.nexrender.com/api/v2/fonts/{FONT_ID}`
+3. Add `Authorization` header
+4. Send and confirm `status: deleted`
+
+---
+
+## Best Practices
+
+- Always list fonts first before deleting
+- Ensure no active templates or teams rely on the font
+- Rename and re-upload fonts instead of constantly deleting
+
+---
+
+Next:
+➡️ [List Fonts →](../fonts/list)  
+➡️ [Upload Fonts →](../fonts/upload)  
+➡️ [Back to Render Jobs →](../jobs/creating-jobs)
