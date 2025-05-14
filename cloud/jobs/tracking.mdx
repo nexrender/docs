@@ -1,5 +1,124 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "Tracking Render Jobs"
+description: "Learn how to check job status, set up webhooks, and handle job completions."
+keywords: "nexrender webhooks,job polling,render complete,job status,video automation events"
 ---
 
+# Tracking Render Jobs
+
+This guide explains how to track the status of a render job, either by polling the API or configuring a webhook for real-time delivery.
+
+---
+
+## Polling Job Status
+
+You can always check the state of a job manually:
+
+```bash
+curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Example Response
+
+```json
+{
+  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
+  "status": "done",
+  "progress": 100,
+  "output": {
+    "url": "https://nexrender-output.s3.amazonaws.com/01JTRDF7HCR8QAHYW8GPCP4S9Y.mp4"
+  }
+}
+```
+
+---
+
+## Job Status Lifecycle
+
+| Status      | Description                                     |
+| ----------- | ----------------------------------------------- |
+| `queued`    | Job is waiting to be picked up by render engine |
+| `rendering` | Currently being processed                       |
+| `done`      | Successfully rendered; `output.url` available   |
+| `failed`    | Encountered an error (see `error` field)        |
+
+---
+
+## Webhook Notifications (Recommended)
+
+Instead of polling, you can configure a **webhook** in your job payload:
+
+```json
+"webhook": {
+  "url": "https://yourdomain.com/render-status",
+  "method": "POST"
+}
+```
+
+When the job completes (success or failure), Nexrender Cloud will `POST` to the specified URL with a job payload.
+
+---
+
+### ✅ Example Webhook Payload (Success)
+
+```json
+{
+  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
+  "status": "done",
+  "output": {
+    "url": "https://nexrender-output.s3.amazonaws.com/job.mp4"
+  }
+}
+```
+
+### ❌ Example Webhook Payload (Failure)
+
+```json
+{
+  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
+  "status": "failed",
+  "error": {
+    "message": "Layer 'title' not found in composition 'main'",
+    "code": "LAYER_NOT_FOUND"
+  }
+}
+```
+
+> Make sure your webhook endpoint is idempotent and returns a 200 OK response.
+
+---
+
+## Webhook Retry Logic
+
+If your server is temporarily unavailable, Nexrender Cloud will retry delivery up to **3 times** with exponential backoff.
+
+To maximize reliability:
+
+- Respond with `200 OK` immediately (even if processing async)
+- Avoid timeouts — webhook POSTs should complete in under 2 seconds
+- Log and audit webhook deliveries
+
+---
+
+## Test with Postman
+
+You can simulate webhook delivery locally using:
+
+### Postman
+
+Use the `Mock Server` feature to test payload reception or replay.
+
+---
+
+## Summary
+
+- Use `GET /jobs/:id` to poll job state manually
+- Use `webhook.url` to receive async status notifications
+- Ensure your webhook endpoints are reliable and secure
+
+---
+
+Next:
+➡️ [Handle Errors →](../jobs/errors)
+➡️ [Submit a Render Job →](../jobs/creating-jobs)
