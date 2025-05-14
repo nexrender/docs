@@ -24,7 +24,6 @@
             "group": "Templates",
             "pages": [
               "cloud/templates/creating",
-              "cloud/templates/uploading",
               "cloud/templates/listing",
               "cloud/templates/deleting"
             ]
