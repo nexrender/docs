@@ -1,24 +1,22 @@
 ---
 title: "Rate Limits"
 description: "Understand API rate limits and best practices for retrying requests gracefully."
-keywords: ["nexrender rate limit", "throttling", "api retry"]
+keywords: "nexrender rate limit,throttling,api retry"
 ---
-
-# Rate Limits
 
 To maintain service quality, Nexrender Cloud enforces API request limits. This page explains those limits and how to handle them correctly.
 
 ---
 
-##  API Rate Limits
+## API Rate Limits
 
-| Endpoint Group          | Limit (per minute) | Notes                                 |
-|--------------------------|--------------------|----------------------------------------|
-| `POST /templates`       | 20 req/min         | Template creation                      |
-| `PUT uploadInfo.url`    | Unlimited          | Direct file uploads go to storage CDN |
-| `POST /jobs`            | 60 req/min         | Job creation requests                  |
-| `GET /jobs/:id`         | 120 req/min        | Status polling                         |
-| `GET /templates/:id`    | 100 req/min        | Layer introspection                    |
+| Endpoint Group       | Limit (per minute) | Notes                                 |
+| -------------------- | ------------------ | ------------------------------------- |
+| `POST /templates`    | 20 req/min         | Template creation                     |
+| `PUT uploadInfo.url` | Unlimited          | Direct file uploads go to storage CDN |
+| `POST /jobs`         | 60 req/min         | Job creation requests                 |
+| `GET /jobs/:id`      | 120 req/min        | Status polling                        |
+| `GET /templates/:id` | 100 req/min        | Layer introspection                   |
 
 > Bursts beyond these values may result in 429 Too Many Requests.
 
@@ -36,6 +34,7 @@ To maintain service quality, Nexrender Cloud enforces API request limits. This p
 ```
 
 When receiving 429s:
+
 - Back off exponentially (e.g. wait 1s → 2s → 5s → 10s)
 - Don't retry more than 3–5 times
 - Queue jobs on your side instead of retry storming
@@ -54,6 +53,6 @@ When receiving 429s:
 
 ## Related
 
-- ➡️ [IP Whitelisting →](../troubleshooting/ip-whitelist)  
-- ➡️ [Retry Logic →](../troubleshooting/retries)  
+- ➡️ [IP Whitelisting →](../troubleshooting/ip-whitelist)
+- ➡️ [Retry Logic →](../troubleshooting/retries)
 - ➡️ [Job Tracking →](../jobs/tracking)

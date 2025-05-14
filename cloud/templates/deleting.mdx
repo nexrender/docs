@@ -1,10 +1,8 @@
 ---
 title: "Deleting Templates"
 description: "How to delete templates from Nexrender Cloud and what happens after."
-keywords: ["nexrender templates", "delete template", "remove project", "template cleanup"]
+keywords: "nexrender templates,delete template,remove project,template cleanup"
 ---
-
-## Deleting Templates
 
 Nexrender Cloud allows you to delete templates that are no longer needed. This is useful for:
 
@@ -56,18 +54,18 @@ curl -X DELETE https://api.nexrender.com/api/v2/templates/01JTGM9GCR71JV7EJYDF45
 
 ## What Happens After Deletion?
 
-| Component       | Status                                                   |
-|------------------|-----------------------------------------------------------|
-| Template metadata | Permanently deleted from Nexrender Cloud                 |
-| Uploaded file    | Removed from storage (Cloudflare R2 or equivalent)       |
-| Associated jobs  | Remain intact — no data loss                             |
-| Rendering        | New jobs using this template will fail with 404          |
+| Component         | Status                                             |
+| ----------------- | -------------------------------------------------- |
+| Template metadata | Permanently deleted from Nexrender Cloud           |
+| Uploaded file     | Removed from storage (Cloudflare R2 or equivalent) |
+| Associated jobs   | Remain intact — no data loss                       |
+| Rendering         | New jobs using this template will fail with 404    |
 
 If you attempt to reference a deleted template in a job request, you’ll receive a `404 Template Not Found`.
 
 ---
 
-##  Edge Cases & Notes
+## Edge Cases & Notes
 
 - You **cannot delete** a template while it's actively rendering.
 - If a template is in `awaiting_upload`, you can delete it immediately.
@@ -76,7 +74,7 @@ If you attempt to reference a deleted template in a job request, you’ll receiv
 
 ---
 
-###  Suggested Practice
+### Suggested Practice
 
 To keep things clean:
 
@@ -85,4 +83,3 @@ To keep things clean:
 - Add deletion as part of your CI teardown if you're creating templates dynamically
 
 ---
-
