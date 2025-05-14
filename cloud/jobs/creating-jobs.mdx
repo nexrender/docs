@@ -87,7 +87,112 @@ You can extend it with more assets and a webhook:
   "preview": false
 }
 ```
-## 🎯 Targeting Layers in Alternate Compositions
+---
+
+### Supported Asset Types
+
+Nexrender Cloud lets you customize your After Effects templates by injecting different types of assets during render time. These assets are defined in the `assets` array of your render job payload.
+
+Each asset must include a `type`, and typically a `layerName`, `src`, or parameters depending on its function.
+
+---
+
+#### 1. `data` — Text Override
+
+Use to change text in a composition layer.
+
+```json
+{
+  "type": "data",
+  "layerName": "title",
+  "property": "Source Text",
+  "value": "Hello World!"
+}
+```
+
+---
+
+#### 2. `image` — Replace Image
+
+```json
+{
+  "type": "image",
+  "src": "https://cdn.yourapp.com/assets/avatar.jpg",
+  "layerName": "Avatar"
+}
+```
+
+---
+
+#### 3. `audio` — Inject Audio
+
+```json
+{
+  "type": "audio",
+  "src": "https://yourcdn.com/audio/intro.mp3",
+  "layerName": "VoiceTrack"
+}
+```
+
+---
+
+#### 4. `video` — Replace Footage
+
+```json
+{
+  "type": "video",
+  "src": "https://cdn.site.com/introclip.mp4",
+  "layerName": "FootageLayer"
+}
+```
+
+---
+
+#### 5. `script` — Inject JSX Code
+
+```json
+{
+  "type": "script",
+  "src": "data:text/plain,app.project.timeDisplayType=TimeDisplayType.TIMECODE;"
+}
+```
+
+- Can also point to remote `.jsx` files
+- Scripts are executed before render begins
+
+---
+
+#### 6. `function` — Declarative Action Blocks
+
+Functions allow structured operations like setting text via high-level parameters.
+
+```json
+{
+  "type": "function",
+  "name": "nx:text-params-set",
+  "params": {
+    "layerName": "Main_Title",
+    "textValue": "Hello from Main Comp"
+  }
+}
+```
+
+You can also target a specific composition:
+
+```json
+{
+  "type": "function",
+  "name": "nx:text-params-set",
+  "params": {
+    "composition": "Precomp_1",
+    "layerName": "Sub_Title",
+    "textValue": "Text inside Precomp"
+  }
+}
+```
+
+
+### Targeting Layers in Alternate Compositions
 
 By default, assets are injected into the composition defined in the `template.composition` field.
 
@@ -95,7 +200,7 @@ However, you can override this on a per-asset basis using the `composition` key 
 
 This is useful when you want to render a specific comp (like `main`), but modify a layer in a supporting comp (like `main2`).
 
-### Example
+#### Example
 
 ```json
 {
@@ -209,7 +314,7 @@ Nexrender Cloud supports two rendering modes:
 
 ---
 
-### 💡When to Use `preview: true`
+### When to Use `preview: true`
 
 Use preview mode when:
 
