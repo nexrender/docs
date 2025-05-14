@@ -1,0 +1,126 @@
+---
+title: "Automation Recipes"
+description: "Real-world patterns and technical workflows to scale dynamic video rendering with Nexrender Cloud."
+keywords: ["nexrender batch", "tts automation", "personalized video", "render at scale", "layer override"]
+---
+
+# Automation Recipes
+
+This section showcases technical patterns and workflows that help you scale Nexrender Cloud for real-world automation tasks — from batch rendering to personalized voiceovers.
+
+---
+
+## 1. Batch Rendering at Scale
+
+If you need to render hundreds or thousands of video variants (e.g. for product catalogs, event invites, or localized ads), use this workflow.
+
+### Step-by-Step
+
+1. Prepare a `.aep` or `.mogrt` template with dynamic layers (text, images, audio)
+2. Create a CSV, JSON, or database table with per-job data:
+
+```json
+[
+  { "name": "Alice", "city": "Berlin" },
+  { "name": "Bob", "city": "London" }
+]
+```
+
+3. Write a script (Node.js or Python) to loop through records and:
+   - POST a new job using the API
+   - Replace layer values using the `assets` array
+
+### Example Job Payload
+
+```json
+{
+  "template": {
+    "id": "TEMPLATE_ID",
+    "composition": "main"
+  },
+  "assets": [
+    {
+      "type": "data",
+      "layerName": "title",
+      "property": "Source Text",
+      "value": "Welcome Alice from Berlin!"
+    }
+  ],
+  "webhook": { "url": "https://yourapi.com/status", "method": "POST" }
+}
+```
+
+### Tips
+- Throttle job creation (60/min max)
+- Use tags or metadata to group related jobs
+- Poll status or use webhooks to track completion
+
+---
+
+## 2. Adding TTS Voiceovers
+
+You can dynamically synthesize speech and inject audio into a composition layer.
+
+### Steps
+
+1. Generate speech using an API like ElevenLabs or Google Cloud TTS
+2. Store the audio file on a public or whitelisted URL
+3. Add it as an `audio` asset in the job payload
+
+```json
+{
+  "type": "audio",
+  "src": "https://yourcdn.com/tts/voice1.mp3",
+  "layerName": "Voiceover"
+}
+```
+
+### Tips
+- Sync duration and placement inside AE composition
+- Use TTS engine options to vary pitch/speed
+- Pre-generate and cache audio where possible
+
+---
+
+## 3. Personalized Titles and Text
+
+Use asset injection to modify text dynamically per job.
+
+### Example Asset
+
+```json
+{
+  "type": "data",
+  "layerName": "subtitle",
+  "property": "Source Text",
+  "value": "Your 2024 Recap is Ready!"
+}
+```
+
+### Tips
+- Use clear `layerName`s in your AE project
+- Wrap expressions in AE to handle empty values:
+
+```javascript
+value !== "" ? value : "Default Text"
+```
+
+- Use `preview` mode during development
+- Fonts must be preloaded via [Fonts API](../fonts/upload)
+
+---
+
+## Combine Them
+
+You can combine all three patterns — injecting TTS, custom images, and batch metadata — to create:
+
+- Automated onboarding videos
+- Personalized wrap-ups or recaps
+- Multilingual social content
+
+---
+
+Next:
+➡️ [Creating Jobs →](../jobs/creating-jobs)  
+➡️ [Uploading Fonts →](../fonts/upload)  
+➡️ [Handle Webhooks →](../jobs/tracking)
