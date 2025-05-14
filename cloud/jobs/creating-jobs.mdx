@@ -174,19 +174,18 @@ These actions allow you to:
 - Transcode or rename the result
 - Chain workflows (e.g. send to TTS or narration engine)
 
-
 ## Step 6: Preview Mode vs Final Render
 
 Nexrender Cloud supports two rendering modes:
 
-| Mode         | Description                                              | Use Case                      |
-|--------------|----------------------------------------------------------|-------------------------------|
-| `preview: true`  | Low-res render, fast execution, watermark (optional)    | Testing template structure     |
-| `preview: false` | Full-quality final render, slower, billed normally      | Production rendering           |
+| Mode             | Description                                          | Use Case                   |
+| ---------------- | ---------------------------------------------------- | -------------------------- |
+| `preview: true`  | Low-res render, fast execution, watermark (optional) | Testing template structure |
+| `preview: false` | Full-quality final render, slower, billed normally   | Production rendering       |
 
 ---
 
-### 💡 When to Use `preview: true`
+### 💡When to Use `preview: true`
 
 Use preview mode when:
 
@@ -217,17 +216,17 @@ Building jobs at scale requires defensive design. Here’s what we recommend:
 
 Your templates should gracefully handle empty or missing values.
 
-| Layer Type | Best Practice                                 |
-|------------|-----------------------------------------------|
-| Text       | Set a default like “(Missing Title)”          |
-| Image      | Use a neutral brand logo or placeholder       |
-| Audio      | Default to silent.mp3 or fallback narration   |
+| Layer Type | Best Practice                               |
+| ---------- | ------------------------------------------- |
+| Text       | Set a default like “(Missing Title)”        |
+| Image      | Use a neutral brand logo or placeholder     |
+| Audio      | Default to silent.mp3 or fallback narration |
 
 In After Effects, use `if` expressions or fallback layers hidden by default.
 
 ---
 
-### 🔁 Implement Retry Logic
+### Implement Retry Logic
 
 Sometimes jobs can fail due to:
 
@@ -243,7 +242,7 @@ You can retry a failed job with the exact same payload, or:
 
 ---
 
-### 🧪 Validate Assets Before Submit
+### Validate Assets Before Submit
 
 Before rendering, always validate:
 
@@ -254,7 +253,7 @@ Before rendering, always validate:
 
 ---
 
-### 📬 Use Webhooks to Avoid Polling
+### Use Webhooks to Avoid Polling
 
 Set a `webhook.url` so your system is notified when jobs complete.
 
@@ -269,7 +268,7 @@ This saves on polling requests and scales better across high volume workflows.
 
 ---
 
-### 🧹 Clean Up Old Jobs
+### Clean Up Old Jobs
 
 Use `GET /jobs` to review recent activity and optionally clean up old or test jobs that are no longer needed.
 
@@ -277,10 +276,9 @@ While job output remains accessible after completion, pruning unused entries imp
 
 ---
 
-Next: [Check Job Status →](../jobs/status-checking)
----
+## Next: [Check Job Status →](../jobs/status-checking)
 
-###  How to Add Post-Actions
+### How to Add Post-Actions
 
 Post-actions are declared in a `postrender` array in the job payload. Each entry defines a `module` (built-in action) and its corresponding `params`.
 
@@ -319,7 +317,7 @@ More examples in [nexrender/actions](https://github.com/nexrender/actions).
 
 ---
 
-###  Example: Upload to Google Cloud Storage
+### Example: Upload to Google Cloud Storage
 
 ```json
 {
@@ -337,7 +335,7 @@ More examples in [nexrender/actions](https://github.com/nexrender/actions).
 
 ---
 
-### 🔒 Security Note
+### Security Note
 
 For cloud execution, some postrender modules require credentials (AWS/GCP keys). You must securely manage these — avoid committing them to version control or exposing them in public requests.
 
