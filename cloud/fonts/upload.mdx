@@ -1,13 +1,4 @@
----
-title: "Uploading Fonts"
-description: "How to upload custom fonts for use in Nexrender Cloud projects."
-keywords: ["nexrender fonts", "upload font", "custom font", "ttf after effects"]
-
-If your template uses custom fonts not included in Adobe After Effects by default, you’ll need to upload those fonts so they’re available during rendering.
-
----
-
-##  Why Upload Fonts?
+## Why Upload Fonts?
 
 After Effects needs fonts installed on the rendering system. If your project references a font that’s not available, it will:
 
@@ -19,7 +10,7 @@ Nexrender Cloud lets you upload `.ttf` files and associate them with your accoun
 
 ---
 
-##  Supported Formats
+## Supported Formats
 
 Only `.ttf` (TrueType Font) files are currently supported.
 
@@ -27,7 +18,7 @@ Only `.ttf` (TrueType Font) files are currently supported.
 
 ---
 
-##  Uploading via API
+## Uploading via API
 
 Use the `POST /api/v2/fonts` endpoint with `multipart/form-data`:
 
@@ -54,7 +45,7 @@ curl -X POST https://api.nexrender.com/api/v2/fonts \
 
 ---
 
-##  Upload via Postman
+## Upload via Postman
 
 1. Set method to `POST`
 2. Enter URL: `https://api.nexrender.com/api/v2/fonts`
@@ -67,7 +58,7 @@ Click **Send**, and you should see a `200 OK` with font metadata.
 
 ---
 
-##  Font Matching Logic
+## Font Matching Logic
 
 When your AE project uses a font like `Roboto-Bold.ttf`, Nexrender Cloud will:
 
@@ -80,7 +71,7 @@ You don’t need to reference fonts explicitly in the render job — just make s
 
 ---
 
-##  Best Practices
+## Best Practices
 
 - Use **subset fonts** or stripped versions to reduce size
 - Remove unused font weights/styles before upload
@@ -90,6 +81,6 @@ You don’t need to reference fonts explicitly in the render job — just make s
 ---
 
 Next:
-➡️ [List Uploaded Fonts →](../fonts/list)  
-➡️ [Delete Unused Fonts →](../fonts/delete)  
+➡️ [List Uploaded Fonts →](../fonts/list)\
+➡️ [Delete Unused Fonts →](../fonts/delete)\
 ➡️ [Back to Creating Templates →](../templates/creating)
