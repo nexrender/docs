@@ -1,5 +1,117 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "Inspecting & Managing Templates"
+description: "How to list, fetch, update, and organize templates in Nexrender Cloud."
+keywords: "list templates,inspect template,update display name,template tags,template retention"
 ---
 
+# Inspecting & Managing Templates
+
+This guide explains how to **list**, **fetch**, **update**, and (eventually) **organize** your After Effects templates in Nexrender Cloud.
+
+---
+
+## 📋 List All Templates
+
+To retrieve a list of all templates in your Nexrender account:
+
+```bash
+curl -X GET https://api.nexrender.com/api/v2/templates \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+This returns an array of template objects, each with fields like `id`, `displayName`, `status`, `type`, `createdAt`, and `updatedAt`.
+
+### Example Response
+
+```json
+[
+  {
+    "id": "01JT2M9GCR712V7EJYDF45QAFD",
+    "displayName": "Product Promo",
+    "status": "uploaded",
+    "type": "zip",
+    "createdAt": "2025-05-01T10:23:04.123Z"
+  },
+  {
+    "id": "01JTG9A9X38P2BC74XDZ9RZK5W",
+    "displayName": "Test Campaign",
+    "status": "awaiting_upload",
+    "type": "mogrt",
+    "createdAt": "2025-05-03T16:00:10.456Z"
+  }
+]
+```
+
+---
+
+## 🔍 Inspect a Specific Template
+
+To inspect a single template and retrieve its metadata, use:
+
+```bash
+curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Response Fields to Look For
+
+| Field          | Description                                   |
+| -------------- | --------------------------------------------- |
+| `status`       | Must be `uploaded` to be usable               |
+| `compositions` | Available AE compositions for rendering       |
+| `layers`       | Dynamically editable text/images/audio layers |
+
+---
+
+## ✏️ Update Template Metadata (Display Name)
+
+To rename a template after creation:
+
+```bash
+curl -X PATCH https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "displayName": "Updated Campaign V2"
+  }'
+```
+
+### Example Success Response
+
+```json
+{
+  "id": "01JT2M9GCR712V7EJYDF45QAFD",
+  "displayName": "Updated Campaign V2"
+}
+```
+
+> Updating metadata is useful for keeping things clean in environments with many concurrent templates.
+
+---
+
+## Future: Tagging Templates for Organization
+
+Tagging support is not yet available, but we recommend naming templates using prefixes or categories to simulate tagging:
+
+- `promo-summer-2024`
+- `test-case-audio-sync`
+- `internal-pitch-deck`
+
+When native tags are supported, you’ll be able to filter and organize templates in a more structured way.
+
+##  Template Storage & Retention
+
+Templates are currently persisted indefinitely unless deleted manually.
+
+In future versions of Nexrender Cloud, you may be able to:
+
+- Define auto-expiry dates for templates
+- Set retention policies (e.g. delete after 30 days of inactivity)
+- Audit unused templates to manage storage
+
+For now:
+
+- Use `GET /templates` to review active templates
+- Regularly delete old or unused templates after campaigns
+
+---
