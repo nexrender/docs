@@ -68,12 +68,12 @@
       "anchors": [
         {
           "anchor": "About",
-          "href": "https://mintlify.com/docs",
+          "href": "https://nexrender.com",
           "icon": "book-open-cover"
         },
         {
           "anchor": "Community",
-          "href": "https://mintlify.com/community",
+          "href": "https://discord.com/channels/250389725406429199/1163395061422243891",
           "icon": "slack"
         }
       ]
