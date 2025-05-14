@@ -87,6 +87,7 @@ You can extend it with more assets and a webhook:
   "preview": false
 }
 ```
+
 ---
 
 ### Supported Asset Types
@@ -97,7 +98,7 @@ Each asset must include a `type`, and typically a `layerName`, `src`, or paramet
 
 ---
 
-#### 1. `data` — Text Override
+#### `data` — Text Override
 
 Use to change text in a composition layer.
 
@@ -112,7 +113,7 @@ Use to change text in a composition layer.
 
 ---
 
-#### 2. `image` — Replace Image
+#### `image` — Replace Image
 
 ```json
 {
@@ -124,7 +125,7 @@ Use to change text in a composition layer.
 
 ---
 
-#### 3. `audio` — Inject Audio
+####  `audio` — Inject Audio
 
 ```json
 {
@@ -136,7 +137,7 @@ Use to change text in a composition layer.
 
 ---
 
-#### 4. `video` — Replace Footage
+####  `video` — Replace Footage
 
 ```json
 {
@@ -148,7 +149,7 @@ Use to change text in a composition layer.
 
 ---
 
-#### 5. `script` — Inject JSX Code
+####  `script` — Inject JSX Code
 
 ```json
 {
@@ -162,7 +163,7 @@ Use to change text in a composition layer.
 
 ---
 
-#### 6. `function` — Declarative Action Blocks
+####  `function` — Declarative Action Blocks
 
 Functions allow structured operations like setting text via high-level parameters.
 
@@ -191,7 +192,6 @@ You can also target a specific composition:
 }
 ```
 
-
 ### Targeting Layers in Alternate Compositions
 
 By default, assets are injected into the composition defined in the `template.composition` field.
@@ -202,7 +202,7 @@ This is useful when you want to render a specific comp (like `main`), but modify
 
 #### Example
 
-```json
+````json
 {
   "template": {
     "id": "01JTGM9GCR71JV7EJYDF45QAFD",
@@ -230,7 +230,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d @job-payload.json
-```
+````
 
 Or inline:
 
@@ -289,8 +289,6 @@ Each asset object must have:
 > You can inspect available `layerName`s using `GET /templates/:id`
 
 ---
-
-Next: [Add Post-Actions →](#step-5-post-actions-optional)
 
 ## Step 5: Post-Actions (Optional)
 
