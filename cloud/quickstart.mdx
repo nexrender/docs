@@ -6,6 +6,7 @@ keywords: "quickstart,nexrender api,render template,hello world video,curl,postm
 
 # Quickstart
 
+
 This guide will walk you through your first render using Nexrender Cloud — from uploading a template to retrieving the final video.
 
 You’ll use:
@@ -13,6 +14,8 @@ You’ll use:
 - A `.mogrt` or `.aep` template
 - cURL or Postman to interact with the API
 - A single JSON job payload to customize your render
+
+👉 [Download Postman Collection](../downloads/nexrender-cloud.postman_collection.json)
 
 ---
 
@@ -23,7 +26,7 @@ You’ll use:
 - A valid After Effects template in `.aep`, `.zip`, or `.mogrt` format with assets and fonts
 - Custom fonts in TTF format
 
-### Preparing Your Template for Upload
+### Preparing Your Template for Upload 
 
 To ensure your `.zip` template works properly in Nexrender Cloud, make sure the archive is structured **flat**, with no extra subfolder wrapping the project.
 
@@ -149,7 +152,7 @@ This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you spe
 > Your archive must be structured correctly, or rendering will fail.\
 > On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.
 >
-> 👉 [Learn how to prepare your archive correctly →](#️-preparing-your-template-for-upload)
+>👉 [Learn how to prepare your archive correctly →](#preparing-your-template-for-upload)
 
 ```bash
 curl --location --request PUT \
@@ -211,6 +214,9 @@ If you prefer to upload your template file via Postman instead of `curl`, you mu
 | x-amz-\*      | Remove unless provided in `uploadInfo.fields`  |
 
 ---
+
+> ⚠️ **Heads up:** Most rendering errors come from incorrect `layerName`, `composition`, or missing assets.  
+> Always double-check your template structure and fetch `/template/:id` to inspect available layers before submitting jobs.
 
 ## Step 3: Submit a Render Job
 
@@ -321,6 +327,8 @@ curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
 The response includes `status`, `progress`, and error info if rendering failed.
 
 ---
+
+
 
 ### Next Steps
 
