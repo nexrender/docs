@@ -13,7 +13,7 @@ Templates are the foundation for all render jobs. Once uploaded and processed, N
 - **Editable layers** (text, images, audio, video)
 - And render any of them dynamically based on incoming asset data.
 
-###  Supported Template Formats
+### Supported Template Formats
 
 | Format   | Description                                                      |
 | -------- | ---------------------------------------------------------------- |
@@ -77,7 +77,7 @@ Once a template is uploaded via the API, the backend performs **introspection**:
 
 Once the file is uploaded, the status changes to `uploaded`, and you can start submitting render jobs that reference this template by ID.
 
-###  Typical Template Lifecycle
+### Typical Template Lifecycle
 
 1. **Create** the template (`POST /api/v2/templates`) with a `type` and `displayName`
 2. **Upload** the actual file to `uploadInfo.url` (no auth headers\!)
@@ -423,7 +423,7 @@ To maintain design fidelity and brand consistency, Nexrender Cloud provides a wa
 
 ---
 
-###  Supported Font Formats
+### Supported Font Formats
 
 | Format | Description               |
 | ------ | ------------------------- |
@@ -469,7 +469,7 @@ Once uploaded, fonts are available to all future render jobs, no additional step
 
 ---
 
-➡️ To manage fonts, visit: [Fonts →](../cloud/fonts/upload)
+To manage fonts, visit: [Fonts →](../cloud/fonts/upload)
 
 ## Step 6: Best Practices for Template Management
 
@@ -559,7 +559,7 @@ This helps catch structural and naming bugs early, especially with deeply nested
 
 ---
 
-###  Summary: Think Like a Developer \+ Designer
+### Summary: Think Like a Developer \+ Designer
 
 Design with **automation-first principles**:
 
