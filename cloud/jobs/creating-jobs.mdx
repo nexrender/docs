@@ -87,7 +87,33 @@ You can extend it with more assets and a webhook:
   "preview": false
 }
 ```
+## 🎯 Targeting Layers in Alternate Compositions
 
+By default, assets are injected into the composition defined in the `template.composition` field.
+
+However, you can override this on a per-asset basis using the `composition` key inside the asset definition.
+
+This is useful when you want to render a specific comp (like `main`), but modify a layer in a supporting comp (like `main2`).
+
+### Example
+
+```json
+{
+  "template": {
+    "id": "01JTGM9GCR71JV7EJYDF45QAFD",
+    "composition": "main"
+  },
+  "assets": [
+    {
+      "type": "data",
+      "layerName": "title",
+      "composition": "main2",
+      "property": "Source Text",
+      "value": "Hello World!"
+    }
+  ],
+  "preview": false
+}
 ---
 
 ## Step 3: Submit the Job
