@@ -1,7 +1,7 @@
 ---
 title: "Creating Render Jobs"
 description: "How to submit render jobs using templates in Nexrender Cloud."
-keywords: ["nexrender jobs", "render automation", "submit job", "video API", "asset injection"]
+keywords: "nexrender jobs,render automation,submit job,video API,asset injection"
 ---
 
 # Creating Render Jobs
@@ -9,6 +9,7 @@ keywords: ["nexrender jobs", "render automation", "submit job", "video API", "as
 Once your template is uploaded and inspected, you can submit a **render job** using the Nexrender Cloud API.
 
 A render job ties together:
+
 - A template
 - A specific composition inside that template
 - A set of dynamic assets (text, image, audio, etc.)
@@ -26,7 +27,7 @@ You must specify:
 
 - `template.id`: the template to use
 - `template.composition`: the comp to render
-- `assets`: an array of overrides (layerName + value)
+- `assets`: an array of overrides (layerName \+ value)
 - `preview`: (optional) for low-res fast rendering
 - `webhook`: (optional) for real-time status notification
 
@@ -140,14 +141,14 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
 
 ## Step 4: Job Payload Reference
 
-| Field                    | Type     | Required | Description |
-|---------------------------|----------|----------|-------------|
-| `template.id`             | string   | ✅       | ID of the template created earlier |
-| `template.composition`   | string   | ✅       | Composition to render |
-| `assets`                 | array    | ✅       | List of asset overrides |
-| `preview`                | boolean  | ❌       | Set `true` for fast low-res preview |
-| `webhook.url`            | string   | ❌       | Callback endpoint for job status |
-| `webhook.method`         | string   | ❌       | Typically `POST` |
+| Field                  | Type    | Required | Description                         |
+| ---------------------- | ------- | -------- | ----------------------------------- |
+| `template.id`          | string  | ✅        | ID of the template created earlier  |
+| `template.composition` | string  | ✅        | Composition to render               |
+| `assets`               | array   | ✅        | List of asset overrides             |
+| `preview`              | boolean | ❌        | Set `true` for fast low-res preview |
+| `webhook.url`          | string  | ❌        | Callback endpoint for job status    |
+| `webhook.method`       | string  | ❌        | Typically `POST`                    |
 
 Each asset object must have:
 
@@ -161,6 +162,7 @@ Each asset object must have:
 ---
 
 Next: [Add Post-Actions →](#step-5-post-actions-optional)
+
 ## Step 5: Post-Actions (Optional)
 
 Once a render job completes, Nexrender Cloud can automatically run one or more **post-actions**.
@@ -172,9 +174,113 @@ These actions allow you to:
 - Transcode or rename the result
 - Chain workflows (e.g. send to TTS or narration engine)
 
+
+## Step 6: Preview Mode vs Final Render
+
+Nexrender Cloud supports two rendering modes:
+
+| Mode         | Description                                              | Use Case                      |
+|--------------|----------------------------------------------------------|-------------------------------|
+| `preview: true`  | Low-res render, fast execution, watermark (optional)    | Testing template structure     |
+| `preview: false` | Full-quality final render, slower, billed normally      | Production rendering           |
+
 ---
 
-### 🔧 How to Add Post-Actions
+### 💡 When to Use `preview: true`
+
+Use preview mode when:
+
+- Verifying that `layerName` overrides are correct
+- Testing a new template or composition
+- Integrating webhooks or downstream automation
+- You want to run a batch sanity check before scaling
+
+```json
+{
+  "preview": true
+}
+```
+
+Previews render faster and are cheaper on infrastructure resources. If your template is broken (bad expression, missing font, wrong composition), it’s better to catch it here.
+
+> You can build an internal CI pipeline that runs preview renders against all newly uploaded templates.
+
+---
+
+## Step 7: Best Practices for Stable Job Execution
+
+Building jobs at scale requires defensive design. Here’s what we recommend:
+
+---
+
+### ✅ Always Provide Fallbacks
+
+Your templates should gracefully handle empty or missing values.
+
+| Layer Type | Best Practice                                 |
+|------------|-----------------------------------------------|
+| Text       | Set a default like “(Missing Title)”          |
+| Image      | Use a neutral brand logo or placeholder       |
+| Audio      | Default to silent.mp3 or fallback narration   |
+
+In After Effects, use `if` expressions or fallback layers hidden by default.
+
+---
+
+### 🔁 Implement Retry Logic
+
+Sometimes jobs can fail due to:
+
+- Transient render errors
+- Temporary asset access issues
+- Internal AE limitations
+
+You can retry a failed job with the exact same payload, or:
+
+- Build retries into your webhook processor
+- Query job status with `GET /jobs/:id` and retry failed states
+- Use a queue system that retries `status = failed`
+
+---
+
+### 🧪 Validate Assets Before Submit
+
+Before rendering, always validate:
+
+- `composition` name exists (from template introspection)
+- `layerName` matches exactly
+- URLs for assets return a `200 OK`
+- Font dependencies have been preloaded
+
+---
+
+### 📬 Use Webhooks to Avoid Polling
+
+Set a `webhook.url` so your system is notified when jobs complete.
+
+```json
+"webhook": {
+  "url": "https://yourdomain.com/render-done",
+  "method": "POST"
+}
+```
+
+This saves on polling requests and scales better across high volume workflows.
+
+---
+
+### 🧹 Clean Up Old Jobs
+
+Use `GET /jobs` to review recent activity and optionally clean up old or test jobs that are no longer needed.
+
+While job output remains accessible after completion, pruning unused entries improves visibility.
+
+---
+
+Next: [Check Job Status →](../jobs/status-checking)
+---
+
+###  How to Add Post-Actions
 
 Post-actions are declared in a `postrender` array in the job payload. Each entry defines a `module` (built-in action) and its corresponding `params`.
 
@@ -199,21 +305,21 @@ Post-actions are declared in a `postrender` array in the job payload. Each entry
 
 ---
 
-### 🧱 Common Built-In Modules
+### Common Built-In Modules
 
-| Module Name                  | Description                            |
-|------------------------------|----------------------------------------|
-| `@nexrender/action-upload`   | Upload to S3, FTP, GCS, etc.           |
-| `@nexrender/action-copy`     | Copy file within the render container  |
-| `@nexrender/action-encode`   | Re-encode using ffmpeg                 |
-| `@nexrender/action-webhook`  | Send a POST request with render info   |
-| `@nexrender/action-cleanup`  | Delete project files after render      |
+| Module Name                 | Description                           |
+| --------------------------- | ------------------------------------- |
+| `@nexrender/action-upload`  | Upload to S3, FTP, GCS, etc.          |
+| `@nexrender/action-copy`    | Copy file within the render container |
+| `@nexrender/action-encode`  | Re-encode using ffmpeg                |
+| `@nexrender/action-webhook` | Send a POST request with render info  |
+| `@nexrender/action-cleanup` | Delete project files after render     |
 
 More examples in [nexrender/actions](https://github.com/nexrender/actions).
 
 ---
 
-### ✅ Example: Upload to Google Cloud Storage
+###  Example: Upload to Google Cloud Storage
 
 ```json
 {
@@ -235,7 +341,7 @@ More examples in [nexrender/actions](https://github.com/nexrender/actions).
 
 For cloud execution, some postrender modules require credentials (AWS/GCP keys). You must securely manage these — avoid committing them to version control or exposing them in public requests.
 
-If you need native integration with secure uploads, consider using Nexrender Cloud’s built-in **webhooks + presigned URLs** instead.
+If you need native integration with secure uploads, consider using Nexrender Cloud’s built-in **webhooks \+ presigned URLs** instead.
 
 ---
 
