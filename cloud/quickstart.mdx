@@ -81,7 +81,7 @@ If you prefer using the graphical interface:
 
 > This will include only the contents of the folder, not the folder itself.
 
-### 💡 For `.mogrt` Templates
+### For `.mogrt` Templates
 
 If you're using a `.mogrt` file:
 
@@ -180,7 +180,7 @@ If you prefer to upload your template file via Postman instead of `curl`, you mu
 
 > **Important:** The `uploadInfo.url` is a presigned S3-compatible endpoint that is **header-sensitive**. Postman may add or omit headers that will cause the signature to become invalid and return a `403 Forbidden` or `SignatureDoesNotMatch`.
 
-#### ✅ Correct Postman Setup
+#### Correct Postman Setup
 
 - **Method**: `PUT`
 - **URL**: Use the full `uploadInfo.url` from the API response
@@ -189,7 +189,7 @@ If you prefer to upload your template file via Postman instead of `curl`, you mu
   - Select `binary`
   - Upload your `.aep`, `.zip`, or `.mogrt` file using the file selector
 
-#### ✅ Required Headers
+#### Required Headers
 
 | Header            | Value                              | Notes                               |
 | ----------------- | ---------------------------------- | ----------------------------------- |
@@ -201,7 +201,7 @@ If you prefer to upload your template file via Postman instead of `curl`, you mu
 
 > Most headers like `Host` and `Content-Length` are filled automatically. Only modify them if needed. Make sure `Content-Type` is set explicitly.
 
-#### ❌ Remove These Headers if Present
+#### Remove These Headers if Present
 
 | Header        | Why It Must Be Removed                         |
 | ------------- | ---------------------------------------------- |
@@ -229,7 +229,7 @@ The rendering process will begin once the job is submitted and validated.
 
 ---
 
-### ✅ Example `curl` Request
+### Example `curl` Request
 
 ```bash
 curl -X POST https://api.nexrender.com/api/v2/jobs \
@@ -264,7 +264,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
 
 ---
 
-### 🧱 Job Payload Breakdown
+### Job Payload Breakdown
 
 | Field                  | Type    | Description                                                  |
 | ---------------------- | ------- | ------------------------------------------------------------ |
@@ -279,7 +279,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
 
 ---
 
-### 💡 Example: Minimal Job
+### Example: Minimal Job
 
 ```json
 {
@@ -292,9 +292,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
 
 This will use default values and no dynamic asset injection.
 
----
-
-### 📡 Example: Webhook Response
+###  Example: Webhook Response
 
 Your webhook endpoint will receive a payload like:
 
@@ -312,7 +310,7 @@ You can download the final rendered video via the `output.url`.
 
 ---
 
-### 🕒 Checking Job Status (Optional)
+### Checking Job Status (Optional)
 
 If you prefer polling over webhooks, use:
 
