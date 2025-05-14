@@ -1,0 +1,246 @@
+---
+title: "Creating Render Jobs"
+description: "How to submit render jobs using templates in Nexrender Cloud."
+keywords: ["nexrender jobs", "render automation", "submit job", "video API", "asset injection"]
+---
+
+# Creating Render Jobs
+
+Once your template is uploaded and inspected, you can submit a **render job** using the Nexrender Cloud API.
+
+A render job ties together:
+- A template
+- A specific composition inside that template
+- A set of dynamic assets (text, image, audio, etc.)
+- Optional preview/render flags and webhooks
+
+---
+
+## Step 1: What Is a Render Job?
+
+Each job is a self-contained instruction set telling Nexrender Cloud how to render a video from a specific template.
+
+Jobs are **idempotent**, meaning the same payload will always produce the same output — unless your template changes.
+
+You must specify:
+
+- `template.id`: the template to use
+- `template.composition`: the comp to render
+- `assets`: an array of overrides (layerName + value)
+- `preview`: (optional) for low-res fast rendering
+- `webhook`: (optional) for real-time status notification
+
+---
+
+## Step 2: Job Payload Structure
+
+Here’s what a minimal payload looks like:
+
+```json
+{
+  "template": {
+    "id": "01JTGM9GCR71JV7EJYDF45QAFD",
+    "composition": "main"
+  },
+  "assets": [
+    {
+      "type": "data",
+      "layerName": "title",
+      "property": "Source Text",
+      "value": "Hello World!"
+    }
+  ]
+}
+```
+
+You can extend it with more assets and a webhook:
+
+```json
+{
+  "template": {
+    "id": "01JTGM9GCR71JV7EJYDF45QAFD",
+    "composition": "main"
+  },
+  "assets": [
+    {
+      "type": "data",
+      "layerName": "title",
+      "property": "Source Text",
+      "value": "Custom Title"
+    },
+    {
+      "type": "image",
+      "layerName": "logo",
+      "property": "Source Name",
+      "src": "https://example.com/logo.png"
+    },
+    {
+      "type": "audio",
+      "layerName": "music",
+      "property": "Source Name",
+      "src": "https://example.com/audio.mp3"
+    }
+  ],
+  "webhook": {
+    "url": "https://yourdomain.com/webhooks/render-complete",
+    "method": "POST"
+  },
+  "preview": false
+}
+```
+
+---
+
+## Step 3: Submit the Job
+
+Submit the job with a simple POST request:
+
+```bash
+curl -X POST https://api.nexrender.com/api/v2/jobs \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @job-payload.json
+```
+
+Or inline:
+
+```bash
+curl -X POST https://api.nexrender.com/api/v2/jobs \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "template": {
+      "id": "01JTGM9GCR71JV7EJYDF45QAFD",
+      "composition": "main"
+    },
+    "assets": [
+      {
+        "type": "data",
+        "layerName": "title",
+        "property": "Source Text",
+        "value": "Hello World!"
+      }
+    ],
+    "preview": false
+  }'
+```
+
+### Expected Response
+
+```json
+{
+  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
+  "status": "queued",
+  "output": null,
+  "createdAt": "2025-05-14T12:00:00.000Z"
+}
+```
+
+---
+
+## Step 4: Job Payload Reference
+
+| Field                    | Type     | Required | Description |
+|---------------------------|----------|----------|-------------|
+| `template.id`             | string   | ✅       | ID of the template created earlier |
+| `template.composition`   | string   | ✅       | Composition to render |
+| `assets`                 | array    | ✅       | List of asset overrides |
+| `preview`                | boolean  | ❌       | Set `true` for fast low-res preview |
+| `webhook.url`            | string   | ❌       | Callback endpoint for job status |
+| `webhook.method`         | string   | ❌       | Typically `POST` |
+
+Each asset object must have:
+
+- `type`: `data`, `image`, `audio`, `video`
+- `layerName`: exact layer name from the template
+- `property`: like `"Source Text"` or `"Source Name"`
+- `value` or `src`: depending on asset type
+
+> You can inspect available `layerName`s using `GET /templates/:id`
+
+---
+
+Next: [Add Post-Actions →](#step-5-post-actions-optional)
+## Step 5: Post-Actions (Optional)
+
+Once a render job completes, Nexrender Cloud can automatically run one or more **post-actions**.
+
+These actions allow you to:
+
+- Upload the final video to external storage
+- Trigger external processes (e.g. Slack, CMS, Zapier)
+- Transcode or rename the result
+- Chain workflows (e.g. send to TTS or narration engine)
+
+---
+
+### 🔧 How to Add Post-Actions
+
+Post-actions are declared in a `postrender` array in the job payload. Each entry defines a `module` (built-in action) and its corresponding `params`.
+
+```json
+"postrender": [
+  {
+    "module": "@nexrender/action-upload",
+    "input": "result.mp4",
+    "params": {
+      "provider": "s3",
+      "bucket": "my-bucket",
+      "key": "output/final-video.mp4",
+      "region": "eu-west-1",
+      "accessKey": "AWS_ACCESS_KEY_ID",
+      "secretKey": "AWS_SECRET_ACCESS_KEY"
+    }
+  }
+]
+```
+
+> Not all postrender actions are supported in the cloud. Start with safe actions like upload or webhook-based flows.
+
+---
+
+### 🧱 Common Built-In Modules
+
+| Module Name                  | Description                            |
+|------------------------------|----------------------------------------|
+| `@nexrender/action-upload`   | Upload to S3, FTP, GCS, etc.           |
+| `@nexrender/action-copy`     | Copy file within the render container  |
+| `@nexrender/action-encode`   | Re-encode using ffmpeg                 |
+| `@nexrender/action-webhook`  | Send a POST request with render info   |
+| `@nexrender/action-cleanup`  | Delete project files after render      |
+
+More examples in [nexrender/actions](https://github.com/nexrender/actions).
+
+---
+
+### ✅ Example: Upload to Google Cloud Storage
+
+```json
+{
+  "module": "@nexrender/action-upload",
+  "input": "result.mp4",
+  "params": {
+    "provider": "gcs",
+    "bucket": "nexrender-cloud-videos",
+    "key": "jobs/01JABCXYZ/output.mp4",
+    "projectId": "my-gcp-project",
+    "keyFilename": "/path/to/gcp-service-account.json"
+  }
+}
+```
+
+---
+
+### 🔒 Security Note
+
+For cloud execution, some postrender modules require credentials (AWS/GCP keys). You must securely manage these — avoid committing them to version control or exposing them in public requests.
+
+If you need native integration with secure uploads, consider using Nexrender Cloud’s built-in **webhooks + presigned URLs** instead.
+
+---
+
+> For detailed examples of postrender usage, see our Advanced Recipes and OSS repo [nexrender/jobs](https://github.com/inlife/nexrender#job-format).
+
+---
+
+Next: [Check Job Status →](../jobs/status)
