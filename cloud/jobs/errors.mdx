@@ -8,6 +8,55 @@ Even the best-built templates can fail — especially when working with automati
 
 ---
 
+<CardGroup cols={3}>
+  <Card title="Quickstart Guide" icon="bolt" href="/cloud/quickstart">
+    Step-by-step instructions to submit your first render job using curl or Postman
+  </Card>
+  <Card title="Create and Upload Templates" icon="upload" href="/cloud/templates/creating">
+    Learn how to structure your AE projects and upload them via the API
+  </Card>
+  <Card title="Submit a Render Job" icon="play" href="/cloud/jobs/creating">
+    Create and trigger a render job using compositions and asset overrides
+  </Card>
+  <Card title="Track Job Status" icon="signal" href="/cloud/jobs/status">
+    Poll for progress or receive updates with webhooks
+  </Card>
+</CardGroup>
+
+<AccordionGroup>
+  <Accordion title="Clone your docs locally" icon="github">
+    During the onboarding process, we created a repository on your Github with
+    your docs content. You can find this repository on our
+    [dashboard](https://dashboard.mintlify.com). To clone the repository
+    locally, follow these
+    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+    in your terminal.
+  </Accordion>
+  <Accordion title="Preview changes" icon="rectangle-terminal">
+    Previewing helps you make sure your changes look as intended. We built a
+    command line interface to render these changes locally.
+
+    1. Install the
+       [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
+       documentation changes locally with this command: `npm i -g mintlify`
+    2. Run the following command at the root of your documentation (where
+       `docs.json` is): `mintlify dev`
+
+    <Note>
+      If you’re currently using the legacy `mint.json` configuration file, please update the Mintlify CLI:
+
+      `npm i -g mintlify@latest`
+      And run the new upgrade command in your docs repository:
+
+      `mintlify upgrade`
+      You should now be using the new `docs.json` configuration file. Feel free to delete the `mint.json` file from your repository.
+    </Note>
+  </Accordion>
+  <Accordion title="hello">
+    
+  </Accordion>
+</AccordionGroup>
+
 ## Where Errors Appear
 
 When a render job fails, the system sets its status to:

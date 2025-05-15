@@ -23,41 +23,49 @@ DELETE /api/v2/fonts/:id
 You must provide the font ID from the listing endpoint.
 
 ---
-
-### Example `curl`
+<CodeGroup>
 
 ```bash
 curl -X DELETE https://api.nexrender.com/api/v2/fonts/font-01JTX5VRSCK11DZ8AQT90F6BRP \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-### Response
-
 ```json
 {
   "status": "deleted"
 }
 ```
+</CodeGroup>
 
 > Attempting to delete a nonexistent or unauthorized font will return a `404` or `403` error.
 
 ---
-
 ## Testing in Postman
+
+<AccordionGroup>
+  <Accordion title="Step-by-step Instructions">
 
 1. Set method to `DELETE`
 2. URL: `https://api.nexrender.com/api/v2/fonts/{FONT_ID}`
 3. Add `Authorization` header
 4. Send and confirm `status: deleted`
 
----
+  </Accordion>
+  <Accordion title="Common Mistakes">
 
+- Forgetting the `Authorization` header
+- Using a deleted or invalid font ID
+- Using `GET` instead of `DELETE`
+
+  </Accordion>
+</AccordionGroup>
+
+---
 ## Best Practices
 
 - Always list fonts first before deleting
 - Ensure no active templates or teams rely on the font
 - Rename and re-upload fonts instead of constantly deleting
-
 ---
 
 Next:
