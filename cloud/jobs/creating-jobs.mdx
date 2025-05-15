@@ -13,9 +13,7 @@ A render job ties together:
 - A set of dynamic assets (text, image, audio, etc.)
 - Optional preview/render flags and webhooks
 
----
-
-## Step 1: What Is a Render Job?
+## What Is a Render Job?
 
 Each job is a self-contained instruction set telling Nexrender Cloud how to render a video from a specific template.
 
@@ -29,9 +27,7 @@ You must specify:
 - `preview`: (optional) for low-res fast rendering
 - `webhook`: (optional) for real-time status notification
 
----
-
-## Step 2: Job Payload Structure
+## Job Payload Structure
 
 Here’s what a minimal payload looks like:
 
@@ -88,15 +84,11 @@ You can extend it with more assets and a webhook:
 }
 ```
 
----
-
 ### Supported Asset Types
 
 Nexrender Cloud lets you customize your After Effects templates by injecting different types of assets during render time. These assets are defined in the `assets` array of your render job payload.
 
 Each asset must include a `type`, and typically a `layerName`, `src`, or parameters depending on its function.
-
----
 
 #### `data` — Text Override
 
@@ -111,8 +103,6 @@ Use to change text in a composition layer.
 }
 ```
 
----
-
 #### `image` — Replace Image
 
 ```json
@@ -123,9 +113,7 @@ Use to change text in a composition layer.
 }
 ```
 
----
-
-####  `audio` — Inject Audio
+#### `audio` — Inject Audio
 
 ```json
 {
@@ -135,9 +123,7 @@ Use to change text in a composition layer.
 }
 ```
 
----
-
-####  `video` — Replace Footage
+#### `video` — Replace Footage
 
 ```json
 {
@@ -147,9 +133,7 @@ Use to change text in a composition layer.
 }
 ```
 
----
-
-####  `script` — Inject JSX Code
+#### `script` — Inject JSX Code
 
 ```json
 {
@@ -161,9 +145,7 @@ Use to change text in a composition layer.
 - Can also point to remote `.jsx` files
 - Scripts are executed before render begins
 
----
-
-####  `function` — Declarative Action Blocks
+#### `function` — Declarative Action Blocks
 
 Functions allow structured operations like setting text via high-level parameters.
 
@@ -202,7 +184,7 @@ This is useful when you want to render a specific comp (like `main`), but modify
 
 #### Example
 
-````json
+```json
 {
   "template": {
     "id": "01JTGM9GCR71JV7EJYDF45QAFD",
@@ -219,9 +201,9 @@ This is useful when you want to render a specific comp (like `main`), but modify
   ],
   "preview": false
 }
----
+```
 
-## Step 3: Submit the Job
+## Submit the Job
 
 Submit the job with a simple POST request:
 
@@ -230,7 +212,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d @job-payload.json
-````
+```
 
 Or inline:
 
@@ -266,9 +248,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
 }
 ```
 
----
-
-## Step 4: Job Payload Reference
+## Job Payload Reference
 
 | Field                  | Type    | Required | Description                         |
 | ---------------------- | ------- | -------- | ----------------------------------- |
@@ -288,9 +268,7 @@ Each asset object must have:
 
 > You can inspect available `layerName`s using `GET /templates/:id`
 
----
-
-## Step 5: Post-Actions (Optional)
+## Post-Actions (Optional)
 
 Once a render job completes, Nexrender Cloud can automatically run one or more **post-actions**.
 
@@ -301,7 +279,7 @@ These actions allow you to:
 - Transcode or rename the result
 - Chain workflows (e.g. send to TTS or narration engine)
 
-## Step 6: Preview Mode vs Final Render
+## Preview Mode vs Final Render
 
 Nexrender Cloud supports two rendering modes:
 
@@ -309,8 +287,6 @@ Nexrender Cloud supports two rendering modes:
 | ---------------- | ---------------------------------------------------- | -------------------------- |
 | `preview: true`  | Low-res render, fast execution, watermark (optional) | Testing template structure |
 | `preview: false` | Full-quality final render, slower, billed normally   | Production rendering       |
-
----
 
 ### When to Use `preview: true`
 
@@ -331,13 +307,9 @@ Previews render faster and are cheaper on infrastructure resources. If your temp
 
 > You can build an internal CI pipeline that runs preview renders against all newly uploaded templates.
 
----
-
-## Step 7: Best Practices for Stable Job Execution
+## Best Practices for Stable Job Execution
 
 Building jobs at scale requires defensive design. Here’s what we recommend:
-
----
 
 ### Always Provide Fallbacks
 
@@ -350,8 +322,6 @@ Your templates should gracefully handle empty or missing values.
 | Audio      | Default to silent.mp3 or fallback narration |
 
 In After Effects, use `if` expressions or fallback layers hidden by default.
-
----
 
 ### Implement Retry Logic
 
@@ -367,8 +337,6 @@ You can retry a failed job with the exact same payload, or:
 - Query job status with `GET /jobs/:id` and retry failed states
 - Use a queue system that retries `status = failed`
 
----
-
 ### Validate Assets Before Submit
 
 Before rendering, always validate:
@@ -377,8 +345,6 @@ Before rendering, always validate:
 - `layerName` matches exactly
 - URLs for assets return a `200 OK`
 - Font dependencies have been preloaded
-
----
 
 ### Use Webhooks to Avoid Polling
 
@@ -393,15 +359,11 @@ Set a `webhook.url` so your system is notified when jobs complete.
 
 This saves on polling requests and scales better across high volume workflows.
 
----
-
 ### Clean Up Old Jobs
 
 Use `GET /jobs` to review recent activity and optionally clean up old or test jobs that are no longer needed.
 
 While job output remains accessible after completion, pruning unused entries improves visibility.
-
----
 
 ### How to Add Post-Actions
 
@@ -426,8 +388,6 @@ Post-actions are declared in a `postrender` array in the job payload. Each entry
 
 > Not all postrender actions are supported in the cloud. Start with safe actions like upload or webhook-based flows.
 
----
-
 ### Common Built-In Modules
 
 | Module Name                 | Description                           |
@@ -439,8 +399,6 @@ Post-actions are declared in a `postrender` array in the job payload. Each entry
 | `@nexrender/action-cleanup` | Delete project files after render     |
 
 More examples in [nexrender/actions](https://github.com/nexrender/actions).
-
----
 
 ### Example: Upload to Google Cloud Storage
 
@@ -457,8 +415,6 @@ More examples in [nexrender/actions](https://github.com/nexrender/actions).
   }
 }
 ```
-
----
 
 ### Security Note
 
