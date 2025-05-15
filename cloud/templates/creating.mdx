@@ -3,6 +3,37 @@ title: "Creating a Template"
 description: "Description of your new file."
 ---
 
+<CardGroup cols={2}>
+  <Card
+    title="Quickstart Guide"
+    icon="bolt"
+    href="/cloud/quickstart"
+  >
+    Step-by-step instructions to submit your first render job using curl or Postman
+  </Card>
+  <Card
+    title="Create and Upload Templates"
+    icon="upload"
+    href="/cloud/templates/creating"
+  >
+    Learn how to structure your AE projects and upload them via the API
+  </Card>
+  <Card
+    title="Submit a Render Job"
+    icon="play"
+    href="/cloud/jobs/creating"
+  >
+    Create and trigger a render job using compositions and asset overrides
+  </Card>
+  <Card
+    title="Track Job Status"
+    icon="signal"
+    href="/cloud/jobs/status"
+  >
+    Poll for progress or receive updates with webhooks
+  </Card>
+</CardGroup>
+
 ## What is a Template in Nexrender Cloud?
 
 In Nexrender Cloud, a **template** is an After Effects project file (or compatible format) uploaded to the cloud and registered with metadata, enabling dynamic rendering and automation at scale.
