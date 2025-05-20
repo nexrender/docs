@@ -1,7 +1,7 @@
 ---
 title: "Deleting Fonts"
 description: "How to delete fonts from your Nexrender Cloud account."
-keywords: ["nexrender fonts", "delete font", "font cleanup"]
+keywords: "nexrender fonts,delete font,font cleanup"
 ---
 
 ## Why Delete Fonts?
@@ -12,63 +12,50 @@ keywords: ["nexrender fonts", "delete font", "font cleanup"]
 
 Deleting fonts does **not** affect jobs that are already rendered. However, future jobs referencing that font may fail if it's not re-uploaded.
 
----
-
-## Endpoint
-
-```http
-DELETE /api/v2/fonts/:id
-```
+## Deleting Fonts
 
 You must provide the font ID from the listing endpoint.
 
----
 <CodeGroup>
 
-```bash
+```bash Delete Font
 curl -X DELETE https://api.nexrender.com/api/v2/fonts/font-01JTX5VRSCK11DZ8AQT90F6BRP \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-```json
+
+```json Example Response
 {
   "status": "deleted"
 }
 ```
+
 </CodeGroup>
 
 > Attempting to delete a nonexistent or unauthorized font will return a `404` or `403` error.
 
----
-## Testing in Postman
+<Accordion title="Testing in Postman">
+  ## Step-by-step Instructions
 
-<AccordionGroup>
-  <Accordion title="Step-by-step Instructions">
+  1. Set method to `DELETE`
+  2. URL: `https://api.nexrender.com/api/v2/fonts/{FONT_ID}`
+  3. Add `Authorization` header
+  4. Send and confirm `status: deleted`
 
-1. Set method to `DELETE`
-2. URL: `https://api.nexrender.com/api/v2/fonts/{FONT_ID}`
-3. Add `Authorization` header
-4. Send and confirm `status: deleted`
+  ## Common Mistakes
 
-  </Accordion>
-  <Accordion title="Common Mistakes">
+  - Forgetting the `Authorization` header
+  - Using a deleted or invalid font ID
+  - Using `GET` instead of `DELETE`
+</Accordion>
 
-- Forgetting the `Authorization` header
-- Using a deleted or invalid font ID
-- Using `GET` instead of `DELETE`
-
-  </Accordion>
-</AccordionGroup>
-
----
 ## Best Practices
 
 - Always list fonts first before deleting
 - Ensure no active templates or teams rely on the font
 - Rename and re-upload fonts instead of constantly deleting
----
 
 Next:
-➡️ [List Fonts →](../fonts/list)  
-➡️ [Upload Fonts →](../fonts/upload)  
+➡️ [List Fonts →](../fonts/list)\
+➡️ [Upload Fonts →](../fonts/upload)\
 ➡️ [Back to Render Jobs →](../jobs/creating-jobs)
