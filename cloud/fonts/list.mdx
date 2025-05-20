@@ -5,64 +5,58 @@ description: "How to list fonts in your Nexrender Cloud Account"
 
 Once you've uploaded fonts to your Nexrender Cloud account, you can list them to confirm their availability or debug font-related issues.
 
----
+<AccordionGroup>
+  <Accordion title="Endpoint">
+    This returns all fonts uploaded to your account.
 
-## 📄 Endpoint
+    <CodeGroup>
 
-```http
-GET /api/v2/fonts
-```
+    ```http Endpoint
+    GET /api/v2/fonts
+    ```
 
-This returns all fonts uploaded to your account.
+    
+    ```bash Get Fonts curl Request
+    curl -X GET https://api.nexrender.com/api/v2/fonts \
+    -H "Authorization: Bearer YOUR_API_KEY"
+    ```
 
-### Example `curl` Request
+    
+    ```json Example Response
+    [
+      {
+        "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
+        "fileName": "Roboto-Bold.ttf",
+        "status": "available",
+        "uploadedAt": "2025-05-14T11:00:00Z"
+      },
+      {
+        "id": "font-01JTX5VRSCK11DZ8AQT90F6BRP",
+        "fileName": "OpenSans-Regular.ttf",
+        "status": "available",
+        "uploadedAt": "2025-05-14T11:02:17Z"
+      }
+    ]
+    ```
 
-```bash
-curl -X GET https://api.nexrender.com/api/v2/fonts \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
+    </CodeGroup>
+  </Accordion>
+  <Accordion title="How Fonts Are Matched">
+    When rendering, Nexrender Cloud installs fonts based on:
 
-## Example Response
+    - **Exact file name match** between After Effects project and uploaded `.ttf`
+    - Fonts are case-sensitive and must retain their original names
 
-```json
-[
-  {
-    "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
-    "fileName": "Roboto-Bold.ttf",
-    "status": "available",
-    "uploadedAt": "2025-05-14T11:00:00Z"
-  },
-  {
-    "id": "font-01JTX5VRSCK11DZ8AQT90F6BRP",
-    "fileName": "OpenSans-Regular.ttf",
-    "status": "available",
-    "uploadedAt": "2025-05-14T11:02:17Z"
-  }
-]
-```
-
----
-
-## How Fonts Are Matched
-
-When rendering, Nexrender Cloud installs fonts based on:
-
-- **Exact file name match** between After Effects project and uploaded `.ttf`
-- Fonts are case-sensitive and must retain their original names
-
-> AE uses the system-installed font name internally. To avoid mismatch, make sure your uploaded font’s file name matches what’s referenced in AE.
-
----
-
-## Troubleshooting Tips
-
-- If your text layers render with wrong fonts or break, first check:
-  - That the font is uploaded and `status` is `available`
-  - That the file name (e.g. `OpenSans-Regular.ttf`) matches what AE expects
-  - That you don’t accidentally zip fonts inside your `.aep` or `.mogrt`
-- Re-upload the font to resolve a corrupted or partial upload
-
----
+    > AE uses the system-installed font name internally. To avoid mismatch, make sure your uploaded font’s file name matches what’s referenced in AE.
+  </Accordion>
+  <Accordion title="Troubleshooting Tips">
+    - If your text layers render with wrong fonts or break, first check:
+      - That the font is uploaded and `status` is `available`
+      - That the file name (e.g. `OpenSans-Regular.ttf`) matches what AE expects
+      - That you don’t accidentally zip fonts inside your `.aep` or `.mogrt`
+    - Re-upload the font to resolve a corrupted or partial upload
+  </Accordion>
+</AccordionGroup>
 
 Next:
 ➡️ [Delete Fonts →](../fonts/delete)\
