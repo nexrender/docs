@@ -302,102 +302,92 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
 
     Only then will you be able to submit render jobs based on it.
 
-    ---
+    <AccordionGroup>
+      <Accordion title="Check Template Status">
+        To check the current status of your template, make a `GET` request. Replace `TEMPLATE_ID` with the ID returned during Step 1.
 
-    ### Check Template Status
+        <CodeGroup>
 
-    To check the current status of your template, make a `GET` request:
+        ```bash Check Template Status
+        curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+          -H "Authorization: Bearer YOUR_API_KEY"
+        ```
 
-    ```bash
-    curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-      -H "Authorization: Bearer YOUR_API_KEY"
-    ```
-
-    Replace `TEMPLATE_ID` with the ID returned during Step 1.
-
-    ---
-
-    ### Example Successful Response
-
-    ```json
-    {
-      "id": "01JT2M9GCR712V7EJYDF45QAFD",
-      "type": "zip",
-      "status": "uploaded",
-      "displayName": "Promo 2024 Campaign",
-      "createdAt": "2025-05-05T16:25:59.961Z",
-      "updatedAt": "2025-05-05T16:30:01.015Z",
-      "compositions": ["main", "intro", "outro"],
-      "layers": [
+        
+        ```json Example Successful Response
         {
-          "layerName": "title",
-          "property": "Source Text",
-          "type": "data"
-        },
-        {
-          "layerName": "subtitle",
-          "property": "Source Text",
-          "type": "data"
-        },
-        {
-          "layerName": "logo",
-          "property": "Source Name",
-          "type": "image"
+          "id": "01JT2M9GCR712V7EJYDF45QAFD",
+          "type": "zip",
+          "status": "uploaded",
+          "displayName": "Promo 2024 Campaign",
+          "createdAt": "2025-05-05T16:25:59.961Z",
+          "updatedAt": "2025-05-05T16:30:01.015Z",
+          "compositions": ["main", "intro", "outro"],
+          "layers": [
+            {
+              "layerName": "title",
+              "property": "Source Text",
+              "type": "data"
+            },
+            {
+              "layerName": "subtitle",
+              "property": "Source Text",
+              "type": "data"
+            },
+            {
+              "layerName": "logo",
+              "property": "Source Name",
+              "type": "image"
+            }
+          ]
         }
-      ]
-    }
-    ```
+        ```
 
-    ---
+        </CodeGroup>
+      </Accordion>
+      <Accordion title="Key Fields to Inspect">
+        | Field          | Description                                                                |
+        | -------------- | -------------------------------------------------------------------------- |
+        | `status`       | Should be `uploaded`. Any other status means you can't render yet.         |
+        | `compositions` | List of named compositions in the AE project. You must pick one to render. |
+        | `layers`       | List of dynamic layers you can override with asset injection.              |
+      </Accordion>
+      <Accordion title="If `status` ≠ `uploaded`">
+        If the template remains in `awaiting_upload` or shows an error status:
 
-    ### 🔍 Key Fields to Inspect
+        1. Check that you **uploaded the correct file type** (`zip`, `aep`, or `mogrt`)
+        2. Ensure the file was uploaded to the **`exact uploadInfo.url`**
+        3. Inspect logs or contact support if rendering infrastructure couldn’t process the file
 
-    | Field          | Description                                                                |
-    | -------------- | -------------------------------------------------------------------------- |
-    | `status`       | Should be `uploaded`. Any other status means you can't render yet.         |
-    | `compositions` | List of named compositions in the AE project. You must pick one to render. |
-    | `layers`       | List of dynamic layers you can override with asset injection.              |
+        > You cannot submit a render job until the template is fully uploaded and parsed.
+      </Accordion>
+      <Accordion title="Fetching Layers for a Render Job">
+        You’ll use the `layerName` and `property` fields when constructing your job payload:
 
-    ---
-
-    ### ❌ If `status` ≠ `uploaded`
-
-    If the template remains in `awaiting_upload` or shows an error status:
-
-    1. Check that you **uploaded the correct file type** (`zip`, `aep`, or `mogrt`)
-    2. Ensure the file was uploaded to the **`exact uploadInfo.url`**
-    3. Inspect logs or contact support if rendering infrastructure couldn’t process the file
-
-    > You cannot submit a render job until the template is fully uploaded and parsed.
-
-    ---
-
-    ### Example: Fetching Layers for a Render Job
-
-    You’ll use the `layerName` and `property` fields when constructing your job payload:
-
-    ```json
-    {
-      "template": {
-        "id": "TEMPLATE_ID",
-        "composition": "main"
-      },
-      "assets": [
+        ```json
         {
-          "type": "data",
-          "layerName": "title",
-          "property": "Source Text",
-          "value": "My Dynamic Title"
-        },
-        {
-          "type": "image",
-          "layerName": "logo",
-          "property": "Source Name",
-          "src": "https://example.com/yourlogo.png"
+          "template": {
+            "id": "TEMPLATE_ID",
+            "composition": "main"
+          },
+          "assets": [
+            {
+              "type": "data",
+              "layerName": "title",
+              "property": "Source Text",
+              "value": "My Dynamic Title"
+            },
+            {
+              "type": "image",
+              "layerName": "logo",
+              "property": "Source Name",
+              "src": "https://example.com/yourlogo.png"
+            }
+          ]
         }
-      ]
-    }
-    ```
+        ```
+      </Accordion>
+    </AccordionGroup>
   </Step>
   <Step title="Optional – Fonts & Dependencies">
     If your After Effects project uses **custom fonts**, you’ll need to preload them into Nexrender Cloud before rendering — otherwise the render nodes may fallback to system fonts or fail altogether.
@@ -450,8 +440,6 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
     </AccordionGroup>
   </Step>
 </Steps>
-
----
 
 To manage fonts, visit: [Fonts →](../cloud/fonts/upload)
 
@@ -589,8 +577,6 @@ Here are the key principles we recommend.
     - Try preview rendering (`preview: true`) in jobs if needed
   </Accordion>
 </AccordionGroup>
-
----
 
 Following these practices helps ensure your renders are:
 
