@@ -239,9 +239,11 @@ A render job ties together:
 
     </CodeGroup>
 
-    ### Expected Response
+    #### Expected Response
 
-    ```json
+    <CodeGroup>
+
+    ```json Expected Response
     {
       "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
       "status": "queued",
@@ -250,8 +252,11 @@ A render job ties together:
     }
     ```
 
-    ## Job Payload Reference
-
+    </CodeGroup>
+  </Step>
+</Steps>
+<AccordionGroup>
+  <Accordion title="Job Payload Reference">
     | Field                  | Type    | Required | Description                         |
     | ---------------------- | ------- | -------- | ----------------------------------- |
     | `template.id`          | string  | ✅        | ID of the template created earlier  |
@@ -269,10 +274,7 @@ A render job ties together:
     - `value` or `src`: depending on asset type
 
     > You can inspect available `layerName`s using `GET /templates/:id`
-  </Step>
-</Steps>
-
-<AccordionGroup>
+  </Accordion>
   <Accordion title="Post-Actions (Optional)">
     Once a render job completes, Nexrender Cloud can automatically run one or more **post-actions**.
 
