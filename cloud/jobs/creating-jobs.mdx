@@ -13,7 +13,8 @@ A render job ties together:
 - A set of dynamic assets (text, image, audio, etc.)
 - Optional preview/render flags and webhooks
 
-## What Is a Render Job?
+<AccordionGroup>
+<Accordion title="What Is a Render Job?">
 
 Each job is a self-contained instruction set telling Nexrender Cloud how to render a video from a specific template.
 
@@ -27,7 +28,8 @@ You must specify:
 - `preview`: (optional) for low-res fast rendering
 - `webhook`: (optional) for real-time status notification
 
-## Job Payload Structure
+</Accordion>
+<Accordion title="Job Payload Structure">
 
 Here’s what a minimal payload looks like:
 
@@ -83,8 +85,9 @@ You can extend it with more assets and a webhook:
   "preview": false
 }
 ```
+</Accordion>
 
-### Supported Asset Types
+<Accordion title="Supported Asset Types">
 
 Nexrender Cloud lets you customize your After Effects templates by injecting different types of assets during render time. These assets are defined in the `assets` array of your render job payload.
 
@@ -173,8 +176,8 @@ You can also target a specific composition:
   }
 }
 ```
-
-### Targeting Layers in Alternate Compositions
+</Accordion>
+<Accordion title="Targeting Layers in Alternate Compositions">
 
 By default, assets are injected into the composition defined in the `template.composition` field.
 
@@ -202,12 +205,16 @@ This is useful when you want to render a specific comp (like `main`), but modify
   "preview": false
 }
 ```
+</Accordion>
+</AccordionGroup>
 
-## Submit the Job
+<Steps>
+<Step title = "Submit the Job">
 
 Submit the job with a simple POST request:
 
-```bash
+
+```javascript Post Request
 curl -X POST https://api.nexrender.com/api/v2/jobs \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
@@ -267,8 +274,10 @@ Each asset object must have:
 - `value` or `src`: depending on asset type
 
 > You can inspect available `layerName`s using `GET /templates/:id`
-
-## Post-Actions (Optional)
+</Step>
+</Steps>
+<AccordionGroup>
+<Accordion title="Post-Actions (Optional)">
 
 Once a render job completes, Nexrender Cloud can automatically run one or more **post-actions**.
 
@@ -278,8 +287,9 @@ These actions allow you to:
 - Trigger external processes (e.g. Slack, CMS, Zapier)
 - Transcode or rename the result
 - Chain workflows (e.g. send to TTS or narration engine)
+</Accordion>
 
-## Preview Mode vs Final Render
+<Accordion title="Preview Mode vs Final Render">
 
 Nexrender Cloud supports two rendering modes:
 
@@ -307,11 +317,16 @@ Previews render faster and are cheaper on infrastructure resources. If your temp
 
 > You can build an internal CI pipeline that runs preview renders against all newly uploaded templates.
 
+</Accordion>
+</AccordionGroup>
+
 ## Best Practices for Stable Job Execution
 
 Building jobs at scale requires defensive design. Here’s what we recommend:
 
-### Always Provide Fallbacks
+<AccordionGroup>
+  
+<Accordion title="Always Provide Fallbacks">
 
 Your templates should gracefully handle empty or missing values.
 
@@ -322,8 +337,9 @@ Your templates should gracefully handle empty or missing values.
 | Audio      | Default to silent.mp3 or fallback narration |
 
 In After Effects, use `if` expressions or fallback layers hidden by default.
-
-### Implement Retry Logic
+</Accordion>
+  
+<Accordion title="Implement Retry Logic">
 
 Sometimes jobs can fail due to:
 
@@ -336,8 +352,9 @@ You can retry a failed job with the exact same payload, or:
 - Build retries into your webhook processor
 - Query job status with `GET /jobs/:id` and retry failed states
 - Use a queue system that retries `status = failed`
+</Accordion>
 
-### Validate Assets Before Submit
+<Accordion title="Validate Assets Before Submit">
 
 Before rendering, always validate:
 
@@ -345,8 +362,9 @@ Before rendering, always validate:
 - `layerName` matches exactly
 - URLs for assets return a `200 OK`
 - Font dependencies have been preloaded
+</Accordion>
 
-### Use Webhooks to Avoid Polling
+<Accordion title="Use Webhooks to Avoid Polling">
 
 Set a `webhook.url` so your system is notified when jobs complete.
 
@@ -358,14 +376,15 @@ Set a `webhook.url` so your system is notified when jobs complete.
 ```
 
 This saves on polling requests and scales better across high volume workflows.
+</Accordion>
 
-### Clean Up Old Jobs
+<Accordion title="Clean Up Old Jobs">
 
 Use `GET /jobs` to review recent activity and optionally clean up old or test jobs that are no longer needed.
 
 While job output remains accessible after completion, pruning unused entries improves visibility.
-
-### How to Add Post-Actions
+</Accordion>
+<Accordion title="How to Add Post-Actions">
 
 Post-actions are declared in a `postrender` array in the job payload. Each entry defines a `module` (built-in action) and its corresponding `params`.
 
@@ -388,7 +407,9 @@ Post-actions are declared in a `postrender` array in the job payload. Each entry
 
 > Not all postrender actions are supported in the cloud. Start with safe actions like upload or webhook-based flows.
 
-### Common Built-In Modules
+</Accordion>
+
+<Accordion title="Common Built-In Modules">
 
 | Module Name                 | Description                           |
 | --------------------------- | ------------------------------------- |
@@ -415,17 +436,18 @@ More examples in [nexrender/actions](https://github.com/nexrender/actions).
   }
 }
 ```
+</Accordion>
+</AccordionGroup>
 
-### Security Note
+## Security Note
 
 For cloud execution, some postrender modules require credentials (AWS/GCP keys). You must securely manage these — avoid committing them to version control or exposing them in public requests.
 
 If you need native integration with secure uploads, consider using Nexrender Cloud’s built-in **webhooks \+ presigned URLs** instead.
 
 ---
-
-> For detailed examples of postrender usage, see our Advanced Recipes and OSS repo [nexrender/jobs](https://github.com/inlife/nexrender#job-format).
-
----
+<Note>
+For detailed examples of postrender usage, see our Advanced Recipes and OSS repo [nexrender/jobs](https://github.com/inlife/nexrender#job-format).
+</Note>
 
 Next: [Check Job Status →](../cloud/jobs/tracking)
