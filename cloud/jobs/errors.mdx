@@ -6,8 +6,6 @@ keywords: "nexrender errors,debug render,failed job,status=error,layerName not f
 
 Even the best-built templates can fail — especially when working with automation, dynamic data, and After Effects. This guide explains how to detect, interpret, and fix common job errors in Nexrender Cloud.
 
----
-
 <CardGroup cols={3}>
   <Card title="Quickstart Guide" icon="bolt" href="/cloud/quickstart">
     Step-by-step instructions to submit your first render job using curl or Postman
@@ -23,40 +21,6 @@ Even the best-built templates can fail — especially when working with automati
   </Card>
 </CardGroup>
 
-<AccordionGroup>
-  <Accordion title="Clone your docs locally" icon="github">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
-  </Accordion>
-  <Accordion title="Preview changes" icon="rectangle-terminal">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally.
-
-    1. Install the
-       [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-       documentation changes locally with this command: `npm i -g mintlify`
-    2. Run the following command at the root of your documentation (where
-       `docs.json` is): `mintlify dev`
-
-    <Note>
-      If you’re currently using the legacy `mint.json` configuration file, please update the Mintlify CLI:
-
-      `npm i -g mintlify@latest`
-      And run the new upgrade command in your docs repository:
-
-      `mintlify upgrade`
-      You should now be using the new `docs.json` configuration file. Feel free to delete the `mint.json` file from your repository.
-    </Note>
-  </Accordion>
-  <Accordion title="hello">
-    
-  </Accordion>
-</AccordionGroup>
-
 ## Where Errors Appear
 
 When a render job fails, the system sets its status to:
@@ -67,92 +31,83 @@ When a render job fails, the system sets its status to:
 
 You can detect this in two ways:
 
-### Webhook Delivery
+<AccordionGroup>
+  <Accordion title="Webhook Delivery">
+    If you've defined a webhook, the error will be delivered as a POST request:
 
-If you’ve defined a webhook, the error will be delivered as a POST request:
+    ```json
+    {
+      "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
+      "status": "failed",
+      "error": {
+        "message": "Layer 'title' not found in composition 'main'",
+        "code": "LAYER_NOT_FOUND"
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Manual Polling">
+    Use the jobs API:
 
-```json
-{
-  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
-  "status": "failed",
-  "error": {
-    "message": "Layer 'title' not found in composition 'main'",
-    "code": "LAYER_NOT_FOUND"
-  }
-}
-```
+    ```bash
+    curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+    Check the returned `status` and `error` fields.
+  </Accordion>
 
-### Manual Polling
+  <Accordion title="Common Causes of Render Failures">
+    | Cause                   | Error Message Example                        | How to Fix                                   |
+    | ----------------------- | -------------------------------------------- | -------------------------------------------- |
+    | **`Invalid layerName`** | `Layer 'subtitle' not found`                 | Check actual layers via `GET /templates/:id` |
+    | **Missing composition** | `Composition 'main' not found`               | Verify name when submitting job              |
+    | **Missing asset URL**   | `Asset failed to download (403)`             | Double-check `src` links or permissions      |
+    | **Font not found**      | `Font 'CustomFont-Bold.ttf' not available`   | Preload font using the Fonts API             |
+    | **Broken AE project**   | `Render failed: AE crashed with exit code 1` | Preview manually inside After Effects        |
+    | **Expression failure**  | `After Effects expression error at line X`   | Sanitize all dynamic input                   |
 
-Use the jobs API:
-
-```bash
-curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-Check the returned `status` and `error` fields.
-
----
-
-## Common Causes of Render Failures
-
-| Cause                   | Error Message Example                        | How to Fix                                   |
-| ----------------------- | -------------------------------------------- | -------------------------------------------- |
-| **`Invalid layerName`** | `Layer 'subtitle' not found`                 | Check actual layers via `GET /templates/:id` |
-| **Missing composition** | `Composition 'main' not found`               | Verify name when submitting job              |
-| **Missing asset URL**   | `Asset failed to download (403)`             | Double-check `src` links or permissions      |
-| **Font not found**      | `Font 'CustomFont-Bold.ttf' not available`   | Preload font using the Fonts API             |
-| **Broken AE project**   | `Render failed: AE crashed with exit code 1` | Preview manually inside After Effects        |
-| **Expression failure**  | `After Effects expression error at line X`   | Sanitize all dynamic input                   |
-
-> Tip: Most errors are caused by bad data or structural mismatches between template and job payload.
-
----
+    > Tip: Most errors are caused by bad data or structural mismatches between template and job payload.
+  </Accordion>
+</AccordionGroup>
 
 ## Debugging Strategy
+<Steps>
+  <Step title="1.Inspect the Template">
+    Use the `GET /templates/:id` endpoint to see:
 
-### 1. Inspect the Template
+    - Available compositions
+    - All dynamic layers \+ property names
+    - Font dependencies (if visible)
 
-Use the `GET /templates/:id` endpoint to see:
+    ```bash
+    curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+  </Step>
 
-- Available compositions
-- All dynamic layers \+ property names
-- Font dependencies (if visible)
+  <Step title="2.Use Preview Mode">
+    Render the job with `"preview": true`:
 
-```bash
-curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
+    ```json
+    {
+      "template": { "id": "...", "composition": "main" },
+      "preview": true
+    }
+    ```
 
----
+    This saves time and cost — and reveals most issues (missing layers, layout bugs, expression crashes) before final rendering.
+  </Step>
 
-### 2. Use Preview Mode
+  <Step title="3. Test Job Payloads with Defaults">
+    Temporarily reduce your job to a minimal payload with:
 
-Render the job with `"preview": true`:
+    - Static text only
+    - No image/audio layers
+    - Known good composition
 
-```json
-{
-  "template": { "id": "...", "composition": "main" },
-  "preview": true
-}
-```
-
-This saves time and cost — and reveals most issues (missing layers, layout bugs, expression crashes) before final rendering.
-
----
-
-### 3. Test Job Payloads with Defaults
-
-Temporarily reduce your job to a minimal payload with:
-
-- Static text only
-- No image/audio layers
-- Known good composition
-
-Once that succeeds, reintroduce dynamic elements incrementally.
-
----
+    Once that succeeds, reintroduce dynamic elements incrementally.
+  </Step>
+</Steps>
 
 ## Best Practices for Stability
 
@@ -162,8 +117,6 @@ Once that succeeds, reintroduce dynamic elements incrementally.
 - Validate URLs before sending render jobs
 - Wrap asset layers with fallback expressions inside AE
 - Enable webhook retries on your server (at least 3 attempts)
-
----
 
 ## Related Links
 
