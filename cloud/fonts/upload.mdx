@@ -5,7 +5,7 @@ description: "How to upload fonts to your Nexrender Cloud Account."
 
 ## Why Upload Fonts?
 
-After Effects needs fonts installed on the rendering system. If your project references a font that’s not available, it will:
+After Effects needs fonts installed on the rendering system. If your project references a font that's not available, it will:
 
 - Substitute with a fallback (causing layout bugs)
 - Render incorrectly or silently fail
@@ -13,68 +13,56 @@ After Effects needs fonts installed on the rendering system. If your project ref
 
 Nexrender Cloud lets you upload `.ttf` files and associate them with your account.
 
----
+<AccordionGroup>
+  <Accordion title="Supported Formats">
+    Only `.ttf` (TrueType Font) files are currently supported.
+  </Accordion>
+  <Accordion title="Uploading via API">
+    Use the `POST /api/v2/fonts` endpoint with `multipart/form-data`:
 
-## Supported Formats
+    <CodeGroup>
 
-Only `.ttf` (TrueType Font) files are currently supported.
+    ```bash Upload Font
+    curl -X POST https://api.nexrender.com/api/v2/fonts \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -F "file=@/Users/you/fonts/Roboto-Bold.ttf"
+    ```
 
-> `.otf` and variable fonts are not guaranteed to work.
+    
+    ```json Example Response
+    {
+      "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
+      "fileName": "Roboto-Bold.ttf",
+      "status": "available",
+      "uploadedAt": "2025-05-14T11:00:00Z"
+    }
+    ```
 
----
+    </CodeGroup>
 
-## Uploading via API
+    > The `id` is optional — templates locate fonts by file name.
+  </Accordion>
+  <Accordion title="Upload via Postman">
+    1. Set method to `POST`
+    2. Enter URL: `https://api.nexrender.com/api/v2/fonts`
+    3. Set `Authorization` header with your API key
+    4. Select **Body → form-data**:
+       - Key: `file` (type = File)
+       - Value: your `.ttf` file
 
-Use the `POST /api/v2/fonts` endpoint with `multipart/form-data`:
+    Click **Send**, and you should see a `200 OK` with font metadata.
+  </Accordion>
+  <Accordion title="Font Matching Logic">
+    When your AE project uses a font like `Roboto-Bold.ttf`, Nexrender Cloud will:
 
-### Example `curl`
+    - Scan uploaded fonts for a filename match
+    - Install that font before rendering begins
 
-```bash
-curl -X POST https://api.nexrender.com/api/v2/fonts \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -F "file=@/Users/you/fonts/Roboto-Bold.ttf"
-```
+    You don't need to reference fonts explicitly in the render job — just make sure the font name and case match the one used in After Effects.
 
-### Example Response
-
-```json
-{
-  "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
-  "fileName": "Roboto-Bold.ttf",
-  "status": "available",
-  "uploadedAt": "2025-05-14T11:00:00Z"
-}
-```
-
-> The `id` is optional — templates locate fonts by file name.
-
----
-
-## Upload via Postman
-
-1. Set method to `POST`
-2. Enter URL: `https://api.nexrender.com/api/v2/fonts`
-3. Set `Authorization` header with your API key
-4. Select **Body → form-data**:
-   - Key: `file` (type = File)
-   - Value: your `.ttf` file
-
-Click **Send**, and you should see a `200 OK` with font metadata.
-
----
-
-## Font Matching Logic
-
-When your AE project uses a font like `Roboto-Bold.ttf`, Nexrender Cloud will:
-
-- Scan uploaded fonts for a filename match
-- Install that font before rendering begins
-
-You don’t need to reference fonts explicitly in the render job — just make sure the font name and case match the one used in After Effects.
-
-> You can check expected font filenames via `GET /templates/:id` if layer fonts are introspected.
-
----
+    > You can check expected font filenames via `GET /templates/:id` if layer fonts are introspected.
+  </Accordion>
+</AccordionGroup>
 
 ## Best Practices
 
