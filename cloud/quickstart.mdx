@@ -162,12 +162,6 @@ HTTP/1.1 200 OK
 
 </CodeGroup>
 
-> ⚠️ **Important:**\
-> Your archive must be structured correctly, or rendering will fail.\
-> On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.
->
-> [Learn how to prepare your archive correctly →](#preparing-your-template-for-upload)
-
 Once your file is successfully uploaded, the template will transition from `awaiting_upload` to `uploaded`, and you can proceed to rendering.
 
 <Note>
@@ -232,6 +226,7 @@ The job defines:
 - Which assets (text, image, audio, etc.) to inject dynamically
 
 The rendering process will begin once the job is submitted and validated.
+
 ```javascript Create Job Request
 curl -X POST https://api.nexrender.com/api/v2/jobs \
   -H "Authorization: Bearer YOUR_API_KEY" \
@@ -262,6 +257,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
     "preview": false
   }'
 ```
+
 <Accordion title="Job Payload Breakdown">
   | Field                  | Type    | Description                                                  |
   | ---------------------- | ------- | ------------------------------------------------------------ |
@@ -274,6 +270,7 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
 
   > You can get the list of editable layer names via the `layers` field when you fetch a template.
 </Accordion>
+
 ---
 
 ### Checking Job Status (Optional)
@@ -316,6 +313,12 @@ The response includes `status`, `progress`, and error info if rendering failed.
     You can download the final rendered video via the `output.url`.
   </Tab>
 </Tabs>
+
+> ⚠️ **Important:**\
+> Your archive must be structured correctly, or rendering may fail.\
+> On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.
+>
+> [Learn how to prepare your archive correctly →](#preparing-your-template-for-upload)
 
 ### Next Steps
 
