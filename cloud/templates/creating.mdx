@@ -33,6 +33,7 @@ description: "Description of your new file."
     Poll for progress or receive updates with webhooks
   </Card>
 </CardGroup>
+---
 
 <AccordionGroup>
 <Accordion title="What is a Template in Nexrender Cloud?">
@@ -122,7 +123,8 @@ Once the file is uploaded, the status changes to `uploaded`, and you can start s
 
 Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-template)
 
-## Step 1: Register a Template
+<Steps>
+  <Step title= "Register a Template">
 
 Before uploading your file, you need to **create a template object** using the Nexrender Cloud API. This tells the system:
 
@@ -224,8 +226,9 @@ Once the upload is complete, the status will transition to `uploaded`, and Nexre
 ---
 
 Ready to upload the file? [Continue to Step 2 →](#step-2-upload-the-ae-file)
+</Step>
 
-## Step 2: Upload the AE File
+<Step title = "Upload the AE File">
 
 Once your template is registered and you’ve received the `uploadInfo.url`, the next step is to upload the actual After Effects file.
 
@@ -329,9 +332,9 @@ curl https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
 
 This will return metadata including compositions and layers.
 
----
+</Step>
 
-## Step 3: Confirm Status
+<Step title = "Confirm Status">
 
 Once your template file is uploaded, Nexrender Cloud processes it in the background.
 
@@ -439,14 +442,11 @@ You’ll use the `layerName` and `property` fields when constructing your job pa
   ]
 }
 ```
+</Step>
 
----
-
-## Step 5: Optional – Fonts & Dependencies
+<Step title = "Optional – Fonts & Dependencies">
 
 If your After Effects project uses **custom fonts**, you’ll need to preload them into Nexrender Cloud before rendering — otherwise the render nodes may fallback to system fonts or fail altogether.
-
----
 
 ### Why Fonts Must Be Preloaded
 
@@ -454,16 +454,12 @@ Cloud render environments do not have access to your local machine’s fonts.
 
 To maintain design fidelity and brand consistency, Nexrender Cloud provides a way to **`upload and persist .ttf font files`** in your account, which will be automatically loaded before rendering.
 
----
-
 ### Supported Font Formats
 
 | Format | Description               |
 | ------ | ------------------------- |
 | `.ttf` | TrueType Font (preferred) |
 | `.otf` | Not currently supported   |
-
----
 
 ### How to Upload Fonts
 
@@ -474,8 +470,6 @@ curl -X POST https://api.nexrender.com/api/v2/fonts \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -F "file=@/path/to/Roboto-Regular.ttf"
 ```
-
----
 
 ### Example Response
 
@@ -490,7 +484,6 @@ curl -X POST https://api.nexrender.com/api/v2/fonts \
 
 Once uploaded, fonts are available to all future render jobs, no additional steps required.
 
----
 
 ### How Nexrender Loads Fonts
 
@@ -499,20 +492,21 @@ Once uploaded, fonts are available to all future render jobs, no additional step
 - If a font is missing, AE will silently fallback — which can cause layout bugs
 
 > **Always preload** any custom font that’s not part of Adobe’s base installation.
-
+</Step>
+</Steps>
 ---
 
 To manage fonts, visit: [Fonts →](../cloud/fonts/upload)
 
-## Step 6: Best Practices for Template Management
+## Best Practices for Template Management
 
 Creating reliable, scalable templates for Nexrender Cloud isn’t just about making them render — it’s about making them **repeatable**, **debuggable**, and **collaboration-friendly**.
 
 Here are the key principles we recommend.
 
----
+<AccordionGroup>
 
-### Structure Your Template Archives Carefully
+<Accordion title = "Structure Your Template Archives Carefully">
 
 For `.zip` templates:
 
@@ -530,9 +524,9 @@ project.zip
 
 > This avoids asset path issues and guarantees cross-platform portability.
 
----
+</Accordion>
 
-### Name Layers and Compositions Intelligently
+<Accordion title = "Name Layers and Compositions Intelligently">
 
 Clear naming of layers and compositions directly improves automation accuracy, debuggability, and developer handoff. Treat your `.aep` or `.mogrt` like a codebase — the structure matters.
 
@@ -557,10 +551,9 @@ Clear naming of layers and compositions directly improves automation accuracy, d
 | Discarded or hidden | Prefix with `_` (e.g. `_scratchpad`) |
 
 This ensures the `compositions` list returned by the API is clean, predictable, and renderable.
+</Accordion>
 
----
-
-### Nested Compositions: Best Practices
+<Accordion title = "Nested Compositions: Best Practices">
 
 Nested comps are a powerful After Effects feature, but you must use them carefully for cloud automation:
 
@@ -577,10 +570,9 @@ Nested comps are a powerful After Effects feature, but you must use them careful
 - You have deeply nested timelines (\>3 levels) — this can increase AE processing time and complicate debugging
 
 > Keep nested comps clean, flattened when possible, and **treat the top-level comp as your automation interface**.
+</Accordion>
 
----
-
-### Preview Rendering With Dummy Data
+<Accordion title = "Preview Rendering With Dummy Data">
 
 Before deploying a template at scale:
 
@@ -589,10 +581,10 @@ Before deploying a template at scale:
 - Check for missing fonts, broken text, or incorrect layout sizing
 
 This helps catch structural and naming bugs early, especially with deeply nested templates.
+</Accordion>
 
----
 
-### Summary: Think Like a Developer \+ Designer
+<Accordion title = "Think Like a Developer \+ Designer">
 
 Design with **automation-first principles**:
 
@@ -602,20 +594,17 @@ Design with **automation-first principles**:
 - Organize assets logically inside the project and `.zip`
 
 This makes your After Effects templates act like **parameterized functions**, not fragile, one-off assets.
-
----
-
-### Expose Only What You Need (Especially in `.mogrt`)
+</Accordion>
+<Accordion title = "Expose Only What You Need (Especially in `.mogrt`)">
 
 If using `.mogrt`, keep the Essential Graphics panel **lean and intentional**:
 
 - Don’t expose unused controls
 - Rename each property for clarity
 - Avoid overly nested structures
+</Accordion>
 
----
-
-### Reuse Templates with Job-Level Overrides
+<Accordion title = "Reuse Templates with Job-Level Overrides">
 
 Instead of creating dozens of near-identical templates:
 
@@ -628,10 +617,9 @@ Instead of creating dozens of near-identical templates:
   - Fonts
 
 > One clean template can power hundreds of job variants via automation.
+</Accordion>
 
----
-
-### Clean Up Before Export
+<Accordion title = "Clean Up Before Export">
 
 Before finalizing your `.aep` or `.mogrt`:
 
@@ -640,10 +628,8 @@ Before finalizing your `.aep` or `.mogrt`:
 - Reduce media to only what is needed
 - Name all dynamic layers clearly
 - Preview render in After Effects to catch broken expressions or fonts
-
----
-
-### Version Your Templates
+</Accordion>
+<Accordion title = "Version Your Templates">
 
 Use `displayName` consistently across template versions:
 
@@ -655,9 +641,8 @@ Use `displayName` consistently across template versions:
 
 This helps your team stay organized and avoid breaking changes.
 
----
-
-### Validate Before Launching Jobs at Scale
+</Accordion>
+<Accordion title = "Validate Before Launching Jobs at Scale">
 
 Before integrating a template into production automation:
 
@@ -665,7 +650,8 @@ Before integrating a template into production automation:
 - Validate composition names
 - Validate all layer overrides using `GET /template/:id`
 - Try preview rendering (`preview: true`) in jobs if needed
-
+</Accordion>
+</AccordionGroup>
 ---
 
 Following these practices helps ensure your renders are:
