@@ -364,12 +364,12 @@ Building jobs at scale requires defensive design. Here's what we recommend:
 
     This saves on polling requests and scales better across high volume workflows.
   </Accordion>
-  <Accordion title="Clean Up Old Jobs">
+  <!-- <Accordion title="Clean Up Old Jobs">
     Use `GET /jobs` to review recent activity and optionally clean up old or test jobs that are no longer needed.
 
     While job output remains accessible after completion, pruning unused entries improves visibility.
-  </Accordion>
-  <Accordion title="How to Add Post-Actions">
+  </Accordion> -->
+  <!-- <Accordion title="How to Add Post-Actions">
     Post-actions are declared in a `postrender` array in the job payload. Each entry defines a `module` (built-in action) and its corresponding `params`.
 
     ```json
@@ -408,8 +408,8 @@ Building jobs at scale requires defensive design. Here's what we recommend:
     ```
 
     > Not all postrender actions are supported in the cloud. Start with safe actions like upload or webhook-based flows.
-  </Accordion>
-  <Accordion title="Common Built-In Modules">
+  </Accordion> -->
+  <!-- <Accordion title="Common Built-In Modules">
     | Module Name                 | Description                           |
     | --------------------------- | ------------------------------------- |
     | `@nexrender/action-upload`  | Upload to S3, FTP, GCS, etc.          |
@@ -435,7 +435,7 @@ Building jobs at scale requires defensive design. Here's what we recommend:
       }
     }
     ```
-  </Accordion>
+  </Accordion> -->
 </AccordionGroup>
 
 ## Security Note
