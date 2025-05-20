@@ -6,110 +6,107 @@ keywords: "list templates,inspect template,update display name,template tags,tem
 
 This guide explains how to **list**, **fetch**, **update**, and (eventually) **organize** your After Effects templates in Nexrender Cloud.
 
----
+<AccordionGroup>
+  <Accordion title="List All Templates">
+    To retrieve a list of all templates in your Nexrender account:
 
-## List All Templates
+    <CodeGroup>
 
-To retrieve a list of all templates in your Nexrender account:
+    ```bash Get List of Templates
+    curl -X GET https://api.nexrender.com/api/v2/templates \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
 
-```bash
-curl -X GET https://api.nexrender.com/api/v2/templates \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
+    
+    ```json Example Response
+    [
+      {
+        "id": "01JT2M9GCR712V7EJYDF45QAFD",
+        "displayName": "Product Promo",
+        "status": "uploaded",
+        "type": "zip",
+        "createdAt": "2025-05-01T10:23:04.123Z"
+      },
+      {
+        "id": "01JTG9A9X38P2BC74XDZ9RZK5W",
+        "displayName": "Test Campaign",
+        "status": "awaiting_upload",
+        "type": "mogrt",
+        "createdAt": "2025-05-03T16:00:10.456Z"
+      }
+    ]
+    ```
 
-This returns an array of template objects, each with fields like `id`, `displayName`, `status`, `type`, `createdAt`, and `updatedAt`.
+    </CodeGroup>
 
-### Example Response
+    This returns an array of template objects, each with fields like `id`, `displayName`, `status`, `type`, `createdAt`, and `updatedAt`.
+  </Accordion>
+  <Accordion title="Inspect a Specific Template">
+    To inspect a single template and retrieve its metadata, use:
 
-```json
-[
-  {
-    "id": "01JT2M9GCR712V7EJYDF45QAFD",
-    "displayName": "Product Promo",
-    "status": "uploaded",
-    "type": "zip",
-    "createdAt": "2025-05-01T10:23:04.123Z"
-  },
-  {
-    "id": "01JTG9A9X38P2BC74XDZ9RZK5W",
-    "displayName": "Test Campaign",
-    "status": "awaiting_upload",
-    "type": "mogrt",
-    "createdAt": "2025-05-03T16:00:10.456Z"
-  }
-]
-```
+    ```bash
+    curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
 
----
+    ### Response Fields to Look For
 
-## 🔍 Inspect a Specific Template
+    | Field          | Description                                   |
+    | -------------- | --------------------------------------------- |
+    | `status`       | Must be `uploaded` to be usable               |
+    | `compositions` | Available AE compositions for rendering       |
+    | `layers`       | Dynamically editable text/images/audio layers |
 
-To inspect a single template and retrieve its metadata, use:
+    ---
 
-```bash
-curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
+    ## Update Template Metadata (Display Name)
 
-### Response Fields to Look For
+    To rename a template after creation:
 
-| Field          | Description                                   |
-| -------------- | --------------------------------------------- |
-| `status`       | Must be `uploaded` to be usable               |
-| `compositions` | Available AE compositions for rendering       |
-| `layers`       | Dynamically editable text/images/audio layers |
+    <CodeGroup>
 
----
+    ```bash Rename a Template
+    curl -X PATCH https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "displayName": "Updated Campaign V2"
+      }'
+    ```
 
-## Update Template Metadata (Display Name)
+    
+    ```json Example Success Response
+    {
+      "id": "01JT2M9GCR712V7EJYDF45QAFD",
+      "displayName": "Updated Campaign V2"
+    }
+    ```
 
-To rename a template after creation:
+    </CodeGroup>
 
-```bash
-curl -X PATCH https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "displayName": "Updated Campaign V2"
-  }'
-```
+    > Updating metadata is useful for keeping things clean in environments with many concurrent templates.
+  </Accordion>
+  <Accordion title="Future: Tagging Templates for Organization">
+    Tagging support is not yet available, but we recommend naming templates using prefixes or categories to simulate tagging:
 
-### Example Success Response
+    - `promo-summer-2024`
+    - `test-case-audio-sync`
+    - `internal-pitch-deck`
 
-```json
-{
-  "id": "01JT2M9GCR712V7EJYDF45QAFD",
-  "displayName": "Updated Campaign V2"
-}
-```
+    When native tags are supported, you’ll be able to filter and organize templates in a more structured way.
+  </Accordion>
+  <Accordion title="Template Storage & Retention">
+    Templates are currently persisted indefinitely unless deleted manually.
 
-> Updating metadata is useful for keeping things clean in environments with many concurrent templates.
+    In future versions of Nexrender Cloud, you may be able to:
 
----
+    - Define auto-expiry dates for templates
+    - Set retention policies (e.g. delete after 30 days of inactivity)
+    - Audit unused templates to manage storage
 
-## Future: Tagging Templates for Organization
+    For now:
 
-Tagging support is not yet available, but we recommend naming templates using prefixes or categories to simulate tagging:
-
-- `promo-summer-2024`
-- `test-case-audio-sync`
-- `internal-pitch-deck`
-
-When native tags are supported, you’ll be able to filter and organize templates in a more structured way.
-
-## Template Storage & Retention
-
-Templates are currently persisted indefinitely unless deleted manually.
-
-In future versions of Nexrender Cloud, you may be able to:
-
-- Define auto-expiry dates for templates
-- Set retention policies (e.g. delete after 30 days of inactivity)
-- Audit unused templates to manage storage
-
-For now:
-
-- Use `GET /templates` to review active templates
-- Regularly delete old or unused templates after campaigns
-
----
+    - Use `GET /templates` to review active templates
+    - Regularly delete old or unused templates after campaigns
+  </Accordion>
+</AccordionGroup>
