@@ -47,9 +47,8 @@
           {
             "group": "Troubleshooting",
             "pages": [
-              "cloud/troubleshooting/ip_whitelisting",
-              "cloud/troubleshooting/rate-limits",
-              "cloud/troubleshooting/retries"
+              "cloud/troubleshooting/ip_whitelisting"
+          
             ]
           }
         ]
