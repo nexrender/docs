@@ -4,496 +4,466 @@ description: "Description of your new file."
 ---
 
 <CardGroup cols={2}>
-  <Card
-    title="Quickstart Guide"
-    icon="bolt"
-    href="/cloud/quickstart"
-  >
+  <Card title="Quickstart Guide" icon="bolt" href="/cloud/quickstart">
     Step-by-step instructions to submit your first render job using curl or Postman
   </Card>
-  <Card
-    title="Create and Upload Templates"
-    icon="upload"
-    href="/cloud/templates/creating"
-  >
+  <Card title="Create and Upload Templates" icon="upload" href="/cloud/templates/creating">
     Learn how to structure your AE projects and upload them via the API
   </Card>
-  <Card
-    title="Submit a Render Job"
-    icon="play"
-    href="/cloud/jobs/creating"
-  >
+  <Card title="Submit a Render Job" icon="play" href="/cloud/jobs/creating">
     Create and trigger a render job using compositions and asset overrides
   </Card>
-  <Card
-    title="Track Job Status"
-    icon="signal"
-    href="/cloud/jobs/status"
-  >
+  <Card title="Track Job Status" icon="signal" href="/cloud/jobs/status">
     Poll for progress or receive updates with webhooks
   </Card>
 </CardGroup>
+
 ---
 
 <AccordionGroup>
-<Accordion title="What is a Template in Nexrender Cloud?">
+  <Accordion title="What is a Template in Nexrender Cloud?">
+    In Nexrender Cloud, a **template** is an After Effects project file (or compatible format) uploaded to the cloud and registered with metadata, enabling dynamic rendering and automation at scale.
 
-In Nexrender Cloud, a **template** is an After Effects project file (or compatible format) uploaded to the cloud and registered with metadata, enabling dynamic rendering and automation at scale.
+    Templates are the foundation for all render jobs. Once uploaded and processed, Nexrender Cloud can introspect the file to extract:
 
-Templates are the foundation for all render jobs. Once uploaded and processed, Nexrender Cloud can introspect the file to extract:
+    - **Available compositions** (e.g., `main`, `intro`, `outro`)
+    - **Editable layers** (text, images, audio, video)
+    - And render any of them dynamically based on incoming asset data.
+  </Accordion>
+  <Accordion title="Supported Template Formats">
+    | Format   | Description                                                      |
+    | -------- | ---------------------------------------------------------------- |
+    | `.aep`   | Native Adobe After Effects project file                          |
+    | `.zip`   | A `.aep` file bundled with its assets (images, videos, fonts)    |
+    | `.mogrt` | Motion Graphics Template exported from AE, for use in Adobe apps |
 
-- **Available compositions** (e.g., `main`, `intro`, `outro`)
-- **Editable layers** (text, images, audio, video)
-- And render any of them dynamically based on incoming asset data.
-</Accordion>
-<Accordion title="Supported Template Formats">
+    We recommend `.zip` as the **most flexible and robust** format for complex workflows. It allows bundling everything together in one archive: project, assets, fonts, and expressions.
+  </Accordion>
+  <Accordion title="Why Use `.zip` Instead of Raw `.aep`?">
+    - **Portable**: All dependencies are included in the archive
+    - **Stable**: Avoids asset path resolution issues on render nodes
+    - **Versionable**: Can be zipped and reused reliably in CI/CD pipelines
+    - **Flexible**: Supports preloading fonts, media, nested comps, scripts
 
-| Format   | Description                                                      |
-| -------- | ---------------------------------------------------------------- |
-| `.aep`   | Native Adobe After Effects project file                          |
-| `.zip`   | A `.aep` file bundled with its assets (images, videos, fonts)    |
-| `.mogrt` | Motion Graphics Template exported from AE, for use in Adobe apps |
+    > For `.mogrt` templates, you can upload them directly without zipping.
+  </Accordion>
+  <Accordion title="Why Use `.mogrt` Templates with Nexrender Cloud?">
+    `.mogrt` (Motion Graphics Template) files are a streamlined way to automate rich, branded animations with Nexrender Cloud — without requiring a complex `.aep` project structure.
 
-We recommend `.zip` as the **most flexible and robust** format for complex workflows. It allows bundling everything together in one archive: project, assets, fonts, and expressions.
-</Accordion>
-<Accordion title="Why Use `.zip` Instead of Raw `.aep`?">
+    Created directly from Adobe After Effects via the **Essential Graphics panel**, these templates allow designers to expose just the fields needed for dynamic automation: text, images, colors, sliders, audio, and more.
+  </Accordion>
+  <Accordion title="Benefits of `.mogrt` with Nexrender">
+    | Feature                        | Why It Matters in Nexrender Automation                                   |
+    | ------------------------------ | ------------------------------------------------------------------------ |
+    | **Simplified integration**     | Upload directly via API — no need to bundle assets, no zip required      |
+    | **Designer-controlled inputs** | Fields defined in AE become JSON-editable params in Nexrender jobs       |
+    | **Low-maintenance**            | No manual layer mapping or fragile expression parsing                    |
+    | **Fast introspection**         | Nexrender automatically extracts editable parameters on upload           |
+    | **Lightweight & portable**     | Ideal for workflows requiring rapid rendering and high volume throughput |
+  </Accordion>
+  <Accordion title="Best Use Cases in Nexrender Cloud">
+    - **API-driven personalization** of short-form branded videos
+    - **Ad creatives** with dynamic messaging and visuals
+    - **Onboarding or tutorial clips** where only text or logos change
+    - **Mass rendering jobs** for social media, product launches, or app stores
+  </Accordion>
+  <Accordion title="Nexrender Internals">
+    When you upload a `.mogrt` template via the API:
 
-- **Portable**: All dependencies are included in the archive
-- **Stable**: Avoids asset path resolution issues on render nodes
-- **Versionable**: Can be zipped and reused reliably in CI/CD pipelines
-- **Flexible**: Supports preloading fonts, media, nested comps, scripts
+    - Nexrender parses the file immediately using the embedded JSON schema
+    - All editable fields are exposed under the `layers` property
+    - The system automatically handles validation and rendering logic
+    - No additional scripting or manual post-processing is required
 
-> For `.mogrt` templates, you can upload them directly without zipping.
-</Accordion>
-<Accordion title = "Why Use `.mogrt` Templates with Nexrender Cloud?">
-`.mogrt` (Motion Graphics Template) files are a streamlined way to automate rich, branded animations with Nexrender Cloud — without requiring a complex `.aep` project structure.
+    > Nexrender treats `.mogrt` files as first-class citizens in its rendering pipeline. You get the same scalability and real-time tracking as with `.zip`-based templates — with less configuration.
+  </Accordion>
+  <Accordion title="How Nexrender Uses Templates Internally">
+    Once a template is uploaded via the API, the backend performs **introspection**:
 
-Created directly from Adobe After Effects via the **Essential Graphics panel**, these templates allow designers to expose just the fields needed for dynamic automation: text, images, colors, sliders, audio, and more.
-</Accordion>
-<Accordion title = "Benefits of `.mogrt` with Nexrender">
+    - Validates the file type
+    - Extracts a list of compositions and editable layer properties
+    - Stores metadata under a unique template ID
+    - Returns a presigned `uploadInfo.url` (valid for 1 hour) to upload the actual file
 
-| Feature                        | Why It Matters in Nexrender Automation                                   |
-| ------------------------------ | ------------------------------------------------------------------------ |
-| **Simplified integration**     | Upload directly via API — no need to bundle assets, no zip required      |
-| **Designer-controlled inputs** | Fields defined in AE become JSON-editable params in Nexrender jobs       |
-| **Low-maintenance**            | No manual layer mapping or fragile expression parsing                    |
-| **Fast introspection**         | Nexrender automatically extracts editable parameters on upload           |
-| **Lightweight & portable**     | Ideal for workflows requiring rapid rendering and high volume throughput |
-</Accordion>
-
-<Accordion title = "Best Use Cases in Nexrender Cloud">
-
-- **API-driven personalization** of short-form branded videos
-- **Ad creatives** with dynamic messaging and visuals
-- **Onboarding or tutorial clips** where only text or logos change
-- **Mass rendering jobs** for social media, product launches, or app stores
-</Accordion>
-<Accordion title = "Nexrender Internals">
-
-When you upload a `.mogrt` template via the API:
-
-- Nexrender parses the file immediately using the embedded JSON schema
-- All editable fields are exposed under the `layers` property
-- The system automatically handles validation and rendering logic
-- No additional scripting or manual post-processing is required
-
-> Nexrender treats `.mogrt` files as first-class citizens in its rendering pipeline. You get the same scalability and real-time tracking as with `.zip`-based templates — with less configuration.
-</Accordion>
-<Accordion title = "How Nexrender Uses Templates Internally">
-
-Once a template is uploaded via the API, the backend performs **introspection**:
-
-- Validates the file type
-- Extracts a list of compositions and editable layer properties
-- Stores metadata under a unique template ID
-- Returns a presigned `uploadInfo.url` (valid for 1 hour) to upload the actual file
-
-Once the file is uploaded, the status changes to `uploaded`, and you can start submitting render jobs that reference this template by ID.
-</Accordion>
-
-<Accordion title = "Typical Template Lifecycle">
-
-1. **Create** the template (`POST /api/v2/templates`) with a `type` and `displayName`
-2. **Upload** the actual file to `uploadInfo.url` (no auth headers\!)
-3. **Confirm** the status is `uploaded`
-4. **Inspect** the template to see available `compositions` and `layers`
-5. **Submit** render jobs that reference the template
-</Accordion>
+    Once the file is uploaded, the status changes to `uploaded`, and you can start submitting render jobs that reference this template by ID.
+  </Accordion>
+  <Accordion title="Typical Template Lifecycle">
+    1. **Create** the template (`POST /api/v2/templates`) with a `type` and `displayName`
+    2. **Upload** the actual file to `uploadInfo.url` (no auth headers\!)
+    3. **Confirm** the status is `uploaded`
+    4. **Inspect** the template to see available `compositions` and `layers`
+    5. **Submit** render jobs that reference the template
+  </Accordion>
 </AccordionGroup>
 
 Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-template)
 
 <Steps>
-  <Step title= "Register a Template">
+  <Step title="Register a Template">
+    Before uploading your file, you need to **create a template object** using the Nexrender Cloud API. This tells the system:
 
-Before uploading your file, you need to **create a template object** using the Nexrender Cloud API. This tells the system:
+    - What type of template you're going to upload (`aep`, `zip`, or `mogrt`)
+    - How to label this template for your internal reference
 
-- What type of template you're going to upload (`aep`, `zip`, or `mogrt`)
-- How to label this template for your internal reference
+    This step returns an `uploadInfo` object that contains a **pre-signed upload URL** for securely uploading your file in the next step.
 
-This step returns an `uploadInfo` object that contains a **pre-signed upload URL** for securely uploading your file in the next step.
+    ### Endpoint
 
-### Endpoint
+    ```
+    POST /api/v2/templates
+    ```
 
-```
-POST /api/v2/templates
-```
+    ### Request Payload
 
-### Request Payload
-
-```json
-{
-  "type": "zip",
-  "displayName": "Promo 2024 Campaign"
-}
-```
-
-| Field         | Type   | Required | Description                          |
-| ------------- | ------ | -------- | ------------------------------------ |
-| `type`        | string | ✅        | One of: `aep`, `zip`, or `mogrt`     |
-| `displayName` | string | ✅        | Human-readable name for the template |
-
-> Choose `type: "zip"` if your template is a `.aep` file bundled with assets and fonts.\
-> Use `type: "mogrt"` only for raw `.mogrt` files exported from After Effects.
-
----
-
-### Example `curl` Request
-
-```bash
-curl -X POST https://api.nexrender.com/api/v2/templates \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "zip",
-    "displayName": "Promo 2024 Campaign"
-  }'
-```
-
----
-
-### Example Success Response
-
-```json
-{
-  "template": {
-    "id": "01JT2M9GCR712V7EJYDF45QAFD",
-    "type": "zip",
-    "displayName": "Promo 2024 Campaign",
-    "status": "awaiting_upload",
-    "createdAt": "2025-05-05T16:25:59.961Z",
-    "updatedAt": "2025-05-05T16:25:59.961Z",
-    "compositions": [],
-    "layers": [],
-    "mogrt": {}
-  },
-  "uploadInfo": {
-    "url": "https://nx1-assets-eu.r2.cloudflarestorage.com/...signed_url...",
-    "method": "PUT",
-    "fields": {
-      "Content-Type": "application/octet-stream",
-      "x-amz-meta-custom": "{\"templateId\":\"01JT2M9GCR712V7EJYDF45QAFD\"}"
-    },
-    "expiresIn": 3600,
-    "key": "01JTGK.../templates/Promo2024.zip"
-  }
-}
-```
-
----
-
-### What Happens Behind the Scenes?
-
-- The backend **reserves storage** for your file
-- Generates a **secure upload URL** valid for ~1 hour
-- Waits for the actual file to be uploaded (in the next step)
-- The template status is initially set to `awaiting_upload`
-
-You **must upload the correct file** matching the declared `type` — otherwise the introspection process will fail.
-
----
-
-### Common Mistakes to Avoid
-
-| Mistake                                                | Result                                                      |
-| ------------------------------------------------------ | ----------------------------------------------------------- |
-| Declaring `type: zip` but uploading `.aep` or `.mogrt` | The render job will fail or silently break asset resolution |
-| Uploading to the wrong URL                             | The template will remain in `awaiting_upload` status        |
-| Forgetting to use the pre-signed URL                   | You’ll get a 403 Forbidden error or SignatureDoesNotMatch   |
-
-Once the upload is complete, the status will transition to `uploaded`, and Nexrender Cloud will extract all available compositions and dynamic layers.
-
----
-
-Ready to upload the file? [Continue to Step 2 →](#step-2-upload-the-ae-file)
-</Step>
-
-<Step title = "Upload the AE File">
-
-Once your template is registered and you’ve received the `uploadInfo.url`, the next step is to upload the actual After Effects file.
-
-This file must match the format you declared when creating the template: either `.aep`, `.zip`, or `.mogrt`.
-
----
-
-### Where to Upload
-
-The `uploadInfo.url` returned in the response is a **presigned URL** — a time-limited link that allows you to upload the file without any additional authentication.
-
-The method is always `PUT`, and you must include the correct headers exactly as provided in the `uploadInfo.fields`.
-
----
-
-### Example `curl` Upload Request
-
-```bash
-curl --location --request PUT \
-  'https://your-upload-url-from-uploadInfo.url' \
-  --header 'Content-Type: application/octet-stream' \
-  --data-binary '@/path/to/your/project.zip'
-```
-
-You can replace `.zip` with `.aep` or `.mogrt` depending on your workflow.
-
----
-
-### Example Success Response
-
-```http
-HTTP/1.1 200 OK
-```
-
----
-
-### Required Headers
-
-The following headers must be present if included in the `uploadInfo.fields` object:
-
-| Header            | Description                                    |
-| ----------------- | ---------------------------------------------- |
-| Content-Type      | Usually `application/octet-stream`             |
-| x-amz-meta-custom | May be included for tracking template ID       |
-| Content-Length    | Set automatically by `curl` or Postman         |
-| Content-Encoding  | Usually not required; use `identity` if needed |
-
-> Do not change the upload URL, append query params, or add any extra headers.
-
----
-
-### Postman Configuration (If Not Using curl)
-
-To upload via Postman:
-
-- **Method**: `PUT`
-- **URL**: Use the full `uploadInfo.url` from the API
-- **Auth**: No Auth
-- **Body**: Set to `binary`, and select your file
-- **Header**: Manually set `Content-Type` to `application/octet-stream`
-
-Make sure Postman does **not** automatically add:
-
-- `Authorization`
-- `Accept`
-- `User-Agent`
-- Any `x-amz-*` headers not explicitly required
-
-These can invalidate the signature and result in a `403 SignatureDoesNotMatch` error.
-
----
-
-### ⚠️ Important: Upload the Correct File Type
-
-The file you upload must match the `type` field you declared during template creation:
-
-| Declared `type` | Expected File Upload |
-| --------------- | -------------------- |
-| `zip`           | `project.zip`        |
-| `aep`           | `project.aep`        |
-| `mogrt`         | `project.mogrt`      |
-
-If you upload the wrong file type, the template introspection will fail, and you won’t be able to render from it.
-
----
-
-### Template Status: `uploaded`
-
-Once the upload completes, the template's `status` will change from `awaiting_upload` to `uploaded`. At this point, Nexrender Cloud will:
-
-- Extract all available **compositions**
-- Parse editable **layers** for use in jobs
-- Make the template immediately available for rendering
-
-You can fetch the template object via:
-
-```bash
-curl https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-This will return metadata including compositions and layers.
-
-</Step>
-
-<Step title = "Confirm Status">
-
-Once your template file is uploaded, Nexrender Cloud processes it in the background.
-
-You must confirm that the template has transitioned from:
-
-```
-awaiting_upload → uploaded
-```
-
-Only then will you be able to submit render jobs based on it.
-
----
-
-### Check Template Status
-
-To check the current status of your template, make a `GET` request:
-
-```bash
-curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-Replace `TEMPLATE_ID` with the ID returned during Step 1.
-
----
-
-### Example Successful Response
-
-```json
-{
-  "id": "01JT2M9GCR712V7EJYDF45QAFD",
-  "type": "zip",
-  "status": "uploaded",
-  "displayName": "Promo 2024 Campaign",
-  "createdAt": "2025-05-05T16:25:59.961Z",
-  "updatedAt": "2025-05-05T16:30:01.015Z",
-  "compositions": ["main", "intro", "outro"],
-  "layers": [
+    ```json
     {
-      "layerName": "title",
-      "property": "Source Text",
-      "type": "data"
-    },
-    {
-      "layerName": "subtitle",
-      "property": "Source Text",
-      "type": "data"
-    },
-    {
-      "layerName": "logo",
-      "property": "Source Name",
-      "type": "image"
+      "type": "zip",
+      "displayName": "Promo 2024 Campaign"
     }
-  ]
-}
-```
+    ```
 
----
+    | Field         | Type   | Required | Description                          |
+    | ------------- | ------ | -------- | ------------------------------------ |
+    | `type`        | string | ✅        | One of: `aep`, `zip`, or `mogrt`     |
+    | `displayName` | string | ✅        | Human-readable name for the template |
 
-### 🔍 Key Fields to Inspect
+    > Choose `type: "zip"` if your template is a `.aep` file bundled with assets and fonts.\
+    > Use `type: "mogrt"` only for raw `.mogrt` files exported from After Effects.
 
-| Field          | Description                                                                |
-| -------------- | -------------------------------------------------------------------------- |
-| `status`       | Should be `uploaded`. Any other status means you can't render yet.         |
-| `compositions` | List of named compositions in the AE project. You must pick one to render. |
-| `layers`       | List of dynamic layers you can override with asset injection.              |
+    ---
 
----
+    ### Example `curl` Request
 
-### ❌ If `status` ≠ `uploaded`
+    ```bash
+    curl -X POST https://api.nexrender.com/api/v2/templates \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "type": "zip",
+        "displayName": "Promo 2024 Campaign"
+      }'
+    ```
 
-If the template remains in `awaiting_upload` or shows an error status:
+    ---
 
-1. Check that you **uploaded the correct file type** (`zip`, `aep`, or `mogrt`)
-2. Ensure the file was uploaded to the **`exact uploadInfo.url`**
-3. Inspect logs or contact support if rendering infrastructure couldn’t process the file
+    ### Example Success Response
 
-> You cannot submit a render job until the template is fully uploaded and parsed.
-
----
-
-### Example: Fetching Layers for a Render Job
-
-You’ll use the `layerName` and `property` fields when constructing your job payload:
-
-```json
-{
-  "template": {
-    "id": "TEMPLATE_ID",
-    "composition": "main"
-  },
-  "assets": [
+    ```json
     {
-      "type": "data",
-      "layerName": "title",
-      "property": "Source Text",
-      "value": "My Dynamic Title"
-    },
-    {
-      "type": "image",
-      "layerName": "logo",
-      "property": "Source Name",
-      "src": "https://example.com/yourlogo.png"
+      "template": {
+        "id": "01JT2M9GCR712V7EJYDF45QAFD",
+        "type": "zip",
+        "displayName": "Promo 2024 Campaign",
+        "status": "awaiting_upload",
+        "createdAt": "2025-05-05T16:25:59.961Z",
+        "updatedAt": "2025-05-05T16:25:59.961Z",
+        "compositions": [],
+        "layers": [],
+        "mogrt": {}
+      },
+      "uploadInfo": {
+        "url": "https://nx1-assets-eu.r2.cloudflarestorage.com/...signed_url...",
+        "method": "PUT",
+        "fields": {
+          "Content-Type": "application/octet-stream",
+          "x-amz-meta-custom": "{\"templateId\":\"01JT2M9GCR712V7EJYDF45QAFD\"}"
+        },
+        "expiresIn": 3600,
+        "key": "01JTGK.../templates/Promo2024.zip"
+      }
     }
-  ]
-}
-```
-</Step>
+    ```
 
-<Step title = "Optional – Fonts & Dependencies">
+    ---
 
-If your After Effects project uses **custom fonts**, you’ll need to preload them into Nexrender Cloud before rendering — otherwise the render nodes may fallback to system fonts or fail altogether.
+    ### What Happens Behind the Scenes?
 
-### Why Fonts Must Be Preloaded
+    - The backend **reserves storage** for your file
+    - Generates a **secure upload URL** valid for ~1 hour
+    - Waits for the actual file to be uploaded (in the next step)
+    - The template status is initially set to `awaiting_upload`
 
-Cloud render environments do not have access to your local machine’s fonts.
+    You **must upload the correct file** matching the declared `type` — otherwise the introspection process will fail.
 
-To maintain design fidelity and brand consistency, Nexrender Cloud provides a way to **`upload and persist .ttf font files`** in your account, which will be automatically loaded before rendering.
+    ---
 
-### Supported Font Formats
+    ### Common Mistakes to Avoid
 
-| Format | Description               |
-| ------ | ------------------------- |
-| `.ttf` | TrueType Font (preferred) |
-| `.otf` | Not currently supported   |
+    | Mistake                                                | Result                                                      |
+    | ------------------------------------------------------ | ----------------------------------------------------------- |
+    | Declaring `type: zip` but uploading `.aep` or `.mogrt` | The render job will fail or silently break asset resolution |
+    | Uploading to the wrong URL                             | The template will remain in `awaiting_upload` status        |
+    | Forgetting to use the pre-signed URL                   | You’ll get a 403 Forbidden error or SignatureDoesNotMatch   |
 
-### How to Upload Fonts
+    Once the upload is complete, the status will transition to `uploaded`, and Nexrender Cloud will extract all available compositions and dynamic layers.
 
-You can upload fonts via the Fonts API:
+    ---
 
-```bash
-curl -X POST https://api.nexrender.com/api/v2/fonts \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -F "file=@/path/to/Roboto-Regular.ttf"
-```
+    Ready to upload the file? [Continue to Step 2 →](#step-2-upload-the-ae-file)
+  </Step>
+  <Step title="Upload the AE File">
+    Once your template is registered and you’ve received the `uploadInfo.url`, the next step is to upload the actual After Effects file.
 
-### Example Response
+    This file must match the format you declared when creating the template: either `.aep`, `.zip`, or `.mogrt`.
 
-```json
-{
-  "id": "font-roboto-regular",
-  "filename": "Roboto-Regular.ttf",
-  "status": "ready",
-  "size": 142384
-}
-```
+    ---
 
-Once uploaded, fonts are available to all future render jobs, no additional steps required.
+    ### Where to Upload
 
+    The `uploadInfo.url` returned in the response is a **presigned URL** — a time-limited link that allows you to upload the file without any additional authentication.
 
-### How Nexrender Loads Fonts
+    The method is always `PUT`, and you must include the correct headers exactly as provided in the `uploadInfo.fields`.
 
-- Fonts are installed before After Effects launches
-- Fonts persist across render jobs in the cloud
-- If a font is missing, AE will silently fallback — which can cause layout bugs
+    ---
 
-> **Always preload** any custom font that’s not part of Adobe’s base installation.
-</Step>
+    ### Example `curl` Upload Request
+
+    ```bash
+    curl --location --request PUT \
+      'https://your-upload-url-from-uploadInfo.url' \
+      --header 'Content-Type: application/octet-stream' \
+      --data-binary '@/path/to/your/project.zip'
+    ```
+
+    You can replace `.zip` with `.aep` or `.mogrt` depending on your workflow.
+
+    ---
+
+    ### Example Success Response
+
+    ```http
+    HTTP/1.1 200 OK
+    ```
+
+    ---
+
+    ### Required Headers
+
+    The following headers must be present if included in the `uploadInfo.fields` object:
+
+    | Header            | Description                                    |
+    | ----------------- | ---------------------------------------------- |
+    | Content-Type      | Usually `application/octet-stream`             |
+    | x-amz-meta-custom | May be included for tracking template ID       |
+    | Content-Length    | Set automatically by `curl` or Postman         |
+    | Content-Encoding  | Usually not required; use `identity` if needed |
+
+    > Do not change the upload URL, append query params, or add any extra headers.
+
+    ---
+
+    ### Postman Configuration (If Not Using curl)
+
+    To upload via Postman:
+
+    - **Method**: `PUT`
+    - **URL**: Use the full `uploadInfo.url` from the API
+    - **Auth**: No Auth
+    - **Body**: Set to `binary`, and select your file
+    - **Header**: Manually set `Content-Type` to `application/octet-stream`
+
+    Make sure Postman does **not** automatically add:
+
+    - `Authorization`
+    - `Accept`
+    - `User-Agent`
+    - Any `x-amz-*` headers not explicitly required
+
+    These can invalidate the signature and result in a `403 SignatureDoesNotMatch` error.
+
+    ---
+
+    ### ⚠️ Important: Upload the Correct File Type
+
+    The file you upload must match the `type` field you declared during template creation:
+
+    | Declared `type` | Expected File Upload |
+    | --------------- | -------------------- |
+    | `zip`           | `project.zip`        |
+    | `aep`           | `project.aep`        |
+    | `mogrt`         | `project.mogrt`      |
+
+    If you upload the wrong file type, the template introspection will fail, and you won’t be able to render from it.
+
+    ---
+
+    ### Template Status: `uploaded`
+
+    Once the upload completes, the template's `status` will change from `awaiting_upload` to `uploaded`. At this point, Nexrender Cloud will:
+
+    - Extract all available **compositions**
+    - Parse editable **layers** for use in jobs
+    - Make the template immediately available for rendering
+
+    You can fetch the template object via:
+
+    ```bash
+    curl https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+
+    This will return metadata including compositions and layers.
+  </Step>
+  <Step title="Confirm Status">
+    Once your template file is uploaded, Nexrender Cloud processes it in the background.
+
+    You must confirm that the template has transitioned from:
+
+    ```
+    awaiting_upload → uploaded
+    ```
+
+    Only then will you be able to submit render jobs based on it.
+
+    ---
+
+    ### Check Template Status
+
+    To check the current status of your template, make a `GET` request:
+
+    ```bash
+    curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+
+    Replace `TEMPLATE_ID` with the ID returned during Step 1.
+
+    ---
+
+    ### Example Successful Response
+
+    ```json
+    {
+      "id": "01JT2M9GCR712V7EJYDF45QAFD",
+      "type": "zip",
+      "status": "uploaded",
+      "displayName": "Promo 2024 Campaign",
+      "createdAt": "2025-05-05T16:25:59.961Z",
+      "updatedAt": "2025-05-05T16:30:01.015Z",
+      "compositions": ["main", "intro", "outro"],
+      "layers": [
+        {
+          "layerName": "title",
+          "property": "Source Text",
+          "type": "data"
+        },
+        {
+          "layerName": "subtitle",
+          "property": "Source Text",
+          "type": "data"
+        },
+        {
+          "layerName": "logo",
+          "property": "Source Name",
+          "type": "image"
+        }
+      ]
+    }
+    ```
+
+    ---
+
+    ### 🔍 Key Fields to Inspect
+
+    | Field          | Description                                                                |
+    | -------------- | -------------------------------------------------------------------------- |
+    | `status`       | Should be `uploaded`. Any other status means you can't render yet.         |
+    | `compositions` | List of named compositions in the AE project. You must pick one to render. |
+    | `layers`       | List of dynamic layers you can override with asset injection.              |
+
+    ---
+
+    ### ❌ If `status` ≠ `uploaded`
+
+    If the template remains in `awaiting_upload` or shows an error status:
+
+    1. Check that you **uploaded the correct file type** (`zip`, `aep`, or `mogrt`)
+    2. Ensure the file was uploaded to the **`exact uploadInfo.url`**
+    3. Inspect logs or contact support if rendering infrastructure couldn’t process the file
+
+    > You cannot submit a render job until the template is fully uploaded and parsed.
+
+    ---
+
+    ### Example: Fetching Layers for a Render Job
+
+    You’ll use the `layerName` and `property` fields when constructing your job payload:
+
+    ```json
+    {
+      "template": {
+        "id": "TEMPLATE_ID",
+        "composition": "main"
+      },
+      "assets": [
+        {
+          "type": "data",
+          "layerName": "title",
+          "property": "Source Text",
+          "value": "My Dynamic Title"
+        },
+        {
+          "type": "image",
+          "layerName": "logo",
+          "property": "Source Name",
+          "src": "https://example.com/yourlogo.png"
+        }
+      ]
+    }
+    ```
+  </Step>
+  <Step title="Optional – Fonts & Dependencies">
+    If your After Effects project uses **custom fonts**, you’ll need to preload them into Nexrender Cloud before rendering — otherwise the render nodes may fallback to system fonts or fail altogether.
+
+    <AccordionGroup>
+      <Accordion title="Why Fonts Must Be Preloaded">
+        Cloud render environments do not have access to your local machine’s fonts.
+
+        To maintain design fidelity and brand consistency, Nexrender Cloud provides a way to **`upload and persist .ttf font files`** in your account, which will be automatically loaded before rendering.
+
+        ### Supported Font Formats
+
+        | Format | Description               |
+        | ------ | ------------------------- |
+        | `.ttf` | TrueType Font (preferred) |
+        | `.otf` | Not currently supported   |
+      </Accordion>
+      <Accordion title="How to Upload Fonts">
+        You can upload fonts via the Fonts API:
+
+        <CodeGroup>
+
+        ```bash Upload Font
+        curl -X POST https://api.nexrender.com/api/v2/fonts \
+          -H "Authorization: Bearer YOUR_API_KEY" \
+          -F "file=@/path/to/Roboto-Regular.ttf"
+        ```
+
+        
+        ```json Example Response
+        {
+          "id": "font-roboto-regular",
+          "filename": "Roboto-Regular.ttf",
+          "status": "ready",
+          "size": 142384
+        }
+        ```
+
+        </CodeGroup>
+
+        Once uploaded, fonts are available to all future render jobs, no additional steps required.
+      </Accordion>
+      <Accordion title="How Nexrender Loads Fonts">
+        - Fonts are installed before After Effects launches
+        - Fonts persist across render jobs in the cloud
+        - If a font is missing, AE will silently fallback — which can cause layout bugs
+
+        > **Always preload** any custom font that’s not part of Adobe’s base installation.
+      </Accordion>
+    </AccordionGroup>
+  </Step>
 </Steps>
+
 ---
 
 To manage fonts, visit: [Fonts →](../cloud/fonts/upload)
@@ -505,153 +475,134 @@ Creating reliable, scalable templates for Nexrender Cloud isn’t just about mak
 Here are the key principles we recommend.
 
 <AccordionGroup>
+  <Accordion title="Structure Your Template Archives Carefully">
+    For `.zip` templates:
 
-<Accordion title = "Structure Your Template Archives Carefully">
+    - Keep the structure **flat** — no top-level folders
+    - Ensure all assets (images, audio, etc.) are inside the archive
+    - Place the `.aep` file at the root level of the archive
 
-For `.zip` templates:
+    ```text
+    project.zip
+    ├── MyTemplate.aep
+    ├── assets/
+    │   ├── logo.png
+    │   └── audio.mp3
+    ```
 
-- Keep the structure **flat** — no top-level folders
-- Ensure all assets (images, audio, etc.) are inside the archive
-- Place the `.aep` file at the root level of the archive
+    > This avoids asset path issues and guarantees cross-platform portability.
+  </Accordion>
+  <Accordion title="Name Layers and Compositions Intelligently">
+    Clear naming of layers and compositions directly improves automation accuracy, debuggability, and developer handoff. Treat your `.aep` or `.mogrt` like a codebase — the structure matters.
 
-```text
-project.zip
-├── MyTemplate.aep
-├── assets/
-│   ├── logo.png
-│   └── audio.mp3
-```
+    #### Layer Naming Rules
 
-> This avoids asset path issues and guarantees cross-platform portability.
+    | Layer Attribute       | Best Practice                                       |
+    | --------------------- | --------------------------------------------------- |
+    | `layerName`           | Use lowercase, short identifiers (`title`, `cta`)   |
+    | `property`            | Match AE's label exactly (`Source Text`, `Opacity`) |
+    | Avoid duplicates      | Ensure no two layers in the same comp share a name  |
+    | Use descriptive types | e.g. `product_image`, `voiceover`, `cta_background` |
 
-</Accordion>
+    > Nexrender requires exact `layerName` matches during job execution. Ambiguity or typos will cause silent render errors or broken outputs.
 
-<Accordion title = "Name Layers and Compositions Intelligently">
+    #### Composition Naming Rules
 
-Clear naming of layers and compositions directly improves automation accuracy, debuggability, and developer handoff. Treat your `.aep` or `.mogrt` like a codebase — the structure matters.
+    | Composition Type    | Suggested Naming                     |
+    | ------------------- | ------------------------------------ |
+    | Main output comp    | `main`, `final`, `output`, etc.      |
+    | Variants            | `main_1080p`, `main_instagram`, etc. |
+    | Reusable partials   | `cta_module`, `intro_block`, etc.    |
+    | Discarded or hidden | Prefix with `_` (e.g. `_scratchpad`) |
 
-#### Layer Naming Rules
+    This ensures the `compositions` list returned by the API is clean, predictable, and renderable.
+  </Accordion>
+  <Accordion title="Nested Compositions: Best Practices">
+    Nested comps are a powerful After Effects feature, but you must use them carefully for cloud automation:
 
-| Layer Attribute       | Best Practice                                       |
-| --------------------- | --------------------------------------------------- |
-| `layerName`           | Use lowercase, short identifiers (`title`, `cta`)   |
-| `property`            | Match AE's label exactly (`Source Text`, `Opacity`) |
-| Avoid duplicates      | Ensure no two layers in the same comp share a name  |
-| Use descriptive types | e.g. `product_image`, `voiceover`, `cta_background` |
+    #### Use Nested Comps To:
 
-> Nexrender requires exact `layerName` matches during job execution. Ambiguity or typos will cause silent render errors or broken outputs.
+    - Group logic-heavy modules (e.g. transitions, intro bumpers)
+    - Encapsulate reusable visual elements (e.g. buttons, tickers)
+    - Reduce clutter in the main timeline
 
-#### Composition Naming Rules
+    #### Avoid Nested Comps If:
 
-| Composition Type    | Suggested Naming                     |
-| ------------------- | ------------------------------------ |
-| Main output comp    | `main`, `final`, `output`, etc.      |
-| Variants            | `main_1080p`, `main_instagram`, etc. |
-| Reusable partials   | `cta_module`, `intro_block`, etc.    |
-| Discarded or hidden | Prefix with `_` (e.g. `_scratchpad`) |
+    - They rely on hard-coded paths or relative asset placement
+    - They contain dynamic layers you intend to override
+    - You have deeply nested timelines (\>3 levels) — this can increase AE processing time and complicate debugging
 
-This ensures the `compositions` list returned by the API is clean, predictable, and renderable.
-</Accordion>
+    > Keep nested comps clean, flattened when possible, and **treat the top-level comp as your automation interface**.
+  </Accordion>
+  <Accordion title="Preview Rendering With Dummy Data">
+    Before deploying a template at scale:
 
-<Accordion title = "Nested Compositions: Best Practices">
+    - Create a test job with fake but realistic values
+    - Set `"preview": true` to get a fast low-res render
+    - Check for missing fonts, broken text, or incorrect layout sizing
 
-Nested comps are a powerful After Effects feature, but you must use them carefully for cloud automation:
+    This helps catch structural and naming bugs early, especially with deeply nested templates.
+  </Accordion>
+  <Accordion title="Think Like a Developer \+ Designer">
+    Design with **automation-first principles**:
 
-#### Use Nested Comps To:
+    - Expose only what needs to be dynamic
+    - Use naming conventions for predictability
+    - Keep timelines shallow, modular, and reusable
+    - Organize assets logically inside the project and `.zip`
 
-- Group logic-heavy modules (e.g. transitions, intro bumpers)
-- Encapsulate reusable visual elements (e.g. buttons, tickers)
-- Reduce clutter in the main timeline
+    This makes your After Effects templates act like **parameterized functions**, not fragile, one-off assets.
+  </Accordion>
+  <Accordion title="Expose Only What You Need (Especially in `.mogrt`)">
+    If using `.mogrt`, keep the Essential Graphics panel **lean and intentional**:
 
-#### Avoid Nested Comps If:
+    - Don’t expose unused controls
+    - Rename each property for clarity
+    - Avoid overly nested structures
+  </Accordion>
+  <Accordion title="Reuse Templates with Job-Level Overrides">
+    Instead of creating dozens of near-identical templates:
 
-- They rely on hard-coded paths or relative asset placement
-- They contain dynamic layers you intend to override
-- You have deeply nested timelines (\>3 levels) — this can increase AE processing time and complicate debugging
+    - Design **modular templates** that accept asset input
+    - Use job payloads to swap:
+      - Text
+      - Images
+      - Colors
+      - Voiceover / audio
+      - Fonts
 
-> Keep nested comps clean, flattened when possible, and **treat the top-level comp as your automation interface**.
-</Accordion>
+    > One clean template can power hundreds of job variants via automation.
+  </Accordion>
+  <Accordion title="Clean Up Before Export">
+    Before finalizing your `.aep` or `.mogrt`:
 
-<Accordion title = "Preview Rendering With Dummy Data">
+    - Remove unused compositions and precomps
+    - Purge unreferenced assets (File → Dependencies → Remove Unused Footage)
+    - Reduce media to only what is needed
+    - Name all dynamic layers clearly
+    - Preview render in After Effects to catch broken expressions or fonts
+  </Accordion>
+  <Accordion title="Version Your Templates">
+    Use `displayName` consistently across template versions:
 
-Before deploying a template at scale:
+    | Display Name            | Notes                       |
+    | ----------------------- | --------------------------- |
+    | `product-demo-v1`       | Initial rollout             |
+    | `product-demo-v2-fixed` | Bugfix for font issues      |
+    | `product-demo-v3`       | Updated to new brand colors |
 
-- Create a test job with fake but realistic values
-- Set `"preview": true` to get a fast low-res render
-- Check for missing fonts, broken text, or incorrect layout sizing
+    This helps your team stay organized and avoid breaking changes.
+  </Accordion>
+  <Accordion title="Validate Before Launching Jobs at Scale">
+    Before integrating a template into production automation:
 
-This helps catch structural and naming bugs early, especially with deeply nested templates.
-</Accordion>
-
-
-<Accordion title = "Think Like a Developer \+ Designer">
-
-Design with **automation-first principles**:
-
-- Expose only what needs to be dynamic
-- Use naming conventions for predictability
-- Keep timelines shallow, modular, and reusable
-- Organize assets logically inside the project and `.zip`
-
-This makes your After Effects templates act like **parameterized functions**, not fragile, one-off assets.
-</Accordion>
-<Accordion title = "Expose Only What You Need (Especially in `.mogrt`)">
-
-If using `.mogrt`, keep the Essential Graphics panel **lean and intentional**:
-
-- Don’t expose unused controls
-- Rename each property for clarity
-- Avoid overly nested structures
-</Accordion>
-
-<Accordion title = "Reuse Templates with Job-Level Overrides">
-
-Instead of creating dozens of near-identical templates:
-
-- Design **modular templates** that accept asset input
-- Use job payloads to swap:
-  - Text
-  - Images
-  - Colors
-  - Voiceover / audio
-  - Fonts
-
-> One clean template can power hundreds of job variants via automation.
-</Accordion>
-
-<Accordion title = "Clean Up Before Export">
-
-Before finalizing your `.aep` or `.mogrt`:
-
-- Remove unused compositions and precomps
-- Purge unreferenced assets (File → Dependencies → Remove Unused Footage)
-- Reduce media to only what is needed
-- Name all dynamic layers clearly
-- Preview render in After Effects to catch broken expressions or fonts
-</Accordion>
-<Accordion title = "Version Your Templates">
-
-Use `displayName` consistently across template versions:
-
-| Display Name            | Notes                       |
-| ----------------------- | --------------------------- |
-| `product-demo-v1`       | Initial rollout             |
-| `product-demo-v2-fixed` | Bugfix for font issues      |
-| `product-demo-v3`       | Updated to new brand colors |
-
-This helps your team stay organized and avoid breaking changes.
-
-</Accordion>
-<Accordion title = "Validate Before Launching Jobs at Scale">
-
-Before integrating a template into production automation:
-
-- Manually render with test data
-- Validate composition names
-- Validate all layer overrides using `GET /template/:id`
-- Try preview rendering (`preview: true`) in jobs if needed
-</Accordion>
+    - Manually render with test data
+    - Validate composition names
+    - Validate all layer overrides using `GET /template/:id`
+    - Try preview rendering (`preview: true`) in jobs if needed
+  </Accordion>
 </AccordionGroup>
+
 ---
 
 Following these practices helps ensure your renders are:
