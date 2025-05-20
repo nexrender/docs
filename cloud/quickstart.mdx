@@ -4,10 +4,6 @@ description: "A 5-minute guide to your first rendered video using Nexrender Clou
 keywords: "quickstart,nexrender api,render template,hello world video,curl,postman"
 ---
 
-Here's the fixed MDX file with syntax errors resolved. The main issue was an unclosed Tab tag and some minor formatting issues:
-
----
-
 This guide will walk you through your first render using Nexrender Cloud — from uploading a template to retrieving the final video.
 
 You'll use:
@@ -16,20 +12,18 @@ You'll use:
 - cURL or Postman to interact with the API
 - A single JSON job payload to customize your render
 
-[Download Postman Collection](../downloads/nexrender-cloud.postman_collection.json)
-
 ---
 
 ## Prerequisites
 
-- An active Nexrender Cloud account [Ping Us](https://www.nexrender.com/contact)
+- An active Nexrender Cloud account - [Ping Us](https://www.nexrender.com/contact) if you don't have one
 - Your API Key (grab it from your dashboard) - [API Key](https://app.nexrender.com/team/settings)
 - A valid After Effects template in `.aep`, `.zip`, or `.mogrt` format with assets and fonts
 - Custom fonts in TTF format
 
 ### Preparing Your Template for Upload
 
-To ensure your `.zip` template works properly in Nexrender Cloud, make sure the archive is structured **flat**, with no extra subfolder wrapping the project.
+To ensure your `.zip` template works properly in Nexrender Cloud, make sure the archive is structured **flat**, with no extra subfolder wrapping the project. There are two options:
 
 <Tabs>
   <Tab title="Option 1: Zip Correctly via Finder (GUI)">
@@ -99,11 +93,13 @@ project.zip
   This extra folder layer will break relative file paths inside After Effects, causing missing asset errors or silent render failures.
 </Note>
 
-## Step 1: Upload Your Template
+## Step 1: Create Your Template
 
-First, register your template:
+First, create your template:
 
-```javascript
+<CodeGroup>
+
+```javascript Create Template
 curl -X POST https://api.nexrender.com/api/v2/templates \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
@@ -113,9 +109,8 @@ curl -X POST https://api.nexrender.com/api/v2/templates \
   }'
 ```
 
-This returns:
 
-```bash
+```javascript Create Template Response
 {
   "template": {
     "id": "01JT2M9GCR712V7EJYDF45QAFD",
@@ -141,6 +136,8 @@ This returns:
 }
 ```
 
+</CodeGroup>
+
 ## Step 2: Upload the AE File
 
 In case of .zip archive, make sure you have created a
@@ -149,7 +146,21 @@ After you add your template in [Step 1](#step-1-upload-your-template), the API w
 
 This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
 
----
+<CodeGroup>
+
+```javascript Upload Template File
+curl --location --request PUT \
+  'https://nx1-assets-eu.f4557fde12d757e60304a76f717b04ef.r2.cloudflarestorage.com/01JTGKXH8X92D5N7RZ0DCVGDCH/templates/01JTGM9GDDSBEX9W0EJD7ZQDYY.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=02940851b43baa4d2c4948381b9d91cf%2F20250505%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250505T162559Z&X-Amz-Expires=3600&X-Amz-Signature=3ef9cd829dd24cc430d64b4b3f249a434d2eabfe2652462d883e047a205cb4fb&X-Amz-SignedHeaders=host&x-amz-checksum-crc32=AAAAAA%3D%3D&x-amz-meta-templateid=01JTGM9GCR71JV7EJYDF45QAFD&x-amz-sdk-checksum-algorithm=CRC32&x-id=PutObject' \
+  --header 'Content-Type: application/octet-stream' \
+  --data-binary '@/Users/oleksandrfurtak/Downloads/pluralsighttest.zip'
+```
+
+
+```http Example Success Response
+HTTP/1.1 200 OK
+```
+
+</CodeGroup>
 
 > ⚠️ **Important:**\
 > Your archive must be structured correctly, or rendering will fail.\
@@ -157,70 +168,58 @@ This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you spe
 >
 > [Learn how to prepare your archive correctly →](#preparing-your-template-for-upload)
 
-```bash
-curl --location --request PUT \
-  'https://nx1-assets-eu.f4557fde12d757e60304a76f717b04ef.r2.cloudflarestorage.com/01JTGKXH8X92D5N7RZ0DCVGDCH/templates/01JTGM9GDDSBEX9W0EJD7ZQDYY.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=02940851b43baa4d2c4948381b9d91cf%2F20250505%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250505T162559Z&X-Amz-Expires=3600&X-Amz-Signature=3ef9cd829dd24cc430d64b4b3f249a434d2eabfe2652462d883e047a205cb4fb&X-Amz-SignedHeaders=host&x-amz-checksum-crc32=AAAAAA%3D%3D&x-amz-meta-templateid=01JTGM9GCR71JV7EJYDF45QAFD&x-amz-sdk-checksum-algorithm=CRC32&x-id=PutObject' \
-  --header 'Content-Type: application/octet-stream' \
-  --data-binary '@/Users/oleksandrfurtak/Downloads/pluralsighttest.zip'
-```
-
-### Example Success Response
-
-```http
-HTTP/1.1 200 OK
-```
-
 Once your file is successfully uploaded, the template will transition from `awaiting_upload` to `uploaded`, and you can proceed to rendering.
 
-:::warning Important Notes
+<Note>
+  Warning Important Notes
 
-- You must upload a file that matches the template `type` field — either `.zip`, `.aep`, or `.mogrt`.
-- The `url` is a pre-authorized `PUT` endpoint, valid for a **single file upload**.
-- **Do not** add authentication headers like `Authorization`.
-- **Do not** change or append query parameters to the `uploadInfo.url`.
-- You may omit the optional `x-amz-meta-custom` header unless explicitly required by your use case.
-  :::
+  - You must upload a file that matches the template `type` field — either `.zip`, `.aep`, or `.mogrt`.
+  - The `url` is a pre-authorized `PUT` endpoint, valid for a **single file upload**.
+  - **Do not** add authentication headers like `Authorization`.
+  - **Do not** change or append query parameters to the `uploadInfo.url`.
+  - You may omit the optional `x-amz-meta-custom` header unless explicitly required by your use case.
+</Note>
 
-### Using Postman?
+<Accordion title="Using Postman?">
+  If you prefer to upload your template file via Postman instead of `curl`, you must configure it carefully.
 
-If you prefer to upload your template file via Postman instead of `curl`, you must configure it carefully.
+  > **Important:** The `uploadInfo.url` is a presigned S3-compatible endpoint that is **header-sensitive**. Postman may add or omit headers that will cause the signature to become invalid and return a `403 Forbidden` or `SignatureDoesNotMatch`.
 
-> **Important:** The `uploadInfo.url` is a presigned S3-compatible endpoint that is **header-sensitive**. Postman may add or omit headers that will cause the signature to become invalid and return a `403 Forbidden` or `SignatureDoesNotMatch`.
+  #### Correct Postman Setup
 
-#### Correct Postman Setup
+  - **Method**: `PUT`
+  - **URL**: Use the full `uploadInfo.url` from the API response
+  - **Authorization**: Set to `No Auth`
+  - **Body**:
+    - Select `binary`
+    - Upload your `.aep`, `.zip`, or `.mogrt` file using the file selector
 
-- **Method**: `PUT`
-- **URL**: Use the full `uploadInfo.url` from the API response
-- **Authorization**: Set to `No Auth`
-- **Body**:
-  - Select `binary`
-  - Upload your `.aep`, `.zip`, or `.mogrt` file using the file selector
+  #### Required Headers
 
-#### Required Headers
+  | Header            | Value                              | Notes                               |
+  | ----------------- | ---------------------------------- | ----------------------------------- |
+  | Content-Type      | application/octet-stream           | Must match `uploadInfo.fields`      |
+  | Host              | (auto-filled by Postman)           | Should not be removed               |
+  | Content-Length    | (auto-filled based on file size)   | Let Postman calculate automatically |
+  | Content-Encoding  | identity (or omit)                 | Only required if used when signed   |
+  | x-amz-meta-custom | JSON string (if present in fields) | Include only if returned by API     |
 
-| Header            | Value                              | Notes                               |
-| ----------------- | ---------------------------------- | ----------------------------------- |
-| Content-Type      | application/octet-stream           | Must match `uploadInfo.fields`      |
-| Host              | (auto-filled by Postman)           | Should not be removed               |
-| Content-Length    | (auto-filled based on file size)   | Let Postman calculate automatically |
-| Content-Encoding  | identity (or omit)                 | Only required if used when signed   |
-| x-amz-meta-custom | JSON string (if present in fields) | Include only if returned by API     |
+  > Most headers like `Host` and `Content-Length` are filled automatically. Only modify them if needed. Make sure `Content-Type` is set explicitly.
 
-> Most headers like `Host` and `Content-Length` are filled automatically. Only modify them if needed. Make sure `Content-Type` is set explicitly.
+  #### Remove These Headers if Present
 
-#### Remove These Headers if Present
+  | Header        | Why It Must Be Removed                         |
+  | ------------- | ---------------------------------------------- |
+  | Authorization | Presigned URL already includes authentication  |
+  | Accept        | Alters canonical headers, breaks the signature |
+  | User-Agent    | Not part of signed headers                     |
+  | x-amz-\*      | Remove unless provided in `uploadInfo.fields`  |
 
-| Header        | Why It Must Be Removed                         |
-| ------------- | ---------------------------------------------- |
-| Authorization | Presigned URL already includes authentication  |
-| Accept        | Alters canonical headers, breaks the signature |
-| User-Agent    | Not part of signed headers                     |
-| x-amz-\*      | Remove unless provided in `uploadInfo.fields`  |
+  ---
 
----
-
-> ⚠️ **Heads up:** Most rendering errors come from incorrect `layerName`, `composition`, or missing assets.\
-> Always double-check your template structure and fetch `/template/:id` to inspect available layers before submitting jobs.
+  > ⚠️ **Heads up:** Most rendering errors come from incorrect `layerName`, `composition`, or missing assets.\
+  > Always double-check your template structure and fetch `/template/:id` to inspect available layers before submitting jobs.
+</Accordion>
 
 ## Step 3: Submit a Render Job
 
@@ -233,12 +232,7 @@ The job defines:
 - Which assets (text, image, audio, etc.) to inject dynamically
 
 The rendering process will begin once the job is submitted and validated.
-
----
-
-### Example `curl` Request
-
-```bash
+```javascript Create Job Request
 curl -X POST https://api.nexrender.com/api/v2/jobs \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
@@ -268,23 +262,30 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
     "preview": false
   }'
 ```
+<Accordion title="Job Payload Breakdown">
+  | Field                  | Type    | Description                                                  |
+  | ---------------------- | ------- | ------------------------------------------------------------ |
+  | `template.id`          | string  | The ID of the uploaded template (from Step 1)                |
+  | `template.composition` | string  | The composition to render (e.g., `"main"` or `"intro"`)      |
+  | `assets`               | array   | List of dynamic layer overrides (text, images, audio, video) |
+  | `preview`              | boolean | If `true`, renders lower-res preview (default is `false`)    |
+  | `webhook.url`          | string  | URL to receive job status updates                            |
+  | `webhook.method`       | string  | HTTP method to use in the webhook (usually `"POST"`)         |
 
+  > You can get the list of editable layer names via the `layers` field when you fetch a template.
+</Accordion>
 ---
 
-### Job Payload Breakdown
+### Checking Job Status (Optional)
 
-| Field                  | Type    | Description                                                  |
-| ---------------------- | ------- | ------------------------------------------------------------ |
-| `template.id`          | string  | The ID of the uploaded template (from Step 1)                |
-| `template.composition` | string  | The composition to render (e.g., `"main"` or `"intro"`)      |
-| `assets`               | array   | List of dynamic layer overrides (text, images, audio, video) |
-| `preview`              | boolean | If `true`, renders lower-res preview (default is `false`)    |
-| `webhook.url`          | string  | URL to receive job status updates                            |
-| `webhook.method`       | string  | HTTP method to use in the webhook (usually `"POST"`)         |
+If you prefer polling over webhooks, use:
 
-> You can get the list of editable layer names via the `layers` field when you fetch a template.
+```javascript
+curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
 
----
+The response includes `status`, `progress`, and error info if rendering failed.
 
 <Tabs>
   <Tab title="Example: Minimal Job">
@@ -315,21 +316,6 @@ curl -X POST https://api.nexrender.com/api/v2/jobs \
     You can download the final rendered video via the `output.url`.
   </Tab>
 </Tabs>
-
----
-
-### Checking Job Status (Optional)
-
-If you prefer polling over webhooks, use:
-
-```bash
-curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-The response includes `status`, `progress`, and error info if rendering failed.
-
----
 
 ### Next Steps
 
