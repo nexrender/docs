@@ -6,20 +6,19 @@ keywords: "nexrender webhooks,job polling,render complete,job status,video autom
 
 This guide explains how to track the status of a render job, either by polling the API or configuring a webhook for real-time delivery.
 
----
-
 ## Polling Job Status
 
 You can always check the state of a job manually:
 
-```bash
+<CodeGroup>
+
+```bash Job Status Request
 curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-### Example Response
 
-```json
+```json Example Response
 {
   "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
   "status": "done",
@@ -30,7 +29,7 @@ curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
 }
 ```
 
----
+</CodeGroup>
 
 ## Job Status Lifecycle
 
@@ -40,8 +39,6 @@ curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
 | `rendering` | Currently being processed                       |
 | `done`      | Successfully rendered; `output.url` available   |
 | `failed`    | Encountered an error (see `error` field)        |
-
----
 
 ## Webhook Notifications (Recommended)
 
@@ -56,11 +53,9 @@ Instead of polling, you can configure a **webhook** in your job payload:
 
 When the job completes (success or failure), Nexrender Cloud will `POST` to the specified URL with a job payload.
 
----
+<CodeGroup>
 
-### Example Webhook Payload (Success)
-
-```json
+```json Example Webhook Payload (Success)
 {
   "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
   "status": "done",
@@ -70,9 +65,8 @@ When the job completes (success or failure), Nexrender Cloud will `POST` to the 
 }
 ```
 
-###  Example Webhook Payload (Failure)
 
-```json
+```json Example Webhook Payload (Failure)
 {
   "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
   "status": "failed",
@@ -83,7 +77,11 @@ When the job completes (success or failure), Nexrender Cloud will `POST` to the 
 }
 ```
 
-> Make sure your webhook endpoint is idempotent and returns a 200 OK response.
+</CodeGroup>
+
+<Note>
+  Make sure your webhook endpoint is idempotent and returns a 200 OK response.
+</Note>
 
 ---
 
@@ -100,10 +98,6 @@ To maximize reliability:
 ---
 
 ## Test with Postman
-
-You can simulate webhook delivery locally using:
-
-### Postman
 
 Use the `Mock Server` feature to test payload reception or replay.
 
