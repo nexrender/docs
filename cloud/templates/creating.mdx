@@ -18,8 +18,6 @@ description: "Description of your new file."
   </Card>
 </CardGroup>
 
----
-
 <AccordionGroup>
   <Accordion title="What is a Template in Nexrender Cloud?">
     In Nexrender Cloud, a **template** is an After Effects project file (or compatible format) uploaded to the cloud and registered with metadata, enabling dynamic rendering and automation at scale.
@@ -107,20 +105,21 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
 
     This step returns an `uploadInfo` object that contains a **pre-signed upload URL** for securely uploading your file in the next step.
 
-    ### Endpoint
+    <CodeGroup>
 
+    ```bash API Endpoint
+    POST https://api.nexrender.com/api/v2/templates
     ```
-    POST /api/v2/templates
-    ```
 
-    ### Request Payload
-
-    ```json
+    
+    ```json Request Payload
     {
       "type": "zip",
       "displayName": "Promo 2024 Campaign"
     }
     ```
+
+    </CodeGroup>
 
     | Field         | Type   | Required | Description                          |
     | ------------- | ------ | -------- | ------------------------------------ |
@@ -132,9 +131,9 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
 
     ---
 
-    ### Example `curl` Request
+    <CodeGroup>
 
-    ```bash
+    ```bash Register Template Request
     curl -X POST https://api.nexrender.com/api/v2/templates \
       -H "Authorization: Bearer YOUR_API_KEY" \
       -H "Content-Type: application/json" \
@@ -144,11 +143,8 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
       }'
     ```
 
-    ---
-
-    ### Example Success Response
-
-    ```json
+    
+    ```javascript Example Success Response
     {
       "template": {
         "id": "01JT2M9GCR712V7EJYDF45QAFD",
@@ -174,29 +170,29 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
     }
     ```
 
-    ---
-
-    ### What Happens Behind the Scenes?
-
-    - The backend **reserves storage** for your file
-    - Generates a **secure upload URL** valid for ~1 hour
-    - Waits for the actual file to be uploaded (in the next step)
-    - The template status is initially set to `awaiting_upload`
-
-    You **must upload the correct file** matching the declared `type` — otherwise the introspection process will fail.
+    </CodeGroup>
 
     ---
 
-    ### Common Mistakes to Avoid
+    <AccordionGroup>
+      <Accordion title="What Happens Behind the Scenes?">
+        - The backend **reserves storage** for your file
+        - Generates a **secure upload URL** valid for ~1 hour
+        - Waits for the actual file to be uploaded (in the next step)
+        - The template status is initially set to `awaiting_upload`
 
-    | Mistake                                                | Result                                                      |
-    | ------------------------------------------------------ | ----------------------------------------------------------- |
-    | Declaring `type: zip` but uploading `.aep` or `.mogrt` | The render job will fail or silently break asset resolution |
-    | Uploading to the wrong URL                             | The template will remain in `awaiting_upload` status        |
-    | Forgetting to use the pre-signed URL                   | You’ll get a 403 Forbidden error or SignatureDoesNotMatch   |
+        You **must upload the correct file** matching the declared `type` — otherwise the introspection process will fail.
+      </Accordion>
+      <Accordion title="Common Mistakes to Avoid">
+        | Mistake                                                | Result                                                      |
+        | ------------------------------------------------------ | ----------------------------------------------------------- |
+        | Declaring `type: zip` but uploading `.aep` or `.mogrt` | The render job will fail or silently break asset resolution |
+        | Uploading to the wrong URL                             | The template will remain in `awaiting_upload` status        |
+        | Forgetting to use the pre-signed URL                   | You’ll get a 403 Forbidden error or SignatureDoesNotMatch   |
 
-    Once the upload is complete, the status will transition to `uploaded`, and Nexrender Cloud will extract all available compositions and dynamic layers.
-
+        Once the upload is complete, the status will transition to `uploaded`, and Nexrender Cloud will extract all available compositions and dynamic layers.
+      </Accordion>
+    </AccordionGroup>
     ---
 
     Ready to upload the file? [Continue to Step 2 →](#step-2-upload-the-ae-file)
@@ -208,101 +204,92 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
 
     ---
 
-    ### Where to Upload
+    <Accordion title="Where to Upload">
+      The `uploadInfo.url` returned in the response is a **presigned URL** — a time-limited link that allows you to upload the file without any additional authentication.
 
-    The `uploadInfo.url` returned in the response is a **presigned URL** — a time-limited link that allows you to upload the file without any additional authentication.
-
-    The method is always `PUT`, and you must include the correct headers exactly as provided in the `uploadInfo.fields`.
-
+      The method is always `PUT`, and you must include the correct headers exactly as provided in the `uploadInfo.fields`.
+    </Accordion>
     ---
 
     ### Example `curl` Upload Request
 
-    ```bash
+    You can replace `.zip` with `.aep` or `.mogrt` depending on your workflow.
+
+    <CodeGroup>
+
+    ```bash Template File Upload Request
     curl --location --request PUT \
       'https://your-upload-url-from-uploadInfo.url' \
       --header 'Content-Type: application/octet-stream' \
       --data-binary '@/path/to/your/project.zip'
     ```
 
-    You can replace `.zip` with `.aep` or `.mogrt` depending on your workflow.
-
-    ---
-
-    ### Example Success Response
-
-    ```http
+    
+    ```http Example Success Response
     HTTP/1.1 200 OK
     ```
 
-    ---
+    </CodeGroup>
 
-    ### Required Headers
+    <AccordionGroup>
+      <Accordion title="Required Headers">
+        The following headers must be present if included in the `uploadInfo.fields` object:
 
-    The following headers must be present if included in the `uploadInfo.fields` object:
+        | Header            | Description                                    |
+        | ----------------- | ---------------------------------------------- |
+        | Content-Type      | Usually `application/octet-stream`             |
+        | x-amz-meta-custom | May be included for tracking template ID       |
+        | Content-Length    | Set automatically by `curl` or Postman         |
+        | Content-Encoding  | Usually not required; use `identity` if needed |
 
-    | Header            | Description                                    |
-    | ----------------- | ---------------------------------------------- |
-    | Content-Type      | Usually `application/octet-stream`             |
-    | x-amz-meta-custom | May be included for tracking template ID       |
-    | Content-Length    | Set automatically by `curl` or Postman         |
-    | Content-Encoding  | Usually not required; use `identity` if needed |
+        > Do not change the upload URL, append query params, or add any extra headers.
+      </Accordion>
+      <Accordion title="Postman Configuration (If Not Using curl)">
+        To upload via Postman:
 
-    > Do not change the upload URL, append query params, or add any extra headers.
+        - **Method**: `PUT`
+        - **URL**: Use the full `uploadInfo.url` from the API
+        - **Auth**: No Auth
+        - **Body**: Set to `binary`, and select your file
+        - **Header**: Manually set `Content-Type` to `application/octet-stream`
 
-    ---
+        Make sure Postman does **not** automatically add:
 
-    ### Postman Configuration (If Not Using curl)
+        - `Authorization`
+        - `Accept`
+        - `User-Agent`
+        - Any `x-amz-*` headers not explicitly required
 
-    To upload via Postman:
+        These can invalidate the signature and result in a `403 SignatureDoesNotMatch` error.
+      </Accordion>
+      <Accordion title="Important: Upload the Correct File Type">
+        The file you upload must match the `type` field you declared during template creation:
 
-    - **Method**: `PUT`
-    - **URL**: Use the full `uploadInfo.url` from the API
-    - **Auth**: No Auth
-    - **Body**: Set to `binary`, and select your file
-    - **Header**: Manually set `Content-Type` to `application/octet-stream`
+        | Declared `type` | Expected File Upload |
+        | --------------- | -------------------- |
+        | `zip`           | `project.zip`        |
+        | `aep`           | `project.aep`        |
+        | `mogrt`         | `project.mogrt`      |
 
-    Make sure Postman does **not** automatically add:
+        If you upload the wrong file type, the template introspection will fail, and you won’t be able to render from it.
+      </Accordion>
+      <Accordion title="Template Status: `uploaded`">
+        Once the upload completes, the template's `status` will change from `awaiting_upload` to `uploaded`. At this point, Nexrender Cloud will:
 
-    - `Authorization`
-    - `Accept`
-    - `User-Agent`
-    - Any `x-amz-*` headers not explicitly required
+        - Extract all available **compositions**
+        - Parse editable **layers** for use in jobs
+        - Make the template immediately available for rendering
 
-    These can invalidate the signature and result in a `403 SignatureDoesNotMatch` error.
+        You can fetch the template object via:
 
-    ---
+        ```bash
+        curl https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+          -H "Authorization: Bearer YOUR_API_KEY"
+        ```
 
-    ### ⚠️ Important: Upload the Correct File Type
-
-    The file you upload must match the `type` field you declared during template creation:
-
-    | Declared `type` | Expected File Upload |
-    | --------------- | -------------------- |
-    | `zip`           | `project.zip`        |
-    | `aep`           | `project.aep`        |
-    | `mogrt`         | `project.mogrt`      |
-
-    If you upload the wrong file type, the template introspection will fail, and you won’t be able to render from it.
-
-    ---
-
-    ### Template Status: `uploaded`
-
-    Once the upload completes, the template's `status` will change from `awaiting_upload` to `uploaded`. At this point, Nexrender Cloud will:
-
-    - Extract all available **compositions**
-    - Parse editable **layers** for use in jobs
-    - Make the template immediately available for rendering
-
-    You can fetch the template object via:
-
-    ```bash
-    curl https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-      -H "Authorization: Bearer YOUR_API_KEY"
-    ```
-
-    This will return metadata including compositions and layers.
+        This will return metadata including compositions and layers.
+      </Accordion>
+    </AccordionGroup>
   </Step>
   <Step title="Confirm Status">
     Once your template file is uploaded, Nexrender Cloud processes it in the background.
