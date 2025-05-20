@@ -373,20 +373,38 @@ Building jobs at scale requires defensive design. Here's what we recommend:
     Post-actions are declared in a `postrender` array in the job payload. Each entry defines a `module` (built-in action) and its corresponding `params`.
 
     ```json
-    "postrender": [
-      {
-        "module": "@nexrender/action-upload",
-        "input": "result.mp4",
-        "params": {
-          "provider": "s3",
-          "bucket": "my-bucket",
-          "key": "output/final-video.mp4",
-          "region": "eu-west-1",
-          "accessKey": "AWS_ACCESS_KEY_ID",
-          "secretKey": "AWS_SECRET_ACCESS_KEY"
+    {
+    "template": {
+        "id": "01JR7YPGNKT15DW1VTJ60PFN00",
+        "composition": "main"
+    },
+    "preview": true,
+    "fonts": [
+        "SomeFont.ttf"
+    ],
+    "assets": [
+        {
+            "type": "script",
+            "src": "data:text/plain,<js code>"
         }
-      }
-    ]
+    ],
+    "actions": {
+        "postrender": [
+              {
+                "module": "@nexrender/action-upload",
+                "input": "result.mp4",
+                "params": {
+                    "provider": "s3",
+                    "bucket": "my-bucket",
+                    "key": "output/final-video.mp4",
+                    "region": "eu-west-1",
+                    "accessKey": "AWS_ACCESS_KEY_ID",
+                    "secretKey": "AWS_SECRET_ACCESS_KEY"
+                }
+            }
+        ]
+    }
+    }
     ```
 
     > Not all postrender actions are supported in the cloud. Start with safe actions like upload or webhook-based flows.
