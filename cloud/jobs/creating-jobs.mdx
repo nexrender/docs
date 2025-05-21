@@ -205,6 +205,7 @@ A render job ties together:
 </AccordionGroup>
 
 ## How To Setup a Rendering Job?
+
 <Steps>
   <Step title="Submit the Job">
     Submit the job with a simple POST request:
@@ -258,6 +259,8 @@ A render job ties together:
     </CodeGroup>
   </Step>
 </Steps>
+
+## Job Request Internals
 
 <AccordionGroup>
   <Accordion title="Job Payload Reference">
@@ -367,78 +370,6 @@ Building jobs at scale requires defensive design. Here's what we recommend:
 
     This saves on polling requests and scales better across high volume workflows.
   </Accordion>
-  <!-- <Accordion title="Clean Up Old Jobs">
-    Use `GET /jobs` to review recent activity and optionally clean up old or test jobs that are no longer needed.
-
-    While job output remains accessible after completion, pruning unused entries improves visibility.
-  </Accordion> -->
-  <!-- <Accordion title="How to Add Post-Actions">
-    Post-actions are declared in a `postrender` array in the job payload. Each entry defines a `module` (built-in action) and its corresponding `params`.
-
-    ```json
-    {
-    "template": {
-        "id": "01JR7YPGNKT15DW1VTJ60PFN00",
-        "composition": "main"
-    },
-    "preview": true,
-    "fonts": [
-        "SomeFont.ttf"
-    ],
-    "assets": [
-        {
-            "type": "script",
-            "src": "data:text/plain,<js code>"
-        }
-    ],
-    "actions": {
-        "postrender": [
-              {
-                "module": "@nexrender/action-upload",
-                "input": "result.mp4",
-                "params": {
-                    "provider": "s3",
-                    "bucket": "my-bucket",
-                    "key": "output/final-video.mp4",
-                    "region": "eu-west-1",
-                    "accessKey": "AWS_ACCESS_KEY_ID",
-                    "secretKey": "AWS_SECRET_ACCESS_KEY"
-                }
-            }
-        ]
-    }
-    }
-    ```
-
-    > Not all postrender actions are supported in the cloud. Start with safe actions like upload or webhook-based flows.
-  </Accordion> -->
-  <!-- <Accordion title="Common Built-In Modules">
-    | Module Name                 | Description                           |
-    | --------------------------- | ------------------------------------- |
-    | `@nexrender/action-upload`  | Upload to S3, FTP, GCS, etc.          |
-    | `@nexrender/action-copy`    | Copy file within the render container |
-    | `@nexrender/action-encode`  | Re-encode using ffmpeg                |
-    | `@nexrender/action-webhook` | Send a POST request with render info  |
-    | `@nexrender/action-cleanup` | Delete project files after render     |
-
-    More examples in [nexrender/actions](https://github.com/nexrender/actions).
-
-    ### Example: Upload to Google Cloud Storage
-
-    ```json
-    {
-      "module": "@nexrender/action-upload",
-      "input": "result.mp4",
-      "params": {
-        "provider": "gcs",
-        "bucket": "nexrender-cloud-videos",
-        "key": "jobs/01JABCXYZ/output.mp4",
-        "projectId": "my-gcp-project",
-        "keyFilename": "/path/to/gcp-service-account.json"
-      }
-    }
-    ```
-  </Accordion> -->
 </AccordionGroup>
 
 ## Security Note
