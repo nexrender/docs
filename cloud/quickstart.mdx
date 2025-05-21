@@ -102,7 +102,7 @@ You'll use:
 
     <CodeGroup>
 
-    ```javascript Create Template
+    ```javascript Register a Template
     curl -X POST https://api.nexrender.com/api/v2/templates \
       -H "Authorization: Bearer YOUR_API_KEY" \
       -H "Content-Type: application/json" \
@@ -113,7 +113,7 @@ You'll use:
     ```
 
     
-    ```javascript Create Template Response
+    ```javascript Register a Template Response
     {
       "template": {
         "id": "01JT2M9GCR712V7EJYDF45QAFD",
@@ -141,7 +141,7 @@ You'll use:
 
     </CodeGroup>
   </Step>
-  <Step title="Upload the AE File">
+  <Step title="Upload the After Effects File">
     After you add your template in [Step 1](#step-1-upload-your-template), the API will return a `uploadInfo` object that includes a **presigned URL**, HTTP method, and recommended headers for uploading your actual template file.
 
     This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
