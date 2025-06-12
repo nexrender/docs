@@ -52,7 +52,9 @@
           },
           {
             "group": "API Reference",
-            "openapi": "openapi.yml"
+            "pages": [
+              "cloud/api-reference"
+            ]
           }
         ]
       }
