@@ -21,6 +21,17 @@
             ]
           },
           {
+  "tab": "API Reference",
+  "groups": [
+    {
+      "group": "Endpoints",
+      "pages": [
+        "openapi.yml"
+      ]
+    }
+  ]
+},
+          {
             "group": "Templates",
             "pages": [
               "cloud/templates/creating",
