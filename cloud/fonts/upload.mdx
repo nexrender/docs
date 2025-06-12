@@ -17,7 +17,17 @@ After Effects needs fonts installed on the rendering system. If your project ref
 
 To upload a `.ttf` font to your account:
 
-<API id="postFonts" />
+{
+  "api": {
+    "mdx": {
+      "server": "https://api.nexrender.com",
+      "auth": {
+        "method": "key",
+        "name": "x-api-key"
+      }
+    }
+  }
+}
 
 > See full details in the [API Reference →](/cloud/api-reference#post-/fonts)
 
