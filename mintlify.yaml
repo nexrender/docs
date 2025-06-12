@@ -1,5 +1,4 @@
-# mintlify.yaml
 api:
   playground:
     enabled: true
-    spec: "./openapi.yml"
+    spec: ./openapi.yml
