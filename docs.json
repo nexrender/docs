@@ -52,9 +52,7 @@
           },
           {
             "group": "API Reference",
-            "pages": [
-              "cloud/api-reference"
-            ]
+            "openapi": "openapi.json"
           }
         ]
       }
