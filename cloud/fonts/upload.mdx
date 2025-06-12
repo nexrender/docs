@@ -12,7 +12,10 @@ After Effects needs fonts installed on the rendering system. If your project ref
 - Break dynamic layout/spacing in templates
 
 ## How to Upload  Fonts?
-
+<APIPlayground
+  method="post"
+  path="/fonts"
+/>
 <AccordionGroup>
   <Accordion title="Supported Formats">
     Only `.ttf` (TrueType Font) files are currently supported.
@@ -63,6 +66,7 @@ After Effects needs fonts installed on the rendering system. If your project ref
     > You can check expected font filenames via `GET /templates/:id` if layer fonts are introspected.
   </Accordion>
 </AccordionGroup>
+
 
 ## Best Practices
 
