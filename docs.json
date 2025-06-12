@@ -21,17 +21,6 @@
             ]
           },
           {
-  "tab": "API Reference",
-  "groups": [
-    {
-      "group": "Endpoints",
-      "pages": [
-        "openapi.yml"
-      ]
-    }
-  ]
-},
-          {
             "group": "Templates",
             "pages": [
               "cloud/templates/creating",
@@ -59,7 +48,17 @@
             "group": "Troubleshooting",
             "pages": [
               "cloud/troubleshooting/ip_whitelisting"
-          
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Endpoints",
+            "pages": [
+              "openapi.yml"
             ]
           }
         ]
