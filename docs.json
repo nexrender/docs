@@ -14,10 +14,17 @@
         "tab": "Nexrender Cloud",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Introduction",
             "pages": [
               "cloud/introduction",
-              "cloud/quickstart"
+              "cloud/quickstart",
+              "cloud/prerequisites"
+            ]
+          },
+           {
+            "group": "Prerequisites",
+            "pages": [
+              "cloud/prerequisites"         
             ]
           },
           {
