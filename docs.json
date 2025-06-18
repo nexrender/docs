@@ -1,77 +1,59 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "logo": 
-        {
-         "light":"/Group.png",
-         "dark":"/Group.png"
-        },
   "name": "Nexrender Documentation",
+
   "colors": {
     "primary": "#A06BC6",
     "light": "#A06BC6",
     "dark": "#A06BC6"
   },
+
   "favicon": "/favicon.svg",
+
   "icons": {
     "library": "lucide"
   },
+
   "navigation": {
-    "tabs": [
+    "dropdowns": [
       {
-        "tab": "Nexrender Cloud",
-        "groups": [
-          {
-            "group": "Essentials",
-            "pages": [
-              "cloud/introduction",
-              "cloud/prerequisites",
-              "cloud/quickstart"
-              
-            ]
-          },
-          {
-            "group": "Managing Templates",
-            "pages": [
-              "cloud/templates/creating",
-              "cloud/templates/deleting",
-              "cloud/templates/inspecting"
-            ]
-          },
-          {
-            "group": "Managing Jobs",
-            "pages": [
-              "cloud/jobs/creating-jobs",
-              "cloud/jobs/errors",
-              "cloud/jobs/tracking"
-            ]
-          },
-          {
-            "group": "Managing Fonts",
-            "pages": [
-              "cloud/fonts/upload",
-              "cloud/fonts/list",
-              "cloud/fonts/delete"
-            ]
-          },
-          {
-            "group": "Troubleshooting",
-            "pages": [
-              "cloud/troubleshooting/ip_whitelisting"
-            ]
-          },
-          {
-            "group": "API Reference",
-            "openapi": "openapi.json"
-          }
+        "dropdown": "Documentation",
+        "icon": "book-open",
+        "pages": [
+          "cloud/introduction",
+          "cloud/prerequisites",
+          "cloud/quickstart",
+          "cloud/templates/creating",
+          "cloud/templates/deleting",
+          "cloud/templates/inspecting",
+          "cloud/jobs/creating-jobs",
+          "cloud/jobs/errors",
+          "cloud/jobs/tracking",
+          "cloud/fonts/upload",
+          "cloud/fonts/list",
+          "cloud/fonts/delete",
+          "cloud/troubleshooting/ip_whitelisting"
         ]
+      },
+      {
+        "dropdown": "API Reference",
+        "icon": "square-terminal",
+        "openapi": "openapi.json"
+      },
+      {
+        "dropdown": "Changelog",
+        "icon": "history",
+        "href": "https://github.com/inlife/nexrender/releases"
       }
     ]
   },
+
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
+
   "navbar": {
     "links": [
       {
@@ -85,6 +67,7 @@
       "href": "https://app.nexrender.com"
     }
   },
+
   "footer": {
     "socials": {
       "github": "https://github.com/inlife/nexrender",
