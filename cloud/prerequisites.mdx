@@ -12,9 +12,9 @@ icon: "list-checks"
 ![Archiving on Mac OS](/gifs/archiving.gif)
 
 
-### Preparing Template Files
+## Preparing Template Files
 
-#### Archiving Correctly
+### Archiving Correctly
     To ensure your `.zip` template works properly in Nexrender Cloud, make sure the archive is structured **flat**, with no extra subfolder wrapping the project. There are two options:
     <Tabs>
       <Tab title="Option 1: Zip Correctly via Finder (GUI)">
@@ -50,7 +50,7 @@ icon: "list-checks"
       </Tab>
     </Tabs>
     
-  #### Correct `.zip` Archive Structure
+  ### Correct `.zip` Archive Structure
       The root of the archive should contain the `.aep` file, plus any asset folders (e.g. images, fonts, videos):
 
       ```
@@ -62,16 +62,7 @@ icon: "list-checks"
       └── ...
       ```
 
-
-  #### Preparing `.mogrt` Templates
-    If you're using a `.mogrt` file:
-
-    - You **do not need to zip it**
-    - Just upload the raw `.mogrt` file directly via the presigned URL
-
-    > For best results, unzip your archive before uploading and confirm the `.aep` file is located at the root level (not buried inside a folder).
-
-  #### Common Mistake on macOS
+  ### Common Mistake on macOS
     If you right-click a folder and choose **"Compress"**, macOS will zip the entire folder and include it as a top-level directory:
 
     ```
@@ -84,4 +75,14 @@ icon: "list-checks"
     <Note>
       This extra folder layer will break relative file paths inside After Effects, causing missing asset errors or silent render failures.
     </Note>
+
+  ### Preparing `.mogrt` Templates
+    If you're using a `.mogrt` file:
+
+    - You **do not need to zip it**
+    - Just upload the raw `.mogrt` file directly via the presigned URL
+
+    > For best results, unzip your archive before uploading and confirm the `.aep` file is located at the root level (not buried inside a folder).
+
+
 
