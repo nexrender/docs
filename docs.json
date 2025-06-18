@@ -20,20 +20,45 @@
       {
         "dropdown": "Documentation",
         "icon": "book-open",
-        "pages": [
-          "cloud/introduction",
-          "cloud/prerequisites",
-          "cloud/quickstart",
-          "cloud/templates/creating",
-          "cloud/templates/deleting",
-          "cloud/templates/inspecting",
-          "cloud/jobs/creating-jobs",
-          "cloud/jobs/errors",
-          "cloud/jobs/tracking",
-          "cloud/fonts/upload",
-          "cloud/fonts/list",
-          "cloud/fonts/delete",
-          "cloud/troubleshooting/ip_whitelisting"
+        "groups": [
+          {
+            "group": "Essentials",
+            "pages": [
+              "cloud/introduction",
+              "cloud/prerequisites",
+              "cloud/quickstart"
+            ]
+          },
+          {
+            "group": "Templates",
+            "pages": [
+              "cloud/templates/creating",
+              "cloud/templates/deleting",
+              "cloud/templates/inspecting"
+            ]
+          },
+          {
+            "group": "Jobs",
+            "pages": [
+              "cloud/jobs/creating-jobs",
+              "cloud/jobs/errors",
+              "cloud/jobs/tracking"
+            ]
+          },
+          {
+            "group": "Fonts",
+            "pages": [
+              "cloud/fonts/upload",
+              "cloud/fonts/list",
+              "cloud/fonts/delete"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "cloud/troubleshooting/ip_whitelisting"
+            ]
+          }
         ]
       },
       {
