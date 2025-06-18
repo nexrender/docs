@@ -9,9 +9,6 @@ icon: "list-checks"
 - A valid After Effects template in `.aep`, `.zip`, or `.mogrt` format with assets and fonts
 - Custom fonts in TTF format
 
-![Archiving on Mac OS](/gifs/archiving.gif)
-
-
 ## Preparing Template Files
 
 ### Archiving Correctly
@@ -19,17 +16,13 @@ icon: "list-checks"
     <Tabs>
       <Tab title="Option 1: Zip Correctly via Finder (GUI)">
         <img height="500" src="/gifs/archiving.gif" />
+       
         If you prefer using the graphical interface:
-
         1. **Open the folder** that contains your `.aep` and asset folders.
         2. **Select all items inside** (Command ⌘ \+ A).
         3. Right-click the selected files and choose **"Compress X Items"**.
         4. This will create an archive named `Archive.zip` with the correct structure.
         5. Rename it to `project.zip`.
-
-        <Note>
-          **Do not compress the parent folder itself** — always compress the files inside the folder.
-        </Note>
       </Tab>
       <Tab title="Option 2: Zip Correctly via Terminal (Advanced)">
         1. Open **Terminal**
@@ -43,7 +36,6 @@ icon: "list-checks"
            ```bash
            zip -r ../project.zip ./*
            ```
-
         <Note>
           This will include only the contents of the folder, not the folder itself.
         </Note>
