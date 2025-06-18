@@ -15,6 +15,7 @@
         "groups": [
           {
             "group": "Essentials",
+            "icon": "route",
             "pages": [
               "cloud/introduction",
               "cloud/prerequisites",
