@@ -4,7 +4,7 @@ description: "A 5-minute guide to your first rendered video using Nexrender Clou
 keywords: "quickstart,nexrender api,render template,hello world video,curl,postman"
 icon: "fast-forward"
 
-### Register Your Template
+## Register Your Template
 
     <CodeGroup>
 
@@ -46,15 +46,15 @@ icon: "fast-forward"
     ```
     </CodeGroup>
 
-### Upload the After Effects File
+## Upload the After Effects File
     After you add your template in [Step 1](#step-1-upload-your-template), the API will return a `uploadInfo` object that includes a **presigned URL**, HTTP method, and recommended headers for uploading your actual template file.
 
     This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
 
-    > ⚠️ **Important:**  
-> Your archive must be structured correctly, or rendering may fail.  
-> On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.  
-> [Learn how to archive correctly →](/cloud/prerequisites#archiving-correctly)
+**Important:**  
+Your archive must be structured correctly, or rendering may fail.  
+On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.  
+[Learn how to archive correctly →](/cloud/prerequisites#archiving-correctly)
 
     <CodeGroup>
 
