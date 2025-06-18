@@ -22,8 +22,7 @@
         "tab": "Nexrender Cloud",
         "groups": [
           {
-            "group": "Essentials",
-            "icon": "route",
+            "dropdown": "Essentials",
             "pages": [
               "cloud/introduction",
               "cloud/prerequisites",
