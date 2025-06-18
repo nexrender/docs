@@ -14,7 +14,7 @@
         "tab": "Nexrender Cloud",
         "groups": [
           {
-            "group": "Introduction",
+            "group": "Essentials",
             "pages": [
               "cloud/introduction",
               "cloud/quickstart",
