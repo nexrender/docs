@@ -20,8 +20,7 @@ You'll use:
 
 
 ## How to Register a Template
-<Steps>
-  <Step title="Register Your Template">
+### Register Your Template
     First, create your template:
 
     <CodeGroup>
@@ -64,8 +63,7 @@ You'll use:
     ```
 
     </CodeGroup>
-  </Step>
-  <Step title="Upload the After Effects File">
+### Upload the After Effects File
     After you add your template in [Step 1](#step-1-upload-your-template), the API will return a `uploadInfo` object that includes a **presigned URL**, HTTP method, and recommended headers for uploading your actual template file.
 
     This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
@@ -137,8 +135,8 @@ You'll use:
       > ⚠️ **Heads up:** Most rendering errors come from incorrect `layerName`, `composition`, or missing assets.\
       > Always double-check your template structure and fetch `/template/:id` to inspect available layers before submitting jobs.
     </Accordion>
-  </Step>
-  <Step title="Submit a Render Job">
+ 
+### Submit a Render Job
     Now that your template is uploaded and ready, it's time to create a **render job**.
 
     The job defines:
@@ -192,8 +190,8 @@ You'll use:
 
       > You can get the list of editable layer names via the `layers` field when you fetch a template.
     </Accordion>
-  </Step>
-  <Step title="Checking Job Status (Optional)">
+  
+  ### Checking Job Status (Optional)
     If you prefer polling over webhooks, use:
 
     ```javascript
@@ -237,11 +235,4 @@ You'll use:
     > On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.
     >
     > [Learn how to prepare your archive correctly →](#preparing-your-template-for-upload)
-  </Step>
-</Steps>
-
-### Next Steps
-
-➡️ [Check Job Status](#checking-job-status-optional)\
-➡️ [Render Webhooks →](../jobs/webhooks)\
-➡️ [Common Errors →](../troubleshooting/errors)
+  
