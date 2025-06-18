@@ -52,11 +52,12 @@ icon: "fast-forward"
 
     This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
 
-<Note>**Important:**  
+
+**Important:**  
 Your archive must be structured correctly, or rendering may fail.  
 On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.  
+
 [Learn how to archive correctly →](/cloud/prerequisites#archiving-correctly)
-</Note>
 
 <CodeGroup>
     ```javascript Upload Template File
@@ -71,7 +72,7 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
     HTTP/1.1 200 OK
     ```
 
-    </CodeGroup>
+  </CodeGroup>
 
     Once your file is successfully uploaded, the template will transition from `awaiting_upload` to `uploaded`, and you can proceed to rendering.
 
@@ -119,32 +120,25 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
     ```
 </CodeGroup>  
 
-## Checking Job Status (Optional)
-    If you prefer polling over webhooks, use:
-<CodeGroup>
-    ```javascript
-    curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
-      -H "Authorization: Bearer YOUR_API_KEY"
-    ```
+## Checking Job Status
+    Simple request to get the jobs status:
+  
 
     The response includes `status`, `progress`, and error info if rendering failed.
 
     <Tabs>
-      <Tab title="Example: Minimal Job">
-        ```json
-        {
-          "template": {
-            "id": "TEMPLATE_ID",
-            "composition": "main"
-          }
-        }
-        ```
-
-        This will use default values and no dynamic asset injection.
-      </Tab>
-      <Tab title="Example: Webhook Response">
-        Your webhook endpoint will receive a payload like:
-
+      <Tab title="Job Status Request">
+      <CodeGroup>
+    ```javascript
+    curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+  </CodeGroup>
+        
+  </Tab>
+      <Tab title="Example: Job Status Response">
+        
+<CodeGroup>
         ```json
         {
           "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
@@ -154,9 +148,9 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
           }
         }
         ```
-</CodeGroup>
-        You can download the final rendered video via the `output.url`.
-      </Tab>
+  </CodeGroup>
+  You can download the final rendered video via the `output.url`.
+    </Tab>
     </Tabs>
   
   
