@@ -52,13 +52,13 @@ icon: "fast-forward"
 
     This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
 
-**Important:**  
+<Note>**Important:**  
 Your archive must be structured correctly, or rendering may fail.  
 On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.  
 [Learn how to archive correctly →](/cloud/prerequisites#archiving-correctly)
+</Note>
 
-    <CodeGroup>
-
+<CodeGroup>
     ```javascript Upload Template File
     curl --location --request PUT \
       'https://nx1-assets-eu.preloadnode.r2.cloudflarestorage.com/0XXXXXXXXXXXXXXXXXXXXXXXCH/templates/01JTGM9GDDSBEX9W0EJD7ZQDYY.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=02940851b43baa4d2c4948381b9d91cf%2F20250505%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250505T162559Z&X-Amz-Expires=3600&X-Amz-Signature=3ef9cd829dd24cc430d64b4b3f249a434d2eabfe2652462d883e047a205cb4fb&X-Amz-SignedHeaders=host&x-amz-checksum-crc32=AAAAAA%3D%3D&x-amz-meta-templateid=01JTGM9GCR71JV7EJYDF45QAFD&x-amz-sdk-checksum-algorithm=CRC32&x-id=PutObject' \
@@ -86,7 +86,7 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
     - Which assets (text, image, audio, etc.) to inject dynamically
 
     The rendering process will begin once the job is submitted and validated.
-
+<CodeGroup>
     ```javascript Create Job Request
     curl -X POST https://api.nexrender.com/api/v2/jobs \
       -H "Authorization: Bearer YOUR_API_KEY" \
@@ -117,10 +117,11 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
         "preview": false
       }'
     ```
-  
-  ### Checking Job Status (Optional)
-    If you prefer polling over webhooks, use:
+</CodeGroup>  
 
+## Checking Job Status (Optional)
+    If you prefer polling over webhooks, use:
+<CodeGroup>
     ```javascript
     curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
       -H "Authorization: Bearer YOUR_API_KEY"
@@ -153,7 +154,7 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
           }
         }
         ```
-
+</CodeGroup>
         You can download the final rendered video via the `output.url`.
       </Tab>
     </Tabs>
