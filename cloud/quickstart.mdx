@@ -75,58 +75,8 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
 
     Once your file is successfully uploaded, the template will transition from `awaiting_upload` to `uploaded`, and you can proceed to rendering.
 
-    <Note>
-      Warning Important Notes
-
-      - You must upload a file that matches the template `type` field — either `.zip`, `.aep`, or `.mogrt`.
-      - The `url` is a pre-authorized `PUT` endpoint, valid for a **single file upload**.
-      - **Do not** add authentication headers like `Authorization`.
-      - **Do not** change or append query parameters to the `uploadInfo.url`.
-      - You may omit the optional `x-amz-meta-custom` header unless explicitly required by your use case.
-    </Note>
-    
-    <Accordion title="Using Postman? Special Instructions">
-      If you prefer to upload your template file via Postman instead of `curl`, you must configure it carefully.
-
-      > **Important:** The `uploadInfo.url` is a presigned S3-compatible endpoint that is **header-sensitive**. Postman may add or omit headers that will cause the signature to become invalid and return a `403 Forbidden` or `SignatureDoesNotMatch`.
-
-      #### Correct Postman Setup
-
-      - **Method**: `PUT`
-      - **URL**: Use the full `uploadInfo.url` from the API response
-      - **Authorization**: Set to `No Auth`
-      - **Body**:
-        - Select `binary`
-        - Upload your `.aep`, `.zip`, or `.mogrt` file using the file selector
-
-      #### Required Headers
-
-      | Header            | Value                              | Notes                               |
-      | ----------------- | ---------------------------------- | ----------------------------------- |
-      | Content-Type      | application/octet-stream           | Must match `uploadInfo.fields`      |
-      | Host              | (auto-filled by Postman)           | Should not be removed               |
-      | Content-Length    | (auto-filled based on file size)   | Let Postman calculate automatically |
-      | Content-Encoding  | identity (or omit)                 | Only required if used when signed   |
-      | x-amz-meta-custom | JSON string (if present in fields) | Include only if returned by API     |
-
-      > Most headers like `Host` and `Content-Length` are filled automatically. Only modify them if needed. Make sure `Content-Type` is set explicitly.
-
-      #### Remove These Headers if Present
-
-      | Header        | Why It Must Be Removed                         |
-      | ------------- | ---------------------------------------------- |
-      | Authorization | Presigned URL already includes authentication  |
-      | Accept        | Alters canonical headers, breaks the signature |
-      | User-Agent    | Not part of signed headers                     |
-      | x-amz-\*      | Remove unless provided in `uploadInfo.fields`  |
-
-      ---
-
-      > ⚠️ **Heads up:** Most rendering errors come from incorrect `layerName`, `composition`, or missing assets.\
-      > Always double-check your template structure and fetch `/template/:id` to inspect available layers before submitting jobs.
-    </Accordion>
  
-### Submit a Render Job
+## Submit a Render Job
     Now that your template is uploaded and ready, it's time to create a **render job**.
 
     The job defines:
@@ -167,19 +117,6 @@ On macOS, compressing a folder via right-click often introduces an extra top-lev
         "preview": false
       }'
     ```
-
-    <Accordion title="Job Payload Breakdown">
-      | Field                  | Type    | Description                                                  |
-      | ---------------------- | ------- | ------------------------------------------------------------ |
-      | `template.id`          | string  | The ID of the uploaded template (from Step 1)                |
-      | `template.composition` | string  | The composition to render (e.g., `"main"` or `"intro"`)      |
-      | `assets`               | array   | List of dynamic layer overrides (text, images, audio, video) |
-      | `preview`              | boolean | If `true`, renders lower-res preview (default is `false`)    |
-      | `webhook.url`          | string  | URL to receive job status updates                            |
-      | `webhook.method`       | string  | HTTP method to use in the webhook (usually `"POST"`)         |
-
-      > You can get the list of editable layer names via the `layers` field when you fetch a template.
-    </Accordion>
   
   ### Checking Job Status (Optional)
     If you prefer polling over webhooks, use:
