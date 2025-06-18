@@ -3,8 +3,8 @@
   "theme": "mint",
   "logo": 
         {
-         "light":"/images/Group.png",
-         "dark":"/images/Group.png"
+         "light":"/Group.png",
+         "dark":"/Group.png"
         },
   "name": "Nexrender Documentation",
   "colors": {
