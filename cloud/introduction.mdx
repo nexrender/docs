@@ -6,7 +6,6 @@ sidebarTitle: "Introduction"
 
 Welcome to the official documentation for Nexrender Cloud – the hosted API-based solution for automating Adobe After Effects rendering at scale.
 
-
 ## Nexrender Basics
 ### What is Nexrender Cloud?
 Nexrender Cloud is a managed version of [Nexrender OSS](https://github.com/inlife/nexrender), designed for:
@@ -16,32 +15,75 @@ Nexrender Cloud is a managed version of [Nexrender OSS](https://github.com/inlif
 - Product teams that need frictionless video rendering and deep customization to power user experiences
 
 ### Key Features
-- Fully managed rendering infrastructure – No local setup, render farm, or plugins required
-- Scalable cloud backend – Automatically handles high-volume render spikes and concurrent job loads
+- Fully managed rendering infrastructure
+- Scalable cloud backend
 - Fast job submission via REST API
 - .aep, .zip, and .mogrt support
 - Template analytics and introspection
 - Dynamic asset injection – Replace text, images, videos, audio, and nested layers via declarative JSON
-- Upload and persist custom font files to ensure brand consistency across renders
+- Upload and persist custom font files
 - After Effects expressions support
 - Secure output delivery
 
-## Get Started
 
-<Card>
- Quickstart 
-</Card>
-[Quickstart →](../cloud/quickstart)
+## How to Get Started
+Quick references to help you render your first video in minutes.
 
-[Create a Template →](../cloud/templates/creating)
+<CardGroup cols={2}>
+  <Card
+    title="Prerequisites"
+    icon="checklist"
+    href="/cloud/prerequisites"
+  >
+    Step-by-step instructions to submit your first render job using curl or Postman
+  </Card>
+  <Card
+    title="Quickstart"
+    icon="bolt"
+    href="/cloud/quickstart"
+  >
+    Step-by-step instructions to submit your first render job using curl or Postman
+  </Card>
+  <Card
+    title="Template Setup"
+    icon="upload"
+    href="/cloud/templates/creating"
+  >
+    Learn how to structure your AE projects and upload them via the API
+  </Card>
+  <Card
+    title="Submit a Render Job"
+    icon="play"
+    href="/cloud/jobs/creating"
+  >
+    Create and trigger a render job using compositions and asset overrides
+  </Card>
+  <Card
+    title="Track Job Status"
+    icon="signal"
+    href="/cloud/jobs/status"
+  >
+    Poll for progress or receive updates with webhooks
+  </Card>
+</CardGroup>
 
-[Submit a Render Job →](../cloud/jobs/creating-jobs)
+---
 
-## Questions?
+## Advanced Customization
 
-If you're stuck, have ideas, or want to request features:
-
-- Join the community on [Discord](https://discord.gg/4jQ3VfE)
-- Email us: [support@nexrender.com](mailto:support@nexrender.com)
-
-Let's render at scale\!
+<CardGroup cols={2}>
+  <Card
+    title="Fonts and Brand Assets"
+    icon="font"
+    href="/cloud/fonts/upload"
+  >
+    Preload fonts to preserve brand identity across renders
+  </Card>
+  <Card
+    title="API Reference"
+    icon="terminal"
+    href="https://api.nexrender.com"
+  >
+    Interact with Nexrender Cloud programmatically using our REST API
+  </Card>
+</CardGroup>
