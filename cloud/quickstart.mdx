@@ -4,18 +4,6 @@ description: "A 5-minute guide to your first rendered video using Nexrender Clou
 keywords: "quickstart,nexrender api,render template,hello world video,curl,postman"
 icon: "fast-forward"
 
----
-
-This guide will walk you through your first render using Nexrender Cloud — from uploading a template to retrieving the final video.
-
-You'll use:
-
-- A `.mogrt` or `.aep` template
-- cURL or Postman to interact with the API
-- A single JSON job payload to customize your render
-
----
-
 ### Register Your Template
 
     <CodeGroup>
@@ -63,6 +51,11 @@ You'll use:
 
     This file must be a `.zip`, `.aep`, or `.mogrt`, depending on the `type` you specified when creating the template.
 
+    > ⚠️ **Important:**  
+> Your archive must be structured correctly, or rendering may fail.  
+> On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.  
+> [Learn how to archive correctly →](/cloud/prerequisites#archiving-correctly)
+
     <CodeGroup>
 
     ```javascript Upload Template File
@@ -90,7 +83,8 @@ You'll use:
       - **Do not** change or append query parameters to the `uploadInfo.url`.
       - You may omit the optional `x-amz-meta-custom` header unless explicitly required by your use case.
     </Note>
-    <Accordion title="Using Postman?">
+    
+    <Accordion title="Using Postman? Special Instructions">
       If you prefer to upload your template file via Postman instead of `curl`, you must configure it carefully.
 
       > **Important:** The `uploadInfo.url` is a presigned S3-compatible endpoint that is **header-sensitive**. Postman may add or omit headers that will cause the signature to become invalid and return a `403 Forbidden` or `SignatureDoesNotMatch`.
@@ -225,9 +219,5 @@ You'll use:
         You can download the final rendered video via the `output.url`.
       </Tab>
     </Tabs>
-    > ⚠️ **Important:**\
-    > Your archive must be structured correctly, or rendering may fail.\
-    > On macOS, compressing a folder via right-click often introduces an extra top-level directory, which breaks relative paths inside After Effects.
-    >
-    > [Learn how to prepare your archive correctly →](#preparing-your-template-for-upload)
+  
   
