@@ -17,18 +17,13 @@
             "group": "Essentials",
             "pages": [
               "cloud/introduction",
-              "cloud/quickstart",
-              "cloud/prerequisites"
-            ]
-          },
-           {
-            "group": "Prerequisites",
-            "pages": [
-              "cloud/prerequisites"         
+              "cloud/prerequisites",
+              "cloud/quickstart"
+              
             ]
           },
           {
-            "group": "Templates",
+            "group": "Managing Templates",
             "pages": [
               "cloud/templates/creating",
               "cloud/templates/deleting",
@@ -36,7 +31,7 @@
             ]
           },
           {
-            "group": "Jobs",
+            "group": "Managing Jobs",
             "pages": [
               "cloud/jobs/creating-jobs",
               "cloud/jobs/errors",
@@ -44,7 +39,7 @@
             ]
           },
           {
-            "group": "Fonts",
+            "group": "Managing Fonts",
             "pages": [
               "cloud/fonts/upload",
               "cloud/fonts/list",
