@@ -1,7 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "logo": "/images/Group.png",
+  "logo": 
+        {
+         "light":"/images/Group.png",
+         "dark":"/images/Group.png"
+        },
   "name": "Nexrender Documentation",
   "colors": {
     "primary": "#A06BC6",
