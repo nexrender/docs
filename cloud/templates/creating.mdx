@@ -17,7 +17,9 @@ description: "How to Register Templates"
     Poll for progress or receive updates with webhooks
   </Card>
 </CardGroup>
-## Nexrender Templates Basics 
+
+## Nexrender Templates Basics
+
 <AccordionGroup>
   <Accordion title="What is a Template in Nexrender Cloud?">
     In Nexrender Cloud, a **template** is an After Effects project file (or compatible format) uploaded to the cloud and registered with metadata, enabling dynamic rendering and automation at scale.
@@ -95,7 +97,9 @@ description: "How to Register Templates"
 </AccordionGroup>
 
 Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-template)
+
 ## How To Register a New Template
+
 <Steps>
   <Step title="Register a Template">
     Before uploading your file, you need to **create a template object** using the Nexrender Cloud API. This tells the system:
@@ -443,148 +447,5 @@ Ready to create your first template? [Jump to Step 1 →](#step-1-register-a-tem
 
 To manage fonts, visit: [Fonts →](../cloud/fonts/upload)
 
-## Best Practices for Template Management
-
-Creating reliable, scalable templates for Nexrender Cloud isn’t just about making them render — it’s about making them **repeatable**, **debuggable**, and **collaboration-friendly**.
-
-Here are the key principles we recommend.
-
-<AccordionGroup>
-  <Accordion title="Structure Your Template Archives Carefully">
-    For `.zip` templates:
-
-    - Keep the structure **flat** — no top-level folders
-    - Ensure all assets (images, audio, etc.) are inside the archive
-    - Place the `.aep` file at the root level of the archive
-
-    ```text
-    project.zip
-    ├── MyTemplate.aep
-    ├── assets/
-    │   ├── logo.png
-    │   └── audio.mp3
-    ```
-
-    > This avoids asset path issues and guarantees cross-platform portability.
-  </Accordion>
-  <Accordion title="Name Layers and Compositions Intelligently">
-    Clear naming of layers and compositions directly improves automation accuracy, debuggability, and developer handoff. Treat your `.aep` or `.mogrt` like a codebase — the structure matters.
-
-    #### Layer Naming Rules
-
-    | Layer Attribute       | Best Practice                                       |
-    | --------------------- | --------------------------------------------------- |
-    | `layerName`           | Use lowercase, short identifiers (`title`, `cta`)   |
-    | `property`            | Match AE's label exactly (`Source Text`, `Opacity`) |
-    | Avoid duplicates      | Ensure no two layers in the same comp share a name  |
-    | Use descriptive types | e.g. `product_image`, `voiceover`, `cta_background` |
-
-    > Nexrender requires exact `layerName` matches during job execution. Ambiguity or typos will cause silent render errors or broken outputs.
-
-    #### Composition Naming Rules
-
-    | Composition Type    | Suggested Naming                     |
-    | ------------------- | ------------------------------------ |
-    | Main output comp    | `main`, `final`, `output`, etc.      |
-    | Variants            | `main_1080p`, `main_instagram`, etc. |
-    | Reusable partials   | `cta_module`, `intro_block`, etc.    |
-    | Discarded or hidden | Prefix with `_` (e.g. `_scratchpad`) |
-
-    This ensures the `compositions` list returned by the API is clean, predictable, and renderable.
-  </Accordion>
-  <Accordion title="Nested Compositions: Best Practices">
-    Nested comps are a powerful After Effects feature, but you must use them carefully for cloud automation:
-
-    #### Use Nested Comps To:
-
-    - Group logic-heavy modules (e.g. transitions, intro bumpers)
-    - Encapsulate reusable visual elements (e.g. buttons, tickers)
-    - Reduce clutter in the main timeline
-
-    #### Avoid Nested Comps If:
-
-    - They rely on hard-coded paths or relative asset placement
-    - They contain dynamic layers you intend to override
-    - You have deeply nested timelines (\>3 levels) — this can increase AE processing time and complicate debugging
-
-    > Keep nested comps clean, flattened when possible, and **treat the top-level comp as your automation interface**.
-  </Accordion>
-  <Accordion title="Preview Rendering With Dummy Data">
-    Before deploying a template at scale:
-
-    - Create a test job with fake but realistic values
-    - Set `"preview": true` to get a fast low-res render
-    - Check for missing fonts, broken text, or incorrect layout sizing
-
-    This helps catch structural and naming bugs early, especially with deeply nested templates.
-  </Accordion>
-  <Accordion title="Think Like a Developer \+ Designer">
-    Design with **automation-first principles**:
-
-    - Expose only what needs to be dynamic
-    - Use naming conventions for predictability
-    - Keep timelines shallow, modular, and reusable
-    - Organize assets logically inside the project and `.zip`
-
-    This makes your After Effects templates act like **parameterized functions**, not fragile, one-off assets.
-  </Accordion>
-  <Accordion title="Expose Only What You Need (Especially in `.mogrt`)">
-    If using `.mogrt`, keep the Essential Graphics panel **lean and intentional**:
-
-    - Don’t expose unused controls
-    - Rename each property for clarity
-    - Avoid overly nested structures
-  </Accordion>
-  <Accordion title="Reuse Templates with Job-Level Overrides">
-    Instead of creating dozens of near-identical templates:
-
-    - Design **modular templates** that accept asset input
-    - Use job payloads to swap:
-      - Text
-      - Images
-      - Colors
-      - Voiceover / audio
-      - Fonts
-
-    > One clean template can power hundreds of job variants via automation.
-  </Accordion>
-  <Accordion title="Clean Up Before Export">
-    Before finalizing your `.aep` or `.mogrt`:
-
-    - Remove unused compositions and precomps
-    - Purge unreferenced assets (File → Dependencies → Remove Unused Footage)
-    - Reduce media to only what is needed
-    - Name all dynamic layers clearly
-    - Preview render in After Effects to catch broken expressions or fonts
-  </Accordion>
-  <Accordion title="Version Your Templates">
-    Use `displayName` consistently across template versions:
-
-    | Display Name            | Notes                       |
-    | ----------------------- | --------------------------- |
-    | `product-demo-v1`       | Initial rollout             |
-    | `product-demo-v2-fixed` | Bugfix for font issues      |
-    | `product-demo-v3`       | Updated to new brand colors |
-
-    This helps your team stay organized and avoid breaking changes.
-  </Accordion>
-  <Accordion title="Validate Before Launching Jobs at Scale">
-    Before integrating a template into production automation:
-
-    - Manually render with test data
-    - Validate composition names
-    - Validate all layer overrides using `GET /template/:id`
-    - Try preview rendering (`preview: true`) in jobs if needed
-  </Accordion>
-</AccordionGroup>
-
-Following these practices helps ensure your renders are:
-
-- **Repeatable**
-- **Scalable**
-- **Debuggable**
-- **Designer- and dev-friendly**
-
----
 
 Next: Learn how to [Submit Render Jobs →](../cloud/jobs/creating-jobs)
