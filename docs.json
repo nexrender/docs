@@ -30,15 +30,19 @@
             ]
           },
           {
-            "group": "Templates",
+            "group": "Managing Templates",
             "pages": [
-              "cloud/templates/creating",
-              "cloud/templates/deleting",
-              "cloud/templates/inspecting"
+              "cloud/templates/basics",
+              "cloud/templates/best_practice",
+              "cloud/templates/formats",
+              "cloud/templates/register_template",
+              "cloud/templates/upload_files",
+              "cloud/templates/inspecting",
+              "cloud/templates/deleting"
             ]
           },
           {
-            "group": "Jobs",
+            "group": "Rendering Jobs",
             "pages": [
               "cloud/jobs/creating-jobs",
               "cloud/jobs/errors",
@@ -46,7 +50,7 @@
             ]
           },
           {
-            "group": "Fonts",
+            "group": "Fonts Management",
             "pages": [
               "cloud/fonts/upload",
               "cloud/fonts/list",
