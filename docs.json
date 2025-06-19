@@ -9,7 +9,7 @@
     "dark": "#A06BC6"
   },
 
-  "favicon": "/favicon.svg",
+  "favicon": "/logo/favicon.svg",
 
   "icons": {
     "library": "lucide"
