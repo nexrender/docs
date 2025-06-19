@@ -47,7 +47,7 @@
               "cloud/jobs/initiating_renders",
               "cloud/jobs/tracking_renders",
               "cloud/jobs/handling_errors",
-              "cloud/jobs/rendering_best_practices"
+              "cloud/jobs/rendering_best_practice"
             ]
           },
           {
