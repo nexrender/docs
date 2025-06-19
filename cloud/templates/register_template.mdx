@@ -85,6 +85,38 @@ curl -X POST https://api.nexrender.com/api/v2/templates \
   This step returns an uploadInfo object that contains a pre-signed upload URL for securely uploading your file in the next step.
 </Note>
 
+### Required Headers
+
+The following headers must be present if included in the `uploadInfo.fields` object:
+
+| Header            | Description                                    |
+| ----------------- | ---------------------------------------------- |
+| Content-Type      | Usually `application/octet-stream`             |
+| x-amz-meta-custom | May be included for tracking template ID       |
+| Content-Length    | Set automatically by `curl` or Postman         |
+| Content-Encoding  | Usually not required; use `identity` if needed |
+
+> Do not change the upload URL, append query params, or add any extra headers.
+
+### Postman Configuration (If Not Using CURL)
+
+To upload via Postman:
+
+- **Method**: `PUT`
+- **URL**: Use the full `uploadInfo.url` from the API
+- **Auth**: No Auth
+- **Body**: Set to `binary`, and select your file
+- **Header**: Manually set `Content-Type` to `application/octet-stream`
+
+Make sure Postman does **not** automatically add:
+
+- `Authorization`
+- `Accept`
+- `User-Agent`
+- Any `x-amz-*` headers not explicitly required
+
+These can invalidate the signature and result in a `403 SignatureDoesNotMatch` error.
+
 ## What Happens Behind the Scenes?
 
 - The backend **reserves storage** for your file
