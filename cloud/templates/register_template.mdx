@@ -1,5 +1,107 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "Template Registration"
+icon: "square-plus"
 ---
 
+Before uploading your project files, you need to **create a template object** using the Nexrender Cloud API. This tells the system:
+
+- What type of template you're going to upload (`aep`, `zip`, or `mogrt`)
+- How to label this template for your internal reference
+
+You can register new AE templates via the [POST /templates](/api#post-/templates) API endpoint.
+
+<CodeGroup>
+
+```bash API Endpoint
+POST https://api.nexrender.com/api/v2/templates
+```
+
+
+```json Request Payload
+{
+  "type": "zip",
+  "displayName": "Promo 2024 Campaign"
+}
+```
+
+</CodeGroup>
+
+**Fields Breakdown**
+
+| Field         | Type   | Required | Description                          |
+| ------------- | ------ | -------- | ------------------------------------ |
+| `type`        | string | ✅        | One of: `aep`, `zip`, or `mogrt`     |
+| `displayName` | string | ✅        | Human-readable name for the template |
+
+> Choose `type: "zip"` if your template is a `.aep` file bundled with assets and fonts.\
+> Use `type: "mogrt"` only for raw `.mogrt` files exported from After Effects.
+
+---
+
+## CURL requests
+
+<CodeGroup>
+
+```bash Register Template Request
+curl -X POST https://api.nexrender.com/api/v2/templates \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "zip",
+    "displayName": "Promo 2024 Campaign"
+  }'
+```
+
+
+```javascript Example Success Response
+{
+  "template": {
+    "id": "01JT2M9GCR712V7EJYDF45QAFD",
+    "type": "zip",
+    "displayName": "Promo 2024 Campaign",
+    "status": "awaiting_upload",
+    "createdAt": "2025-05-05T16:25:59.961Z",
+    "updatedAt": "2025-05-05T16:25:59.961Z",
+    "compositions": [],
+    "layers": [],
+    "mogrt": {}
+  },
+  "uploadInfo": {
+    "url": "https://nx1-assets-eu.r2.cloudflarestorage.com/...signed_url...",
+    "method": "PUT",
+    "fields": {
+      "Content-Type": "application/octet-stream",
+      "x-amz-meta-custom": "{\"templateId\":\"01JT2M9GCR712V7EJYDF45QAFD\"}"
+    },
+    "expiresIn": 3600,
+    "key": "01JTGK.../templates/Promo2024.zip"
+  }
+}
+```
+
+</CodeGroup>
+
+<Note>
+  This step returns an uploadInfo object that contains a pre-signed upload URL for securely uploading your file in the next step.
+</Note>
+
+## What Happens Behind the Scenes?
+
+- The backend **reserves storage** for your file
+- Generates a **secure upload URL** valid for ~1 hour
+- Waits for the actual file to be uploaded (in the next step)
+- The template status is initially set to `awaiting_upload`
+
+You **must upload the correct file** matching the declared `type` — otherwise the introspection process will fail.
+
+## Common Mistakes to Avoid
+
+| Mistake                                                | Result                                                      |
+| ------------------------------------------------------ | ----------------------------------------------------------- |
+| Declaring `type: zip` but uploading `.aep` or `.mogrt` | The render job will fail or silently break asset resolution |
+| Uploading to the wrong URL                             | The template will remain in `awaiting_upload` status        |
+| Forgetting to use the pre-signed URL                   | You'll get a 403 Forbidden error or SignatureDoesNotMatch   |
+
+Once the upload is complete, the status will transition to `uploaded`, and Nexrender Cloud will extract all available compositions and dynamic layers.
+
+---

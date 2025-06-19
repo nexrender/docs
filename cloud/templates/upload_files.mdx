@@ -1,5 +1,118 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: "Uploading Template Files"
+description: "Description of your new file."
+icon: "upload"
 ---
 
+## Upload the After Effects Projects Files
+
+Once your template is registered and you’ve received the `uploadInfo.url`, the next step is to upload the actual After Effects file.
+
+This file must match the format you declared when creating the template: either `.aep`, `.zip`, or `.mogrt`.
+
+You can programmatically get a direct download link for a template file via the [GET /get-download-url-for-template-file](/api#get-/get-download-url-for-template-file) endpoint.
+
+### Where to Upload
+
+The `uploadInfo.url` returned in the response is a **presigned URL** — a time-limited link that allows you to upload the file without any additional authentication.
+
+The method is always `PUT`, and you must include the correct headers exactly as provided in the `uploadInfo.fields`.
+
+#### API Reference
+
+[POST /templates](/api#post-/templates)
+
+#### Example `curl` Upload Request
+
+You can replace `.zip` with `.aep` or `.mogrt` depending on your workflow.
+
+<CodeGroup>
+
+```bash Template File Upload Request
+curl --location --request PUT \
+  'https://your-upload-url-from-uploadInfo.url' \
+  --header 'Content-Type: application/octet-stream' \
+  --data-binary '@/path/to/your/project.zip'
+```
+
+
+```http Example Success Response
+HTTP/1.1 200 OK
+```
+
+</CodeGroup>
+
+#### Required Headers
+
+The following headers must be present if included in the `uploadInfo.fields` object:
+
+| Header            | Description                                    |
+| ----------------- | ---------------------------------------------- |
+| Content-Type      | Usually `application/octet-stream`             |
+| x-amz-meta-custom | May be included for tracking template ID       |
+| Content-Length    | Set automatically by `curl` or Postman         |
+| Content-Encoding  | Usually not required; use `identity` if needed |
+
+> Do not change the upload URL, append query params, or add any extra headers.
+
+#### Postman Configuration (If Not Using curl)
+
+To upload via Postman:
+
+- **Method**: `PUT`
+- **URL**: Use the full `uploadInfo.url` from the API
+- **Auth**: No Auth
+- **Body**: Set to `binary`, and select your file
+- **Header**: Manually set `Content-Type` to `application/octet-stream`
+
+Make sure Postman does **not** automatically add:
+
+- `Authorization`
+- `Accept`
+- `User-Agent`
+- Any `x-amz-*` headers not explicitly required
+
+These can invalidate the signature and result in a `403 SignatureDoesNotMatch` error.
+
+#### Important: Upload the Correct File Type
+
+The file you upload must match the `type` field you declared during template creation:
+
+| Declared `type` | Expected File Upload |
+| --------------- | -------------------- |
+| `zip`           | `project.zip`        |
+| `aep`           | `project.aep`        |
+| `mogrt`         | `project.mogrt`      |
+
+If you upload the wrong file type, the template introspection will fail, and you won’t be able to render from it.
+
+### Confirming Template Upload Status
+
+Once the upload completes, the template's `status` will change from `awaiting_upload` to `uploaded`. At this point, Nexrender Cloud will:
+
+- Extract all available **compositions**
+- Parse editable **layers** for use in jobs
+- Make the template immediately available for rendering
+
+You can fetch the template object via:
+
+<Codegroup>
+  ```bash
+  curl https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
+    -H "Authorization: Bearer YOUR_API_KEY"
+  ```
+
+  This will return metadata including compositions and layers.
+</Codegroup>
+
+## Confirming Template Upload Status
+
+Once your template file is uploaded, Nexrender Cloud processes it in the background.
+
+You must confirm that the template has transitioned from:
+
+```
+awaiting_upload → uploaded
+```
+
+Only then will you be able to submit render jobs based on it.
