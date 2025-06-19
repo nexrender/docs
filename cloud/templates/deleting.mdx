@@ -2,6 +2,7 @@
 title: "Deleting Templates"
 description: "How to delete templates from Nexrender Cloud and what happens after."
 keywords: "nexrender templates,delete template,remove project,template cleanup"
+icon: "delete"
 ---
 
 Nexrender Cloud allows you to delete templates that are no longer needed. This is useful for:
@@ -10,18 +11,17 @@ Nexrender Cloud allows you to delete templates that are no longer needed. This i
 - Cleaning up deprecated campaign templates
 - Managing storage usage in your account
 
-<AccordionGroup>
-  <Accordion title="When Should You Delete a Template?">
-    You might want to delete a template when:
 
+## When Should You Delete a Template?
+  You might want to delete a template when:
     - It has been replaced by a newer version
     - It was used for testing and is no longer relevant
     - You’re cleaning up automation clutter in your account
 
     > Deleting a template **does not affect** existing jobs that already used it. Those jobs remain in the system and their output remains accessible.
-  </Accordion>
-  <Accordion title="Delete via API">
-    To delete a template, call:
+  
+## Deleting  via API
+  To delete a template, call:
 
     ```
     DELETE /api/v2/templates/:id
@@ -42,9 +42,9 @@ Nexrender Cloud allows you to delete templates that are no longer needed. This i
     }
     ```
 
-    </CodeGroup>
-  </Accordion>
-  <Accordion title="What Happens After Deletion?">
+   </CodeGroup>
+  
+## What Happens After Deletion?
     | Component         | Status                                             |
     | ----------------- | -------------------------------------------------- |
     | Template metadata | Permanently deleted from Nexrender Cloud           |
@@ -53,18 +53,15 @@ Nexrender Cloud allows you to delete templates that are no longer needed. This i
     | Rendering         | New jobs using this template will fail with 404    |
 
     If you attempt to reference a deleted template in a job request, you’ll receive a `404 Template Not Found`.
-  </Accordion>
-  <Accordion title="Edge Cases & Notes">
+  
+## Edge Cases & Notes
     - You **cannot delete** a template while it's actively rendering.
     - If a template is in `awaiting_upload`, you can delete it immediately.
     - Deletion is **immediate and irreversible** — no soft-delete or recovery options.
     - You can safely delete templates that had webhook or font dependencies — those are not linked permanently.
-  </Accordion>
-  <Accordion title="Suggested Practice">
+  
+## Suggested Practice
     To keep things clean:
-
     - Delete unused templates after testing flows
     - Use versioned `displayName`s so you know what’s safe to remove
     - Add deletion as part of your CI teardown if you're creating templates dynamically
-  </Accordion>
-</AccordionGroup>
