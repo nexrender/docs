@@ -9,7 +9,7 @@
     "dark": "#A06BC6"
   },
 
-  "favicon": "/logo/favicon.svg",
+  "favicon": "/favicon.svg",
 
   "icons": {
     "library": "lucide"
@@ -76,7 +76,7 @@
 
   "logo": {
     "light": "/logo/textlogo.svg",
-    "dark": "/logo/darklogo.svg"
+    "dark": "/logo/textlogo.svg"
   },
 
   "navbar": {
