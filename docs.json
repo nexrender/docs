@@ -43,10 +43,9 @@
           {
             "group": "Rendering Jobs",
             "pages": [
-              "cloud/jobs/rendring_basics",
+              "cloud/jobs/rendering_basics",
               "cloud/jobs/initiating_renders",
               "cloud/jobs/tracking_renders",
-              "cloud/jobs/tracking",
               "cloud/jobs/handling_errors",
               "cloud/jobs/rendering_best_practices"
             ]
