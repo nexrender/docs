@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1176px" height="310px" viewBox="0 0 1250 350" version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>nexrender logo scaled down 50%</title>
+  <defs>
+    <circle id="path-1" cx="128" cy="128" r="128"></circle>
+    <linearGradient id="linearGradient-3" x1="96.8540564%" y1="0%" x2="24.1540439%" y2="90.8086203%">
+      <stop stop-color="#D3C1DE" offset="0%"/>
+      <stop stop-color="#BDA6CC" offset="100%"/>
+    </linearGradient>
+  </defs>
+
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g transform="translate(38, 10)">
+      <g>
+        <mask id="mask-2" fill="white">
+          <use href="#path-1"/>
+        </mask>
+        <use fill="#EEEEEE" href="#path-1"/>
+        <rect fill="url(#linearGradient-3)" mask="url(#mask-2)"
+              transform="translate(185.2719, 186.5429) rotate(-44) translate(-185.2719, -186.5429)"
+              x="101.771889" y="103.042893" width="167" height="167"/>
+        <rect fill="#A06BC6" x="66" y="66" width="125" height="125" rx="10"/>
+      </g>
+
+      <text x="270" y="170"
+            font-family="Averta-Semibold, Averta, system-ui, sans-serif"
+            font-size="160"
+            font-weight="500"
+            fill="#222222"
+            letter-spacing="2">
+        nexrender
+      </text>
+    </g>
+  </g>
+</svg>
