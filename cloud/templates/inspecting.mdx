@@ -2,12 +2,12 @@
 title: "Inspecting & Managing Templates"
 description: "How to list, fetch, update, and organize templates in Nexrender Cloud."
 keywords: "list templates,inspect template,update display name,template tags,template retention"
+icon: "zoom-in"
 ---
 
 This guide explains how to **list**, **fetch**, **update**, and (eventually) **organize** your After Effects templates in Nexrender Cloud.
 
-<AccordionGroup>
-  <Accordion title="List All Templates">
+## List All Templates
     To retrieve a list of all templates in your Nexrender account:
 
     <CodeGroup>
@@ -40,8 +40,8 @@ This guide explains how to **list**, **fetch**, **update**, and (eventually) **o
     </CodeGroup>
 
     This returns an array of template objects, each with fields like `id`, `displayName`, `status`, `type`, `createdAt`, and `updatedAt`.
-  </Accordion>
-  <Accordion title="Inspect a Specific Template">
+
+## Inspect a Specific Template
     To inspect a single template and retrieve its metadata, use:
 
     ```bash
@@ -59,7 +59,7 @@ This guide explains how to **list**, **fetch**, **update**, and (eventually) **o
 
     ---
 
-    ## Update Template Metadata (Display Name)
+  ## Update Template Metadata (Display Name)
 
     To rename a template after creation:
 
@@ -85,17 +85,9 @@ This guide explains how to **list**, **fetch**, **update**, and (eventually) **o
     </CodeGroup>
 
     > Updating metadata is useful for keeping things clean in environments with many concurrent templates.
-  </Accordion>
-  <Accordion title="Future: Tagging Templates for Organization">
-    Tagging support is not yet available, but we recommend naming templates using prefixes or categories to simulate tagging:
-
-    - `promo-summer-2024`
-    - `test-case-audio-sync`
-    - `internal-pitch-deck`
-
-    When native tags are supported, you’ll be able to filter and organize templates in a more structured way.
-  </Accordion>
-  <Accordion title="Template Storage & Retention">
+  
+ 
+  ## Template Storage & Retention"
     Templates are currently persisted indefinitely unless deleted manually.
 
     In future versions of Nexrender Cloud, you may be able to:
@@ -108,5 +100,3 @@ This guide explains how to **list**, **fetch**, **update**, and (eventually) **o
 
     - Use `GET /templates` to review active templates
     - Regularly delete old or unused templates after campaigns
-  </Accordion>
-</AccordionGroup>
