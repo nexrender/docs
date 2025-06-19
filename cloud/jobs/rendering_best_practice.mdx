@@ -1,0 +1,64 @@
+---
+title: 'New file'
+description: 'Description of your new file.'
+icon: "boxes"
+---
+
+## Best Practices for Stable Job Execution
+
+Building jobs at scale requires defensive design. Here's what we recommend:
+
+### Always Provide Fallbacks
+ Your templates should gracefully handle empty or missing values.
+
+    | Layer Type | Best Practice                               |
+    | ---------- | ------------------------------------------- |
+    | Text       | Set a default like "(Missing Title)"        |
+    | Image      | Use a neutral brand logo or placeholder     |
+    | Audio      | Default to silent.mp3 or fallback narration |
+
+    In After Effects, use `if` expressions or fallback layers hidden by default.
+
+### Implement Retry Logic
+  Sometimes jobs can fail due to:
+
+    - Transient render errors
+    - Temporary asset access issues
+    - Internal AE limitations
+
+  You can retry a failed job with the exact same payload, or:
+
+    - Build retries into your webhook processor
+    - Query job status with `GET /jobs/:id` and retry failed states
+    - Use a queue system that retries `status = failed`
+
+### Validate Assets Before Submit
+  Before rendering, always validate:
+
+    - `composition` name exists (from template introspection)
+    - `layerName` matches exactly
+    - URLs for assets return a `200 OK`
+    - Font dependencies have been preloaded
+
+### Use Webhooks to Avoid Polling
+  Set a `webhook.url` so your system is notified when jobs complete.
+
+    ```json
+    "webhook": {
+      "url": "https://yourdomain.com/render-done",
+      "method": "POST"
+    }
+    ```
+
+  This saves on polling requests and scales better across high volume workflows.
+
+  
+## Security Note
+
+For cloud execution, some postrender modules require credentials (AWS/GCP keys). You must securely manage these — avoid committing them to version control or exposing them in public requests.
+
+If you need native integration with secure uploads, consider using Nexrender Cloud's built-in **webhooks \+ presigned URLs** instead.
+
+<Note>
+  For detailed examples of postrender usage, see our Advanced Recipes and OSS repo [nexrender/jobs](https://github.com/inlife/nexrender#job-format).
+</Note>

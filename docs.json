@@ -34,7 +34,6 @@
             "pages": [
               "cloud/templates/basics",
               "cloud/templates/best_practice",
-              "cloud/templates/formats",
               "cloud/templates/register_template",
               "cloud/templates/upload_files",
               "cloud/templates/inspecting",
@@ -44,9 +43,12 @@
           {
             "group": "Rendering Jobs",
             "pages": [
-              "cloud/jobs/creating-jobs",
-              "cloud/jobs/errors",
-              "cloud/jobs/tracking"
+              "cloud/jobs/rendring_basics",
+              "cloud/jobs/initiating_renders",
+              "cloud/jobs/tracking_renders",
+              "cloud/jobs/tracking",
+              "cloud/jobs/handling_errors",
+              "cloud/jobs/rendering_best_practices"
             ]
           },
           {

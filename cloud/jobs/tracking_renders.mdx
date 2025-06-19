@@ -1,7 +1,7 @@
 ---
 title: "Tracking Render Jobs"
-description: "Learn how to check job status, set up webhooks, and handle job completions."
-keywords: "nexrender webhooks,job polling,render complete,job status,video automation events"
+description: "Description of your new file."
+icon: "inspection-panel"
 ---
 
 This guide explains how to track the status of a render job, either by polling the API or configuring a webhook for real-time delivery.
@@ -17,7 +17,6 @@ curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-
 ```json Example Response
 {
   "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
@@ -28,7 +27,6 @@ curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
   }
 }
 ```
-
 </CodeGroup>
 
 ## Job Status Lifecycle
@@ -64,8 +62,6 @@ When the job completes (success or failure), Nexrender Cloud will `POST` to the 
   }
 }
 ```
-
-
 ```json Example Webhook Payload (Failure)
 {
   "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
@@ -76,14 +72,11 @@ When the job completes (success or failure), Nexrender Cloud will `POST` to the 
   }
 }
 ```
-
 </CodeGroup>
 
 <Note>
   Make sure your webhook endpoint is idempotent and returns a 200 OK response.
 </Note>
-
----
 
 ## Webhook Retry Logic
 
@@ -95,22 +88,12 @@ To maximize reliability:
 - Avoid timeouts — webhook POSTs should complete in under 2 seconds
 - Log and audit webhook deliveries
 
----
-
 ## Test with Postman
 
 Use the `Mock Server` feature to test payload reception or replay.
-
----
 
 ## Summary
 
 - Use `GET /jobs/:id` to poll job state manually
 - Use `webhook.url` to receive async status notifications
 - Ensure your webhook endpoints are reliable and secure
-
----
-
-Next:
-➡️ [Handle Errors →](../jobs/errors)
-➡️ [Submit a Render Job →](../jobs/creating-jobs)

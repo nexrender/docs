@@ -1,25 +1,10 @@
 ---
-title: "Handling Render Errors"
-description: "How to detect, debug, and resolve failed jobs in Nexrender Cloud."
-keywords: "nexrender errors,debug render,failed job,status=error,layerName not found"
+title: 'Handling Rendering Errors'
+description: 'Description of your new file.'
+icon: "ticket-x"
 ---
-
 Even the best-built templates can fail — especially when working with automation, dynamic data, and After Effects. This guide explains how to detect, interpret, and fix common job errors in Nexrender Cloud.
 
-<CardGroup cols={3}>
-  <Card title="Quickstart Guide" icon="bolt" href="/cloud/quickstart">
-    Step-by-step instructions to submit your first render job using curl or Postman
-  </Card>
-  <Card title="Create and Upload Templates" icon="upload" href="/cloud/templates/creating">
-    Learn how to structure your AE projects and upload them via the API
-  </Card>
-  <Card title="Submit a Render Job" icon="play" href="/cloud/jobs/creating">
-    Create and trigger a render job using compositions and asset overrides
-  </Card>
-  <Card title="Track Job Status" icon="signal" href="/cloud/jobs/status">
-    Poll for progress or receive updates with webhooks
-  </Card>
-</CardGroup>
 
 ## Where Errors Appear
 
@@ -45,8 +30,7 @@ You can detect this in two ways:
       }
     }
     ```
-  </Accordion>
-  <Accordion title="Manual Polling">
+## Manual Polling
     Use the jobs API:
 
     ```bash
@@ -54,9 +38,8 @@ You can detect this in two ways:
       -H "Authorization: Bearer YOUR_API_KEY"
     ```
     Check the returned `status` and `error` fields.
-  </Accordion>
 
-  <Accordion title="Common Causes of Render Failures">
+## Common Causes of Render Failures
     | Cause                   | Error Message Example                        | How to Fix                                   |
     | ----------------------- | -------------------------------------------- | -------------------------------------------- |
     | **`Invalid layerName`** | `Layer 'subtitle' not found`                 | Check actual layers via `GET /templates/:id` |
@@ -67,12 +50,10 @@ You can detect this in two ways:
     | **Expression failure**  | `After Effects expression error at line X`   | Sanitize all dynamic input                   |
 
     > Tip: Most errors are caused by bad data or structural mismatches between template and job payload.
-  </Accordion>
-</AccordionGroup>
+
 
 ## Debugging Strategy
-<Steps>
-  <Step title="1.Inspect the Template">
+### Inspect the Template
     Use the `GET /templates/:id` endpoint to see:
 
     - Available compositions
@@ -83,9 +64,8 @@ You can detect this in two ways:
     curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
       -H "Authorization: Bearer YOUR_API_KEY"
     ```
-  </Step>
 
-  <Step title="2.Use Preview Mode">
+### Use Preview Mode
     Render the job with `"preview": true`:
 
     ```json
@@ -94,11 +74,10 @@ You can detect this in two ways:
       "preview": true
     }
     ```
+This saves time and cost — and reveals most issues (missing layers, layout bugs, expression crashes) before final rendering.
+  
 
-    This saves time and cost — and reveals most issues (missing layers, layout bugs, expression crashes) before final rendering.
-  </Step>
-
-  <Step title="3. Test Job Payloads with Defaults">
+### Test Job Payloads with Defaults
     Temporarily reduce your job to a minimal payload with:
 
     - Static text only
@@ -106,8 +85,6 @@ You can detect this in two ways:
     - Known good composition
 
     Once that succeeds, reintroduce dynamic elements incrementally.
-  </Step>
-</Steps>
 
 ## Best Practices for Stability
 
@@ -118,8 +95,3 @@ You can detect this in two ways:
 - Wrap asset layers with fallback expressions inside AE
 - Enable webhook retries on your server (at least 3 attempts)
 
-## Related Links
-
-- [Creating Render Jobs →](../jobs/creating-jobs)
-- [Inspecting Templates →](../templates/inspecting)
-- [Webhooks & Notifications →](../jobs/tracking)
