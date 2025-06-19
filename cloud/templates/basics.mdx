@@ -1,5 +1,67 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Templates Basics'
+icon: "clapperboard"
 ---
 
+
+## What is a Template in Nexrender Cloud?
+    In Nexrender Cloud, a **template** is an After Effects project file (or compatible format) uploaded to the cloud and registered with metadata, enabling dynamic rendering and automation at scale.
+
+    Templates are the foundation for all render jobs. Once uploaded and processed, Nexrender Cloud can introspect the file to extract:
+
+    - **Available compositions** (e.g., `main`, `intro`, `outro`)
+    - **Editable layers** (text, images, audio, video)
+    - And render any of them dynamically based on incoming asset data.
+
+## Supported Template Formats
+    | Format   | Description                                                      |
+    | -------- | ---------------------------------------------------------------- |
+    | `.aep`   | Native Adobe After Effects project file                          |
+    | `.zip`   | A `.aep` file bundled with its assets (images, videos, fonts)    |
+    | `.mogrt` | Motion Graphics Template exported from AE, for use in Adobe apps |
+
+    We recommend `.zip` as the **most flexible and robust** format for complex workflows. It allows bundling everything together in one archive: project, assets, fonts, and expressions.
+
+## Why Use `.zip` Instead of Raw `.aep`?
+    - **Portable**: All dependencies are included in the archive
+    - **Stable**: Avoids asset path resolution issues on render nodes
+    - **Versionable**: Can be zipped and reused reliably in CI/CD pipelines
+    - **Flexible**: Supports preloading fonts, media, nested comps, scripts
+
+    > For `.mogrt` templates, you can upload them directly without zipping.
+
+[Full Manual On Preparing Project Archives →](cloud/prerequisites#archiving-your-project-correctly)    
+
+## Why Use `.mogrt` Templates with Nexrender Cloud?
+    `.mogrt` (Motion Graphics Template) files are a streamlined way to automate rich, branded animations with Nexrender Cloud — without requiring a complex `.aep` project structure.
+
+    Created directly from Adobe After Effects via the **Essential Graphics panel**, these templates allow designers to expose just the fields needed for dynamic automation: text, images, colors, sliders, audio, and more.
+
+## Benefits of `.mogrt` with Nexrender
+    | Feature                        | Why It Matters in Nexrender Automation                                   |
+    | ------------------------------ | ------------------------------------------------------------------------ |
+    | **Simplified integration**     | Upload directly via API — no need to bundle assets, no zip required      |
+    | **Designer-controlled inputs** | Fields defined in AE become JSON-editable params in Nexrender jobs       |
+    | **Low-maintenance**            | No manual layer mapping or fragile expression parsing                    |
+    | **Fast introspection**         | Nexrender automatically extracts editable parameters on upload           |
+    | **Lightweight & portable**     | Ideal for workflows requiring rapid rendering and high volume throughput |
+
+
+## Typical Template Lifecycle
+    1. **Create** the template (`POST /api/v2/templates`) with a `type` and `displayName`
+    2. **Upload** the actual file to `uploadInfo.url` (no auth headers\!)
+    3. **Confirm** the status is `uploaded`
+    4. **Inspect** the template to see available `compositions` and `layers`
+    5. **Submit** render jobs that reference the template
+
+## How Nexrender Uses Templates Internally
+    Once a template is uploaded via the API, the backend performs **introspection**:
+
+    - Validates the file type
+    - Extracts a list of compositions and editable layer properties
+    - Stores metadata under a unique template ID
+    - Returns a presigned `uploadInfo.url` (valid for 1 hour) to upload the actual file
+
+    Once the file is uploaded, the status changes to `uploaded`, and you can start submitting render jobs that reference this template by ID.
+ 
+ 
