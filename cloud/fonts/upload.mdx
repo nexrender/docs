@@ -17,44 +17,6 @@ After Effects needs fonts installed on the rendering system. If your project ref
 
 Only `.ttf` (TrueType Font) files are currently supported.
 
-## Uploading via API
-
-Use the `POST /api/v2/fonts` endpoint with `multipart/form-data`:
-
-<CodeGroup>
-
-```bash Upload Font
-  curl -X POST https://api.nexrender.com/api/v2/fonts \
-    -H "Authorization: Bearer YOUR_API_KEY" \
-    -F "file=@/Users/you/fonts/Roboto-Bold.ttf"
-```
-
-
-```json Example Response
-{
-  "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
-  "fileName": "Roboto-Bold.ttf",
-  "status": "available",
-  "uploadedAt": "2025-05-14T11:00:00Z"
-}
-```
-
-</CodeGroup>
-
-> The `id` is optional — templates locate fonts by file name.
-> See full details in the [API Reference →](/api-reference/upload-new-font)
-
-## Upload via Postman
-
-1. Set method to `POST`
-2. Enter URL: `https://api.nexrender.com/api/v2/fonts`
-3. Set `Authorization` header with your API key
-4. Select **Body → form-data**:
-   - Key: `file` (type = File)
-   - Value: your `.ttf` file
-
-Click **Send**, and you should see a `200 OK` with font metadata.
-
 ## Font Matching Logic
 
 When your AE project uses a font like `Roboto-Bold.ttf`, Nexrender Cloud will:
@@ -72,3 +34,5 @@ You don't need to reference fonts explicitly in the render job — just make sur
 - Remove unused font weights/styles before upload
 - Name fonts clearly (`OpenSans-Bold.ttf`, not `font1.ttf`)
 - Keep naming consistent across AE and upload
+
+## API Reference
