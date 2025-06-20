@@ -52,6 +52,10 @@
           },
           {
             "group": "Fonts Management",
+             "openapi": {
+            "source": "/openapi.json",
+            "directory": "/api-reference/list-all-fonts-for-team"
+          },
             "pages": [
               "cloud/fonts/upload",
               "cloud/fonts/list",
