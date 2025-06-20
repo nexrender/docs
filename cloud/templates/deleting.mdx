@@ -3,6 +3,7 @@ title: "Deleting Templates"
 description: "How to delete templates from Nexrender Cloud and what happens after."
 keywords: "nexrender templates,delete template,remove project,template cleanup"
 icon: "delete"
+openapi: "DELETE /templates/{id}"
 ---
 
 Nexrender Cloud allows you to delete templates that are no longer needed. This is useful for:
@@ -20,29 +21,6 @@ Nexrender Cloud allows you to delete templates that are no longer needed. This i
 
     > Deleting a template **does not affect** existing jobs that already used it. Those jobs remain in the system and their output remains accessible.
   
-## Deleting  via API
-  To delete a template, call:
-
-    ```
-    DELETE /api/v2/templates/:id
-    ```
-
-    <CodeGroup>
-
-    ```bash Delete Template
-    curl -X DELETE https://api.nexrender.com/api/v2/templates/01JTGM9GCR71JV7EJYDF45QAFD \
-      -H "Authorization: Bearer YOUR_API_KEY"
-    ```
-
-    
-    ```json Example Response
-    {
-      "status": "deleted",
-      "id": "01JTGM9GCR71JV7EJYDF45QAFD"
-    }
-    ```
-
-   </CodeGroup>
   
 ## What Happens After Deletion?
     | Component         | Status                                             |
@@ -64,4 +42,8 @@ Nexrender Cloud allows you to delete templates that are no longer needed. This i
     To keep things clean:
     - Delete unused templates after testing flows
     - Use versioned `displayName`s so you know what’s safe to remove
-    - Add deletion as part of your CI teardown if you're creating templates dynamically
+    - Add deletion as part of your CI teardown if you're creating templates dynamically.
+
+## API Reference
+
+    

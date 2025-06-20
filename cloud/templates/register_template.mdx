@@ -1,6 +1,8 @@
 ---
 title: "Template Registration"
 icon: "square-plus"
+description: "How do we register After Effect Tempaltes"
+openapi: "POST /templates"
 ---
 
 Before uploading your project files, you need to **create a template object** using the Nexrender Cloud API. This tells the system:
@@ -10,21 +12,6 @@ Before uploading your project files, you need to **create a template object** us
 
 You can register new AE templates via the [POST /templates](/api#post-/templates) API endpoint.
 
-<CodeGroup>
-
-```bash API Endpoint
-POST https://api.nexrender.com/api/v2/templates
-```
-
-
-```json Request Payload
-{
-  "type": "zip",
-  "displayName": "Promo 2024 Campaign"
-}
-```
-
-</CodeGroup>
 
 **Fields Breakdown**
 
@@ -35,51 +22,6 @@ POST https://api.nexrender.com/api/v2/templates
 
 > Choose `type: "zip"` if your template is a `.aep` file bundled with assets and fonts.\
 > Use `type: "mogrt"` only for raw `.mogrt` files exported from After Effects.
-
----
-
-## CURL requests
-
-<CodeGroup>
-
-```bash Register Template Request
-curl -X POST https://api.nexrender.com/api/v2/templates \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "zip",
-    "displayName": "Promo 2024 Campaign"
-  }'
-```
-
-
-```javascript Example Success Response
-{
-  "template": {
-    "id": "01JT2M9GCR712V7EJYDF45QAFD",
-    "type": "zip",
-    "displayName": "Promo 2024 Campaign",
-    "status": "awaiting_upload",
-    "createdAt": "2025-05-05T16:25:59.961Z",
-    "updatedAt": "2025-05-05T16:25:59.961Z",
-    "compositions": [],
-    "layers": [],
-    "mogrt": {}
-  },
-  "uploadInfo": {
-    "url": "https://nx1-assets-eu.r2.cloudflarestorage.com/...signed_url...",
-    "method": "PUT",
-    "fields": {
-      "Content-Type": "application/octet-stream",
-      "x-amz-meta-custom": "{\"templateId\":\"01JT2M9GCR712V7EJYDF45QAFD\"}"
-    },
-    "expiresIn": 3600,
-    "key": "01JTGK.../templates/Promo2024.zip"
-  }
-}
-```
-
-</CodeGroup>
 
 <Note>
   This step returns an uploadInfo object that contains a pre-signed upload URL for securely uploading your file in the next step.
@@ -98,7 +40,7 @@ The following headers must be present if included in the `uploadInfo.fields` obj
 
 > Do not change the upload URL, append query params, or add any extra headers.
 
-### Postman Configuration (If Not Using CURL)
+### Postman Configuration
 
 To upload via Postman:
 
@@ -137,3 +79,5 @@ You **must upload the correct file** matching the declared `type` — otherwise 
 Once the upload is complete, the status will transition to `uploaded`, and Nexrender Cloud will extract all available compositions and dynamic layers.
 
 ---
+
+## API Reference
