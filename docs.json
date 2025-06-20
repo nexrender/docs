@@ -56,12 +56,7 @@
               "cloud/fonts/upload",
               "cloud/fonts/list",
               "cloud/fonts/delete"
-            ],
-             "openapi": {
-            "source": "/openapi.json",
-            "directory": "/api-reference/"
-          }
-          
+            ]
           },
           {
             "group": "Troubleshooting",
