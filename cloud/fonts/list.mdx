@@ -1,9 +1,8 @@
 ---
-title: "Listing Fonts"
-description: "How to list fonts in your Nexrender Cloud Account"
-icon: "list"
-openapi:'GET /fonts'
-
+title: "Listing All Fonts"
+description: "How to list fonts uploaded to your Nexrender Cloud Account."
+icon: "upload"
+openapi: "GET /fonts"
 ---
 
 Once you've uploaded fonts to your Nexrender Cloud account, you can list them to confirm their availability or debug font-related issues.
@@ -45,6 +44,7 @@ curl -X GET https://api.nexrender.com/api/v2/fonts \
 </CodeGroup>
 
 ## How Fonts Are Matched
+
 When rendering, Nexrender Cloud installs fonts based on:
 
 - **Exact file name match** between After Effects project and uploaded `.ttf`
