@@ -59,7 +59,7 @@
             ],
              "openapi": {
             "source": "/openapi.json",
-            "directory": "/api-reference/list-all-fonts-for-team"
+            "directory": "/api-reference/"
           }
           
           },
