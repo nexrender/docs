@@ -1,86 +1,68 @@
 ---
 title: "Uploading Fonts"
 description: "How to upload fonts to your Nexrender Cloud Account."
+icon: "cloud-upload"
 ---
 
 ## Why Upload Fonts?
-
 After Effects needs fonts installed on the rendering system. If your project references a font that's not available, it will:
 
 - Substitute with a fallback (causing layout bugs)
 - Render incorrectly or silently fail
 - Break dynamic layout/spacing in templates
 
-## How to Upload  Fonts?
+## Supported Formats
 
-## Upload Fonts via API
+Only `.ttf` (TrueType Font) files are currently supported.
 
-To upload a `.ttf` font to your account:
+## Uploading via API
 
+Use the `POST /api/v2/fonts` endpoint with `multipart/form-data`:
+
+<CodeGroup>
+
+```bash Upload Font
+  curl -X POST https://api.nexrender.com/api/v2/fonts \
+    -H "Authorization: Bearer YOUR_API_KEY" \
+    -F "file=@/Users/you/fonts/Roboto-Bold.ttf"
+```
+
+
+```json Example Response
 {
-  "api": {
-    "mdx": {
-      "server": "https://api.nexrender.com",
-      "auth": {
-        "method": "key",
-        "name": "x-api-key"
-      }
-    }
-  }
+  "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
+  "fileName": "Roboto-Bold.ttf",
+  "status": "available",
+  "uploadedAt": "2025-05-14T11:00:00Z"
 }
+```
 
+</CodeGroup>
+
+> The `id` is optional — templates locate fonts by file name.
 > See full details in the [API Reference →](/cloud/api-reference#post-/fonts)
 
-<AccordionGroup>
-  <Accordion title="Supported Formats">
-    Only `.ttf` (TrueType Font) files are currently supported.
-  </Accordion>
-  <Accordion title="Uploading via API">
-    Use the `POST /api/v2/fonts` endpoint with `multipart/form-data`:
+## Upload via Postman
 
-    <CodeGroup>
+1. Set method to `POST`
+2. Enter URL: `https://api.nexrender.com/api/v2/fonts`
+3. Set `Authorization` header with your API key
+4. Select **Body → form-data**:
+   - Key: `file` (type = File)
+   - Value: your `.ttf` file
 
-    ```bash Upload Font
-    curl -X POST https://api.nexrender.com/api/v2/fonts \
-      -H "Authorization: Bearer YOUR_API_KEY" \
-      -F "file=@/Users/you/fonts/Roboto-Bold.ttf"
-    ```
+Click **Send**, and you should see a `200 OK` with font metadata.
 
-    
-    ```json Example Response
-    {
-      "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
-      "fileName": "Roboto-Bold.ttf",
-      "status": "available",
-      "uploadedAt": "2025-05-14T11:00:00Z"
-    }
-    ```
+## Font Matching Logic
 
-    </CodeGroup>
+When your AE project uses a font like `Roboto-Bold.ttf`, Nexrender Cloud will:
 
-    > The `id` is optional — templates locate fonts by file name.
-  </Accordion>
-  <Accordion title="Upload via Postman">
-    1. Set method to `POST`
-    2. Enter URL: `https://api.nexrender.com/api/v2/fonts`
-    3. Set `Authorization` header with your API key
-    4. Select **Body → form-data**:
-       - Key: `file` (type = File)
-       - Value: your `.ttf` file
+- Scan uploaded fonts for a filename match
+- Install that font before rendering begins
 
-    Click **Send**, and you should see a `200 OK` with font metadata.
-  </Accordion>
-  <Accordion title="Font Matching Logic">
-    When your AE project uses a font like `Roboto-Bold.ttf`, Nexrender Cloud will:
+You don't need to reference fonts explicitly in the render job — just make sure the font name and case match the one used in After Effects.
 
-    - Scan uploaded fonts for a filename match
-    - Install that font before rendering begins
-
-    You don't need to reference fonts explicitly in the render job — just make sure the font name and case match the one used in After Effects.
-
-    > You can check expected font filenames via `GET /templates/:id` if layer fonts are introspected.
-  </Accordion>
-</AccordionGroup>
+> You can check expected font filenames via `GET /templates/:id` if layer fonts are introspected.
 
 ## Best Practices
 
@@ -88,10 +70,3 @@ To upload a `.ttf` font to your account:
 - Remove unused font weights/styles before upload
 - Name fonts clearly (`OpenSans-Bold.ttf`, not `font1.ttf`)
 - Keep naming consistent across AE and upload
-
----
-
-Next:
-➡️ [List Uploaded Fonts →](../fonts/list)\
-➡️ [Delete Unused Fonts →](../fonts/delete)\
-➡️ [Back to Creating Templates →](../templates/creating)
