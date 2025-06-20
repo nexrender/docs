@@ -7,42 +7,6 @@ openapi: "GET /fonts"
 
 Once you've uploaded fonts to your Nexrender Cloud account, you can list them to confirm their availability or debug font-related issues.
 
-## Endpoint
-
-This returns all fonts uploaded to your account.
-
-<CodeGroup>
-
-```http Endpoint
-GET /api/v2/fonts
-```
-
-
-```bash Get Fonts curl Request
-curl -X GET https://api.nexrender.com/api/v2/fonts \
--H "Authorization: Bearer YOUR_API_KEY"
-```
-
-
-```json Example Response
-[
-  {
-    "id": "font-01JT9XYZCDEF67GQ28P3KVB1RC",
-    "fileName": "Roboto-Bold.ttf",
-    "status": "available",
-    "uploadedAt": "2025-05-14T11:00:00Z"
-  },
-  {
-    "id": "font-01JTX5VRSCK11DZ8AQT90F6BRP",
-    "fileName": "OpenSans-Regular.ttf",
-    "status": "available",
-    "uploadedAt": "2025-05-14T11:02:17Z"
-  }
-]
-```
-
-</CodeGroup>
-
 ## How Fonts Are Matched
 
 When rendering, Nexrender Cloud installs fonts based on:
@@ -59,3 +23,5 @@ When rendering, Nexrender Cloud installs fonts based on:
 - That the file name (e.g. `OpenSans-Regular.ttf`) matches what AE expects
 - That you don’t accidentally zip fonts inside your `.aep` or `.mogrt`
 - Re-upload the font to resolve a corrupted or partial upload
+
+## API Reference
