@@ -6,52 +6,6 @@ openapi: "GET /templates/{id}"
 ---
 
 This guide explains how to **list**, **fetch**, **update**, and (eventually) **organize** your After Effects templates in Nexrender Cloud.
-
-## Inspect a Specific Template
-    To inspect a single template and retrieve its metadata, use:
-
-    ```bash
-    curl -X GET https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-      -H "Authorization: Bearer YOUR_API_KEY"
-    ```
-
-  ### Response Fields
-
-    | Field          | Description                                   |
-    | -------------- | --------------------------------------------- |
-    | `status`       | Must be `uploaded` to be usable               |
-    | `compositions` | Available AE compositions for rendering       |
-    | `layers`       | Dynamically editable text/images/audio layers |
-
-  
-
-  ## Update Template Metadata (Display Name)
-
-    To rename a template after creation:
-
-    <CodeGroup>
-
-    ```bash Rename a Template
-    curl -X PATCH https://api.nexrender.com/api/v2/templates/TEMPLATE_ID \
-      -H "Authorization: Bearer YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "displayName": "Updated Campaign V2"
-      }'
-    ```
-
-    
-    ```json Example Success Response
-    {
-      "id": "01JT2M9GCR712V7EJYDF45QAFD",
-      "displayName": "Updated Campaign V2"
-    }
-    ```
-
-    </CodeGroup>
-
-    > Updating metadata is useful for keeping things clean in environments with many concurrent templates.
-  
  
   ## Template Storage & Retention
     Templates are currently persisted indefinitely unless deleted manually.
