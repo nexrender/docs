@@ -2,32 +2,10 @@
 title: "Tracking Render Jobs"
 description: "Tracking rendering jobs statuses"
 icon: "inspection-panel"
+openapi: "GET /jobs/{id}"
 ---
 
 This guide explains how to track the status of a render job, either by polling the API or configuring a webhook for real-time delivery.
-
-## Polling Job Status
-
-You can always check the state of a job manually:
-
-<CodeGroup>
-
-```bash Job Status Request
-curl -X GET https://api.nexrender.com/api/v2/jobs/JOB_ID \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-```json Example Response
-{
-  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
-  "status": "done",
-  "progress": 100,
-  "output": {
-    "url": "https://nexrender-output.s3.amazonaws.com/01JTRDF7HCR8QAHYW8GPCP4S9Y.mp4"
-  }
-}
-```
-</CodeGroup>
 
 ## Job Status Lifecycle
 
