@@ -1,149 +1,156 @@
 ---
 title: "Initiating Renders"
-description: "How to build rendering pipelines"
+description: "Learn how to initiate render jobs in Nexrender Cloud by sending a POST /jobs request. Includes full payload structure, asset injection, preview mode, and webhook support. How to build rendering pipelines"
 openapi: "POST /jobs"
 ---
 
 ## Submit the Job
+
 Submit the job with a simple POST request:
 
-  <CodeGroup>
+<CodeGroup>
 
-    ```javascript Post Request
-    curl -X POST https://api.nexrender.com/api/v2/jobs \
-      -H "Authorization: Bearer YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d @job-payload.json
-    ```
+```javascript Post Request
+curl -X POST https://api.nexrender.com/api/v2/jobs \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @job-payload.json
+```
 
-    
-    ```javascript Inline
-    curl -X POST https://api.nexrender.com/api/v2/jobs \
-      -H "Authorization: Bearer YOUR_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "template": {
-          "id": "01JTGM9GCR71JV7EJYDF45QAFD",
-          "composition": "main"
-        },
-        "assets": [
-          {
-            "type": "data",
-            "layerName": "title",
-            "property": "Source Text",
-            "value": "Hello World!"
-          }
-        ],
-        "preview": false
-      }'
-    ```
 
-  </CodeGroup>
+```javascript Inline
+curl -X POST https://api.nexrender.com/api/v2/jobs \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "template": {
+      "id": "01JTGM9GCR71JV7EJYDF45QAFD",
+      "composition": "main"
+    },
+    "assets": [
+      {
+        "type": "data",
+        "layerName": "title",
+        "property": "Source Text",
+        "value": "Hello World!"
+      }
+    ],
+    "preview": false
+  }'
+```
 
-  ### Expected Response
+</CodeGroup>
 
-  <CodeGroup>
+### Expected Response
 
-    ```json Expected Response
-    {
-      "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
-      "status": "queued",
-      "output": null,
-      "createdAt": "2025-05-14T12:00:00.000Z"
-    }
-    ```
+<CodeGroup>
 
-  </CodeGroup>
+```json Expected Response
+{
+  "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
+  "status": "queued",
+  "output": null,
+  "createdAt": "2025-05-14T12:00:00.000Z"
+}
+```
+
+</CodeGroup>
 
 ### Job Request Internals
 
-    | Field                  | Type    | Required | Description                         |
-    | ---------------------- | ------- | -------- | ----------------------------------- |
-    | `template.id`          | string  | ✅        | ID of the template created earlier  |
-    | `template.composition` | string  | ✅        | Composition to render               |
-    | `assets`               | array   | ✅        | List of asset overrides             |
-    | `preview`              | boolean | ❌        | Set `true` for fast low-res preview |
-    | `webhook.url`          | string  | ❌        | Callback endpoint for job status    |
-    | `webhook.method`       | string  | ❌        | Typically `POST`                    |
+| Field                  | Type    | Required | Description                         |
+| ---------------------- | ------- | -------- | ----------------------------------- |
+| `template.id`          | string  | ✅        | ID of the template created earlier  |
+| `template.composition` | string  | ✅        | Composition to render               |
+| `assets`               | array   | ✅        | List of asset overrides             |
+| `preview`              | boolean | ❌        | Set `true` for fast low-res preview |
+| `webhook.url`          | string  | ❌        | Callback endpoint for job status    |
+| `webhook.method`       | string  | ❌        | Typically `POST`                    |
 
-    Each asset object must have:
+Each asset object must have:
 
-    - `type`: `data`, `image`, `audio`, `video`
-    - `layerName`: exact layer name from the template
-    - `property`: like `"Source Text"` or `"Source Name"`
-    - `value` or `src`: depending on asset type
+- `type`: `data`, `image`, `audio`, `video`
+- `layerName`: exact layer name from the template
+- `property`: like `"Source Text"` or `"Source Name"`
+- `value` or `src`: depending on asset type
 
-    > You can inspect available `layerName`s using `GET /templates/:id`
+> You can inspect available `layerName`s using `GET /templates/:id`
 
 ## Post-Actions (Optional)
-    Once a render job completes, Nexrender Cloud can automatically run one or more **post-actions**.
 
-    These actions allow you to:
+Once a render job completes, Nexrender Cloud can automatically run one or more **post-actions**.
 
-    - Upload the final video to external storage
-    - Trigger external processes (e.g. Slack, CMS, Zapier)
-    - Transcode or rename the result
-    - Chain workflows (e.g. send to TTS or narration engine)
+These actions allow you to:
+
+- Upload the final video to external storage
+- Trigger external processes (e.g. Slack, CMS, Zapier)
+- Transcode or rename the result
+- Chain workflows (e.g. send to TTS or narration engine)
 
 ## Preview Mode vs Final Render
-    Nexrender Cloud supports two rendering modes:
 
-    | Mode             | Description                                          | Use Case                   |
-    | ---------------- | ---------------------------------------------------- | -------------------------- |
-    | `preview: true`  | Low-res render, fast execution, watermark (optional) | Testing template structure |
-    | `preview: false` | Full-quality final render, slower, billed normally   | Production rendering       |
+Nexrender Cloud supports two rendering modes:
 
-    ### When to Use `preview: true`
+| Mode             | Description                                          | Use Case                   |
+| ---------------- | ---------------------------------------------------- | -------------------------- |
+| `preview: true`  | Low-res render, fast execution, watermark (optional) | Testing template structure |
+| `preview: false` | Full-quality final render, slower, billed normally   | Production rendering       |
 
-    Use preview mode when:
+### When to Use `preview: true`
 
-    - Verifying that `layerName` overrides are correct
-    - Testing a new template or composition
-    - Integrating webhooks or downstream automation
-    - You want to run a batch sanity check before scaling
+Use preview mode when:
 
-    ```json
-    {
-      "preview": true
-    }
-    ```
+- Verifying that `layerName` overrides are correct
+- Testing a new template or composition
+- Integrating webhooks or downstream automation
+- You want to run a batch sanity check before scaling
 
-    Previews render faster and are cheaper on infrastructure resources. If your template is broken (bad expression, missing font, wrong composition), it's better to catch it here.
+```json
+{
+  "preview": true
+}
+```
 
-    > You can build an internal CI pipeline that runs preview renders against all newly uploaded templates.
+Previews render faster and are cheaper on infrastructure resources. If your template is broken (bad expression, missing font, wrong composition), it's better to catch it here.
+
+> You can build an internal CI pipeline that runs preview renders against all newly uploaded templates.
 
 ## Targeting Layers in Alternate Compositions
-    By default, assets are injected into the composition defined in the `template.composition` field.
 
-    However, you can override this on a per-asset basis using the `composition` key inside the asset definition.
+By default, assets are injected into the composition defined in the `template.composition` field.
 
-    This is useful when you want to render a specific comp (like `main`), but modify a layer in a supporting comp (like `main2`).
+However, you can override this on a per-asset basis using the `composition` key inside the asset definition.
 
-  #### Example
+This is useful when you want to render a specific comp (like `main`), but modify a layer in a supporting comp (like `main2`).
 
-    ```json
+#### Example
+
+```json
+{
+  "template": {
+    "id": "01JTGM9GCR71JV7EJYDF45QAFD",
+    "composition": "main"
+  },
+  "assets": [
     {
-      "template": {
-        "id": "01JTGM9GCR71JV7EJYDF45QAFD",
-        "composition": "main"
-      },
-      "assets": [
-        {
-          "type": "data",
-          "layerName": "title",
-          "composition": "main2",
-          "property": "Source Text",
-          "value": "Hello World!"
-        }
-      ],
-      "preview": false
+      "type": "data",
+      "layerName": "title",
+      "composition": "main2",
+      "property": "Source Text",
+      "value": "Hello World!"
     }
-    ```
+  ],
+  "preview": false
+}
+```
 
 ## Validate the Assets Before Submitting
-    Before rendering, always validate:
 
-    - `composition` name exists (from template introspection)
-    - `layerName` matches exactly
-    - URLs for assets return a `200 OK`
-    - Font dependencies have been preloaded
+Before rendering, always validate:
+
+- `composition` name exists (from template introspection)
+- `layerName` matches exactly
+- URLs for assets return a `200 OK`
+- Font dependencies have been preloaded
+
+## Full API Reference
