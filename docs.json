@@ -73,11 +73,11 @@
       },
       {
   "dropdown": "Changelog",
-  "icon": "github",
+  "icon": "history",
   "groups": [
     {
       "group": "Changelog",
-      "pages": ["cloud/changelog"]
+      "pages": ["/cloud/changelog"]
     }
   ]
 }
