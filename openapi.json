@@ -360,90 +360,78 @@ components:
 security:
 - apiToken: []
 paths:
-  /fonts:
+  /templates:
+    post:
+      summary: Create or update template
+      description: Create a new template or update an existing one with specified
+        type and display name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateCreation'
+      responses:
+        '201':
+          description: Template successfully created with upload information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '400':
+          description: Invalid request - missing required fields or invalid template
+            type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+      - Template Management
     get:
-      summary: List all fonts for team
-      description: Retrieve all fonts available to the authenticated team, including
-        metadata and upload information
+      summary: List all templates
+      description: Retrieve all templates available to the authenticated team with
+        their metadata and processing status
       responses:
         '200':
-          description: Successfully retrieved list of fonts
+          description: Successfully retrieved list of templates
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Font'
-        '401':
-          description: Unauthorized - invalid or missing API token
-      tags:
-      - Font Management
-    post:
-      summary: Upload new font
-      description: Upload a new font file to make it available for use in rendering
-        jobs
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                familyName:
-                  type: string
-                  default: null
-                  description: Optional font family name override (auto-detected if
-                    not provided)
-                font:
-                  type: string
-                  format: binary
-                  description: Font file to upload (supports TTF, OTF, and other common
-                    font formats)
-      responses:
-        '201':
-          description: Font successfully uploaded and processed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Font'
-        '400':
-          description: Invalid request - malformed font file or missing required fields
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                  $ref: '#/components/schemas/Template'
         '401':
           description: Unauthorized - invalid or missing API token
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '413':
-          description: File too large - font file exceeds size limits
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
       tags:
-      - Font Management
-  /fonts/{id}:
+      - Template Management
+  /templates/{id}:
     get:
-      summary: Get font metadata
-      description: Retrieve detailed information about a specific font including family
-        name, file info, and upload timestamp
+      summary: Get template details
+      description: Retrieve complete information about a specific template including
+        compositions, layers, and processing status
       parameters:
       - in: path
         name: id
         required: true
-        description: Unique font identifier
+        description: Unique template identifier
         schema:
           type: string
       responses:
         '200':
-          description: Successfully retrieved font details
+          description: Successfully retrieved template details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Font'
+                $ref: '#/components/schemas/Template'
         '401':
           description: Unauthorized - invalid or missing API token
           content:
@@ -451,27 +439,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Font not found - the specified font ID does not exist
+          description: Template not found - the specified template ID does not exist
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       tags:
-      - Font Management
+      - Template Management
     delete:
-      summary: Delete font
-      description: Permanently remove a font from the team's available fonts (cannot
-        be undone)
+      summary: Delete template
+      description: Permanently remove a template and all associated data (cannot be
+        undone, affects existing jobs)
       parameters:
       - in: path
         name: id
         required: true
-        description: Unique font identifier to delete
+        description: Unique template identifier to delete
         schema:
           type: string
       responses:
         '204':
-          description: Font successfully deleted
+          description: Template successfully deleted
         '401':
           description: Unauthorized - invalid or missing API token
           content:
@@ -479,21 +467,179 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Font not found - the specified font ID does not exist
+          description: Template not found - the specified template ID does not exist
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '409':
-          description: Conflict - font is currently in use by active jobs and cannot
-            be deleted
+          description: Conflict - template is currently in use by active jobs and
+            cannot be deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       tags:
-      - Font Management
+      - Template Management
+    patch:
+      summary: Update template
+      description: Update modifiable properties of an existing template
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier to update
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/TemplateUpdate'
+      responses:
+        '200':
+          description: Template successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '400':
+          description: Invalid request - malformed update data or invalid display
+            name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+      - Template Management
+  /templates/{id}/upload:
+    get:
+      summary: Get download URL for template file
+      description: Generate a presigned download URL for accessing the template file
+        securely
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier to get download URL for
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully generated download URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: Presigned download URL with temporary access (expires
+                      after set time)
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '410':
+          description: Template file no longer available - file may have been deleted
+            or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+      - Template Management
+    put:
+      summary: Get fresh upload URL for template file
+      description: Generate a new presigned upload URL for uploading or replacing
+        the template file (previous URLs expire)
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier to get upload URL for
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully generated fresh upload URL with credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateUploadInfo'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+      - Template Management
   /jobs:
+    post:
+      summary: Create new job
+      description: Submit a new render job with template, assets, and configuration
+        options
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCreation'
+      responses:
+        '201':
+          description: Job successfully created and queued for processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: Invalid request - missing required fields or invalid template
+            configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+      - Render Management
     get:
       summary: List jobs
       description: Retrieve a filtered and paginated list of render jobs with various
@@ -582,43 +728,6 @@ paths:
           description: Unauthorized - invalid or missing API token
       tags:
       - Render Management
-    post:
-      summary: Create new job
-      description: Submit a new render job with template, assets, and configuration
-        options
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JobCreation'
-      responses:
-        '201':
-          description: Job successfully created and queued for processing
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Job'
-        '400':
-          description: Invalid request - missing required fields or invalid template
-            configuration
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-      - Render Management
   /jobs/{id}:
     get:
       summary: Get job details
@@ -652,78 +761,90 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       tags:
       - Render Management
-  /templates:
+  /fonts:
+    post:
+      summary: Upload new font
+      description: Upload a new font file to make it available for use in rendering
+        jobs
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                familyName:
+                  type: string
+                  default: null
+                  description: Optional font family name override (auto-detected if
+                    not provided)
+                font:
+                  type: string
+                  format: binary
+                  description: Font file to upload (supports TTF, OTF, and other common
+                    font formats)
+      responses:
+        '201':
+          description: Font successfully uploaded and processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Font'
+        '400':
+          description: Invalid request - malformed font file or missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: File too large - font file exceeds size limits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+      - Font Management
     get:
-      summary: List all templates
-      description: Retrieve all templates available to the authenticated team with
-        their metadata and processing status
+      summary: List all fonts for team
+      description: Retrieve all fonts available to the authenticated team, including
+        metadata and upload information
       responses:
         '200':
-          description: Successfully retrieved list of templates
+          description: Successfully retrieved list of fonts
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Template'
+                  $ref: '#/components/schemas/Font'
         '401':
           description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
       tags:
-      - Template Management
-    post:
-      summary: Create or update template
-      description: Create a new template or update an existing one with specified
-        type and display name
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TemplateCreation'
-      responses:
-        '201':
-          description: Template successfully created with upload information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Template'
-        '400':
-          description: Invalid request - missing required fields or invalid template
-            type
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-      - Template Management
-  /templates/{id}:
+      - Font Management
+  /fonts/{id}:
     get:
-      summary: Get template details
-      description: Retrieve complete information about a specific template including
-        compositions, layers, and processing status
+      summary: Get font metadata
+      description: Retrieve detailed information about a specific font including family
+        name, file info, and upload timestamp
       parameters:
       - in: path
         name: id
         required: true
-        description: Unique template identifier
+        description: Unique font identifier
         schema:
           type: string
       responses:
         '200':
-          description: Successfully retrieved template details
+          description: Successfully retrieved font details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Template'
+                $ref: '#/components/schemas/Font'
         '401':
           description: Unauthorized - invalid or missing API token
           content:
@@ -731,71 +852,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Template not found - the specified template ID does not exist
+          description: Font not found - the specified font ID does not exist
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       tags:
-      - Template Management
-    patch:
-      summary: Update template
-      description: Update modifiable properties of an existing template
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier to update
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - $ref: '#/components/schemas/TemplateUpdate'
-      responses:
-        '200':
-          description: Template successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Template'
-        '400':
-          description: Invalid request - malformed update data or invalid display
-            name
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-      - Template Management
+      - Font Management
     delete:
-      summary: Delete template
-      description: Permanently remove a template and all associated data (cannot be
-        undone, affects existing jobs)
+      summary: Delete font
+      description: Permanently remove a font from the team's available fonts (cannot
+        be undone)
       parameters:
       - in: path
         name: id
         required: true
-        description: Unique template identifier to delete
+        description: Unique font identifier to delete
         schema:
           type: string
       responses:
         '204':
-          description: Template successfully deleted
+          description: Font successfully deleted
         '401':
           description: Unauthorized - invalid or missing API token
           content:
@@ -803,97 +880,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Template not found - the specified template ID does not exist
+          description: Font not found - the specified font ID does not exist
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '409':
-          description: Conflict - template is currently in use by active jobs and
-            cannot be deleted
+          description: Conflict - font is currently in use by active jobs and cannot
+            be deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       tags:
-      - Template Management
-  /templates/{id}/upload:
-    put:
-      summary: Get fresh upload URL for template file
-      description: Generate a new presigned upload URL for uploading or replacing
-        the template file (previous URLs expire)
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier to get upload URL for
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully generated fresh upload URL with credentials
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TemplateUploadInfo'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-      - Template Management
-    get:
-      summary: Get download URL for template file
-      description: Generate a presigned download URL for accessing the template file
-        securely
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier to get download URL for
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully generated download URL
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  url:
-                    type: string
-                    description: Presigned download URL with temporary access (expires
-                      after set time)
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '410':
-          description: Template file no longer available - file may have been deleted
-            or expired
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-      - Template Management
+      - Font Management
 tags:
 - name: Font Management
   description: Upload, list, and delete fonts for consistent typography rendering.
