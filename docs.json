@@ -76,7 +76,7 @@
   "icon": "history",
   "groups": [
     {
-      "group": "Changelog",
+      "group": "Product Increments",
       "pages": ["cloud/changelog"]
     }
   ]
