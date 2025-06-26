@@ -69,7 +69,14 @@
       {
         "dropdown": "API Reference",
         "icon": "square-terminal",
-        "openapi": "openapi.json"
+        "group": {
+            "group": "Template Management",
+            "openapi": [
+              "openapi.json POST /templates",
+              "openapi.json GET /templates",
+              "openapi.json GET /templates/{id}"
+            ]
+          }
       },
       {
         "dropdown": "Changelog",
