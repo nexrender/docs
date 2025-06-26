@@ -74,8 +74,12 @@
       {
         "dropdown": "Changelog",
         "icon": "github",
-        "group": "Changelog",
-        "pages": "/cloud/changelog"      
+        "groups": [
+        {
+          "group": "Changelog",
+        "pages": "/cloud/changelog"
+        }
+        ]
       }
     ]
   },
