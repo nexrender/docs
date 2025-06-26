@@ -9,7 +9,7 @@
     "dark": "#A06BC6"
   },
 
-  "favicon": "/favicon.svg",
+  "favicon": "/cloud/favicon.svg",
 
   "icons": {
     "library": "lucide"
