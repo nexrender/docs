@@ -71,11 +71,7 @@
         "icon": "square-terminal",
         "group": {
             "group": "Template Management",
-            "openapi": [
-              "/openapi.json POST /templates",
-              "/openapi.json GET /templates",
-              "/openapi.json GET /templates/{id}"
-            ]
+            "openapi": "/openapi.json"
           }
       },
       {
