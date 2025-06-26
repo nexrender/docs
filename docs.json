@@ -72,15 +72,15 @@
         "openapi": "/openapi.json"
       },
       {
-        "dropdown": "Changelog",
-        "icon": "github",
-        "groups": [
-        {
-          "group": "Changelog",
-        "pages": "/cloud/changelog"
-        }
-        ]
-      }
+  "dropdown": "Changelog",
+  "icon": "github",
+  "groups": [
+    {
+      "group": "Changelog",
+      "pages": ["cloud/changelog"]
+    }
+  ]
+}
     ]
   },
 
