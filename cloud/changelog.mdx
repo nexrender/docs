@@ -1,0 +1,73 @@
+---
+title: "Changelog"
+---
+## May 2025
+
+### Job Scalability with Reserved Workers
+
+We now support **reserved workers** — dedicated rendering nodes for teams requiring guaranteed performance. If all reserved nodes are busy, jobs automatically fall back to a shared, slower pool to ensure eventual processing without failure. _(Currently offered to selected clients.)_
+
+### Job Parenting Logic Improved
+
+Refactored internal logic for dependent/related jobs to better support future features like job chains and batches.
+
+### Bug Fixes
+
+Resolved 4 bugs related to job tracking and template rendering stability.
+
+## April 2025
+
+### Template Validation & Deep Parsing
+
+Newly uploaded templates are now **automatically validated and introspected**. We extract key metadata:
+
+- Available compositions
+- Editable layers
+- Embedded `.mogrt` parameters\
+  This paves the way for advanced job setup via UI and API.
+
+### Performance & Reliability Upgrades
+
+Improved API throughput and reduced latency on template upload and font processing.
+
+### Bug Fixes
+
+Resolved 3 issues affecting asset rendering in edge cases.
+
+## March 2025
+
+### Jobs API v2 Launched
+
+A completely new and powerful way to manage rendering jobs at scale.
+
+**Key features:**
+
+- Templates: reusable AEP/MOGRT/ZIP projects for rapid job issuing.
+- Fonts: centralized font management — no need to host fonts externally.
+- Smarter webhook handling, including **custom data payloads**.
+- Clearer job lifecycle visibility: track, retry, and introspect with ease.
+- Support for [`nx` asset functions] to control layers dynamically inside jobs.
+
+## February 2025
+
+### Job Redaction Layer
+
+For privacy-conscious users, job data is now automatically **sanitized** after 3 days (render logs, asset paths, etc).
+
+### Bug Fixes
+
+Addressed 2 stability issues related to font uploads and job progress syncing.
+
+## January 2025
+
+### Dedicated API Service Migration
+
+We’ve migrated all job-related operations to a separate service — this unlocks:
+
+- Independent scaling
+- Faster deploy cycles
+- Greater reliability under load
+
+### Foundational Optimizations
+
+Major refactors behind the scenes: faster queueing, improved monitoring, and more resilient error recovery.
