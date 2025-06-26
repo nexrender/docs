@@ -73,8 +73,8 @@
       },
       {
         "dropdown": "Changelog",
-        "icon": "history",
-        "href": "https://github.com/inlife/nexrender/releases"
+        "group": "Changelog",
+        "pages": "/release_notes"      
       }
     ]
   },
