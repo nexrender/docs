@@ -73,8 +73,9 @@
       },
       {
         "dropdown": "Changelog",
+        "icon": "github",
         "group": "Changelog",
-        "pages": "/release_notes"      
+        "pages": "/cloud/changelog"      
       }
     ]
   },
