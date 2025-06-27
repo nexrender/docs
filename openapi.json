@@ -2,187 +2,888 @@ openapi: 3.0.4
 info:
   title: Nexrender API
   version: '2.0'
-  description: Minimal valid OpenAPI file for Mintlify with ordered endpoints and
-    correct tags.
+  description: 'REST API for the Nexrender cloud rendering platform, enabling programmatic
+    control over After Effects template processing, job management, and asset handling.
+
+
+    Features include:
+
+    - Template upload and management (AEP, MOGRT, ZIP files)
+
+    - Job creation and status monitoring with real-time progress
+
+    - Font library management for typography consistency
+
+    - Webhook notifications for job lifecycle events
+
+    - Asset injection for dynamic content replacement
+
+
+    Authentication is required for all endpoints using Bearer token authorization.
+
+    '
 servers:
 - url: https://api.nexrender.com/api/v2
-paths: !!python/object/apply:collections.OrderedDict
-- - - /templates
-    - post:
-        summary: Create or update template
-        description: Create or update template
-        tags:
-        - Template Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-      get:
-        summary: List all templates
-        description: List all templates
-        tags:
-        - Template Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-  - - /templates/{id}
-    - get:
-        summary: Get template details
-        description: Get template details
-        tags:
-        - Template Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-      delete:
-        summary: Delete template
-        description: Delete template
-        tags:
-        - Template Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-      patch:
-        summary: Update template
-        description: Update template
-        tags:
-        - Template Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-  - - /templates/{id}/upload
-    - get:
-        summary: Get download URL for template file
-        description: Get download URL for template file
-        tags:
-        - Template Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-      put:
-        summary: Get fresh upload URL for template file
-        description: Get fresh upload URL for template file
-        tags:
-        - Template Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-  - - /jobs
-    - post:
-        summary: Create new job
-        description: Create new job
-        tags:
-        - Render Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-      get:
-        summary: List jobs
-        description: List jobs
-        tags:
-        - Render Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-  - - /jobs/{id}
-    - get:
-        summary: Get job details
-        description: Get job details
-        tags:
-        - Render Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-  - - /fonts
-    - post:
-        summary: Upload new font
-        description: Upload new font
-        tags:
-        - Font Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-      get:
-        summary: List all fonts for team
-        description: List all fonts for team
-        tags:
-        - Font Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-  - - /fonts/{id}
-    - get:
-        summary: Get font metadata
-        description: Get font metadata
-        tags:
-        - Font Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-      delete:
-        summary: Delete font
-        description: Delete font
-        tags:
-        - Font Management
-        responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-tags:
-- name: Template Management
-- name: Render Management
-- name: Font Management
+  description: Production API server
+components:
+  securitySchemes:
+    apiToken:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication using API tokens for team-based access
+        control.
+
+
+        You can generate your own API token at: https://app.nexrender.com/team/settings
+
+        '
+  schemas:
+    Font:
+      type: object
+      description: Font file metadata for team-shared typography resources used in
+        After Effects rendering
+      properties:
+        id:
+          type: string
+          description: Unique font identifier
+        familyName:
+          type: string
+          description: Font family name (e.g., "Arial", "Helvetica Neue") extracted
+            from font metadata (or custom)
+        fileName:
+          type: string
+          description: Original font file name as uploaded (supports TTF, OTF, and
+            other font formats). This is the file name referenced in pushed jobs.
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO timestamp when the font was uploaded and processed
+    JobAsset:
+      type: object
+      description: Asset to be used in job rendering, containing source information
+        and target layer details
+      properties:
+        src:
+          type: string
+          description: Source URL, script data or file path for the asset (supports
+            HTTP/HTTPS URLs or local paths)
+        type:
+          type: string
+          description: Asset type (e.g., image, video, audio, text, data, script)
+        layerName:
+          type: string
+          description: Target layer name in the After Effects composition where this
+            asset will be applied
+        name:
+          type: string
+          description: Human-readable name for the asset
+      required:
+      - type
+      additionalProperties: true
+    JobWebhook:
+      type: object
+      description: Webhook configuration for job status notifications and callbacks
+      properties:
+        url:
+          type: string
+          description: Target webhook URL that will receive job status updates
+        method:
+          type: string
+          enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          description: HTTP method to use when calling the webhook endpoint
+        headers:
+          type: object
+          description: Additional HTTP headers to include in webhook requests
+          additionalProperties: true
+        data:
+          type: object
+          description: Custom data payload to include with webhook notifications
+          additionalProperties: true
+        custom:
+          type: boolean
+          default: false
+          description: Flag indicating if webhook should only include custom data
+            provided by the user
+      required:
+      - url
+      - method
+    JobTemplate:
+      type: object
+      description: Template configuration defining the After Effects project and composition
+        to render
+      properties:
+        id:
+          type: string
+          pattern: ^[A-Z0-9]{26}$
+          description: Unique template identifier in ULID format (26 characters, uppercase
+            alphanumeric)
+        src:
+          type: string
+          description: Source URL to the After Effects template (.aep, .mogrt, or
+            .zip file)
+        composition:
+          type: string
+          description: Name of the specific composition within the template to render
+      required:
+      - id
+      additionalProperties: true
+    JobCreation:
+      type: object
+      description: Configuration object for creating a new render job with template,
+        assets, and options
+      properties:
+        template:
+          $ref: '#/components/schemas/JobTemplate'
+        preview:
+          type: boolean
+          default: false
+          description: Generate a low-quality preview render instead of full quality
+            output
+        fonts:
+          type: array
+          items:
+            type: string
+          default: []
+          description: List of font file names to include in the render environment
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobAsset'
+          default: []
+          description: Collection of media assets (images, videos, audio, scripts,
+            text, ...) to use in the render
+        webhook:
+          $ref: '#/components/schemas/JobWebhook'
+      required:
+      - template
+      additionalProperties: true
+    Job:
+      type: object
+      description: Render job with current status, progress, and detailed statistics
+      properties:
+        id:
+          type: string
+          description: Unique job identifier used for tracking and API operations
+        templateId:
+          type: string
+          description: Reference to the template used for this job (null if template
+            was not used)
+          nullable: true
+        status:
+          type: string
+          description: Current job status (queued, render:dorender, finished, error,
+            etc.)
+        progress:
+          type: number
+          format: float
+          description: Render progress as a percentage (0.0 to 100.0)
+        stats:
+          type: object
+          description: Detailed timing and metadata statistics for the job
+          properties:
+            createdAt:
+              type: string
+              format: date-time
+              description: ISO timestamp when the job was initially created
+            updatedAt:
+              type: string
+              format: date-time
+              description: ISO timestamp of the most recent job status update
+            startedAt:
+              type: string
+              format: date-time
+              nullable: true
+              description: ISO timestamp when job processing began (null if not started)
+            finishedAt:
+              type: string
+              format: date-time
+              nullable: true
+              description: ISO timestamp when job completed successfully (null if
+                not finished)
+            errorAt:
+              type: string
+              format: date-time
+              nullable: true
+              description: ISO timestamp when job encountered an error (null if no
+                error)
+            totalAssets:
+              type: integer
+              description: Total number of assets included in this job
+            renderDuration:
+              type: number
+              format: float
+              nullable: true
+              description: Total render time in seconds (null if not completed)
+            error:
+              type: string
+              nullable: true
+              description: Error message if job failed (null if successful)
+    TemplateCreation:
+      type: object
+      description: Configuration for creating a new template with project file type
+        and display information
+      properties:
+        type:
+          type: string
+          enum:
+          - aep
+          - zip
+          - mogrt
+          description: Template project file type - aep (After Effects Project), zip
+            (compressed project), or mogrt (Motion Graphics Template)
+        displayName:
+          type: string
+          description: Human-readable name for the template shown in UI and listings
+      required:
+      - type
+      - displayName
+    TemplateUpdate:
+      type: object
+      description: Fields that can be updated for an existing template
+      properties:
+        displayName:
+          type: string
+          description: Updated human-readable name for the template
+    TemplateUploadInfo:
+      type: object
+      description: Presigned upload URL and metadata for securely uploading template
+        files to cloud storage
+      properties:
+        url:
+          type: string
+          description: Presigned upload URL with temporary access credentials
+        method:
+          type: string
+          enum:
+          - PUT
+          - POST
+          description: HTTP method required for the upload operation
+        fields:
+          type: object
+          description: Additional form fields or headers required for successful upload
+          additionalProperties:
+            type: string
+        expiresIn:
+          type: integer
+          description: Time in seconds until the upload URL expires and becomes invalid
+        key:
+          type: string
+          description: Unique storage key/path where the uploaded file will be stored
+      required:
+      - url
+      - method
+      - expiresIn
+      - key
+    Template:
+      type: object
+      description: Complete template object with metadata, processing status, and
+        content information
+      properties:
+        id:
+          type: string
+          description: Unique template identifier used for referencing in jobs and
+            API operations
+        type:
+          type: string
+          description: Template file format (aep, zip, or mogrt)
+        displayName:
+          type: string
+          description: Human-readable name displayed in UI and template listings
+        status:
+          type: string
+          description: Current processing status (awaits_upload, processing, uploaded,
+            error)
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO timestamp when the template was initially created
+        updatedAt:
+          type: string
+          format: date-time
+          description: ISO timestamp of the most recent template modification
+        compositions:
+          type: array
+          items:
+            type: string
+            description: Individual composition name available for rendering
+          description: List of compositions found within the template that can be
+            rendered
+        layers:
+          type: array
+          items:
+            type: string
+            description: Individual layer name within the template
+          description: List of layers available for asset replacement and manipulation
+        mogrt:
+          type: object
+          description: Motion Graphics Template specific metadata and properties
+          additionalProperties: true
+        error:
+          type: string
+          nullable: true
+          description: Error message if template processing or validation failed (null
+            if successful)
+        uploadInfo:
+          $ref: '#/components/schemas/TemplateUploadInfo'
+    ErrorResponse:
+      type: object
+      description: Standard error response format
+      properties:
+        error:
+          type: string
+          description: Human-readable error message explaining what went wrong
+      required:
+      - error
+    ValidationErrorResponse:
+      type: object
+      description: Validation error response with detailed field information
+      properties:
+        error:
+          type: string
+          description: Main error message
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Field name that failed validation
+              message:
+                type: string
+                description: Specific validation error for this field
+          description: Array of specific validation errors for individual fields
+security:
+- apiToken: []
+paths:
+  /fonts:
+    get:
+      summary: List all fonts for team
+      description: Retrieve all fonts available to the authenticated team, including
+        metadata and upload information
+      responses:
+        '200':
+          description: Successfully retrieved list of fonts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Font'
+        '401':
+          description: Unauthorized - invalid or missing API token
+      tags: &id001
+      - Font Management
+    post:
+      summary: Upload new font
+      description: Upload a new font file to make it available for use in rendering
+        jobs
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                familyName:
+                  type: string
+                  default: null
+                  description: Optional font family name override (auto-detected if
+                    not provided)
+                font:
+                  type: string
+                  format: binary
+                  description: Font file to upload (supports TTF, OTF, and other common
+                    font formats)
+      responses:
+        '201':
+          description: Font successfully uploaded and processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Font'
+        '400':
+          description: Invalid request - malformed font file or missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: File too large - font file exceeds size limits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: *id001
+  /fonts/{id}:
+    get:
+      summary: Get font metadata
+      description: Retrieve detailed information about a specific font including family
+        name, file info, and upload timestamp
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique font identifier
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved font details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Font'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Font not found - the specified font ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: &id002
+      - Font Management
+    delete:
+      summary: Delete font
+      description: Permanently remove a font from the team's available fonts (cannot
+        be undone)
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique font identifier to delete
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Font successfully deleted
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Font not found - the specified font ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict - font is currently in use by active jobs and cannot
+            be deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: *id002
+  /jobs:
+    get:
+      summary: List jobs
+      description: Retrieve a filtered and paginated list of render jobs with various
+        query options for job management and monitoring
+      parameters:
+      - in: query
+        name: minimal
+        schema:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+        description: Return minimal job data (excludes detailed stats and assets for
+          performance)
+      - in: query
+        name: from
+        schema:
+          type: integer
+          minimum: 0
+        description: Starting offset for pagination (0-indexed)
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+        description: Maximum number of jobs to return in a single request
+      - in: query
+        name: from_date
+        schema:
+          type: string
+          format: date-time
+        description: Filter jobs created after this date (ISO 8601 format)
+      - in: query
+        name: to_date
+        schema:
+          type: string
+          format: date-time
+        description: Filter jobs created before this date (ISO 8601 format)
+      - in: query
+        name: states
+        schema:
+          type: string
+        description: Comma-separated list of job states to include (e.g., "queued,processing,finished")
+      - in: query
+        name: exclude_states
+        schema:
+          type: string
+        description: Comma-separated list of job states to exclude from results
+      - in: query
+        name: sort
+        schema:
+          type: string
+          enum:
+          - random
+          - newest_first
+          - oldest_first
+          - priority
+          default: oldest_first
+        description: Sort order for job results and pickup priority
+      - in: query
+        name: tags
+        schema:
+          type: string
+          pattern: ^[a-zA-Z0-9-_]+(,[a-zA-Z0-9-_]+)*$
+        description: Filter by comma-separated tags (alphanumeric, hyphens, underscores
+          only)
+      responses:
+        '200':
+          description: Successfully retrieved list of jobs matching the specified
+            criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        '400':
+          description: Invalid query parameters - malformed date filters or invalid
+            pagination values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+      tags: &id003
+      - Render Management
+    post:
+      summary: Create new job
+      description: Submit a new render job with template, assets, and configuration
+        options
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCreation'
+      responses:
+        '201':
+          description: Job successfully created and queued for processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: Invalid request - missing required fields or invalid template
+            configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: *id003
+  /jobs/{id}:
+    get:
+      summary: Get job details
+      description: Retrieve complete information about a specific job including status,
+        progress, assets, and statistics
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique job identifier
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Job not found - the specified job ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+      - Render Management
+  /templates:
+    get:
+      summary: List all templates
+      description: Retrieve all templates available to the authenticated team with
+        their metadata and processing status
+      responses:
+        '200':
+          description: Successfully retrieved list of templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Template'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: &id004
+      - Template Management
+    post:
+      summary: Create or update template
+      description: Create a new template or update an existing one with specified
+        type and display name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateCreation'
+      responses:
+        '201':
+          description: Template successfully created with upload information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '400':
+          description: Invalid request - missing required fields or invalid template
+            type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: *id004
+  /templates/{id}:
+    get:
+      summary: Get template details
+      description: Retrieve complete information about a specific template including
+        compositions, layers, and processing status
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved template details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: &id005
+      - Template Management
+    patch:
+      summary: Update template
+      description: Update modifiable properties of an existing template
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier to update
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/TemplateUpdate'
+      responses:
+        '200':
+          description: Template successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '400':
+          description: Invalid request - malformed update data or invalid display
+            name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: *id005
+    delete:
+      summary: Delete template
+      description: Permanently remove a template and all associated data (cannot be
+        undone, affects existing jobs)
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier to delete
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Template successfully deleted
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict - template is currently in use by active jobs and
+            cannot be deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: *id005
+  /templates/{id}/upload:
+    put:
+      summary: Get fresh upload URL for template file
+      description: Generate a new presigned upload URL for uploading or replacing
+        the template file (previous URLs expire)
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier to get upload URL for
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully generated fresh upload URL with credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateUploadInfo'
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: &id006
+      - Template Management
+    get:
+      summary: Get download URL for template file
+      description: Generate a presigned download URL for accessing the template file
+        securely
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Unique template identifier to get download URL for
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully generated download URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: Presigned download URL with temporary access (expires
+                      after set time)
+        '401':
+          description: Unauthorized - invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Template not found - the specified template ID does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '410':
+          description: Template file no longer available - file may have been deleted
+            or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags: *id006
