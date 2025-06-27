@@ -380,6 +380,8 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: &id001
+        - Template Management
       post:
         summary: Create or update template
         description: Create a new template or update an existing one with specified
@@ -409,6 +411,7 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: *id001
   - - /templates/{id}
     - get:
         summary: Get template details
@@ -440,6 +443,8 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: &id002
+        - Template Management
       patch:
         summary: Update template
         description: Update modifiable properties of an existing template
@@ -482,6 +487,7 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: *id002
       delete:
         summary: Delete template
         description: Permanently remove a template and all associated data (cannot
@@ -515,6 +521,7 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: *id002
   - - /templates/{id}/upload
     - put:
         summary: Get fresh upload URL for template file
@@ -546,6 +553,8 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: &id003
+        - Template Management
       get:
         summary: Get download URL for template file
         description: Generate a presigned download URL for accessing the template
@@ -588,6 +597,7 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: *id003
   - - /jobs
     - get:
         summary: List jobs
@@ -675,6 +685,8 @@ paths: !!python/object/apply:collections.OrderedDict
                   $ref: '#/components/schemas/ErrorResponse'
           '401':
             description: Unauthorized - invalid or missing API token
+        tags: &id004
+        - Render Management
       post:
         summary: Create new job
         description: Submit a new render job with template, assets, and configuration
@@ -710,6 +722,7 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: *id004
   - - /jobs/{id}
     - get:
         summary: Get job details
@@ -741,6 +754,8 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags:
+        - Render Management
   - - /fonts
     - get:
         summary: List all fonts for team
@@ -757,6 +772,8 @@ paths: !!python/object/apply:collections.OrderedDict
                     $ref: '#/components/schemas/Font'
           '401':
             description: Unauthorized - invalid or missing API token
+        tags: &id005
+        - Font Management
       post:
         summary: Upload new font
         description: Upload a new font file to make it available for use in rendering
@@ -803,6 +820,7 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: *id005
   - - /fonts/{id}
     - get:
         summary: Get font metadata
@@ -834,6 +852,8 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: &id006
+        - Font Management
       delete:
         summary: Delete font
         description: Permanently remove a font from the team's available fonts (cannot
@@ -867,3 +887,4 @@ paths: !!python/object/apply:collections.OrderedDict
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+        tags: *id006
