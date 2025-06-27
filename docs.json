@@ -9,7 +9,7 @@
     "dark": "#A06BC6"
   },
 
-  "favicon": "https://nx-website-assets.nexrender.com/nx-logo.svg",
+  "favicon": "/favicon.png",
 
   "icons": {
     "library": "lucide"
