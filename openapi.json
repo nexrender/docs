@@ -359,531 +359,511 @@ components:
           description: Array of specific validation errors for individual fields
 security:
 - apiToken: []
-paths:
-  /fonts:
-    get:
-      summary: List all fonts for team
-      description: Retrieve all fonts available to the authenticated team, including
-        metadata and upload information
-      responses:
-        '200':
-          description: Successfully retrieved list of fonts
+paths: !!python/object/apply:collections.OrderedDict
+- - - /templates
+    - get:
+        summary: List all templates
+        description: Retrieve all templates available to the authenticated team with
+          their metadata and processing status
+        responses:
+          '200':
+            description: Successfully retrieved list of templates
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Template'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+      post:
+        summary: Create or update template
+        description: Create a new template or update an existing one with specified
+          type and display name
+        requestBody:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Font'
-        '401':
-          description: Unauthorized - invalid or missing API token
-      tags: &id001
-      - Font Management
-    post:
-      summary: Upload new font
-      description: Upload a new font file to make it available for use in rendering
-        jobs
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                familyName:
-                  type: string
-                  default: null
-                  description: Optional font family name override (auto-detected if
-                    not provided)
-                font:
-                  type: string
-                  format: binary
-                  description: Font file to upload (supports TTF, OTF, and other common
-                    font formats)
-      responses:
-        '201':
-          description: Font successfully uploaded and processed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Font'
-        '400':
-          description: Invalid request - malformed font file or missing required fields
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '413':
-          description: File too large - font file exceeds size limits
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: *id001
-  /fonts/{id}:
-    get:
-      summary: Get font metadata
-      description: Retrieve detailed information about a specific font including family
-        name, file info, and upload timestamp
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique font identifier
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully retrieved font details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Font'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Font not found - the specified font ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: &id002
-      - Font Management
-    delete:
-      summary: Delete font
-      description: Permanently remove a font from the team's available fonts (cannot
-        be undone)
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique font identifier to delete
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Font successfully deleted
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Font not found - the specified font ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Conflict - font is currently in use by active jobs and cannot
-            be deleted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: *id002
-  /jobs:
-    get:
-      summary: List jobs
-      description: Retrieve a filtered and paginated list of render jobs with various
-        query options for job management and monitoring
-      parameters:
-      - in: query
-        name: minimal
-        schema:
-          type: string
-          enum:
-          - 'true'
-          - 'false'
-        description: Return minimal job data (excludes detailed stats and assets for
-          performance)
-      - in: query
-        name: from
-        schema:
-          type: integer
-          minimum: 0
-        description: Starting offset for pagination (0-indexed)
-      - in: query
-        name: limit
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 1000
-        description: Maximum number of jobs to return in a single request
-      - in: query
-        name: from_date
-        schema:
-          type: string
-          format: date-time
-        description: Filter jobs created after this date (ISO 8601 format)
-      - in: query
-        name: to_date
-        schema:
-          type: string
-          format: date-time
-        description: Filter jobs created before this date (ISO 8601 format)
-      - in: query
-        name: states
-        schema:
-          type: string
-        description: Comma-separated list of job states to include (e.g., "queued,processing,finished")
-      - in: query
-        name: exclude_states
-        schema:
-          type: string
-        description: Comma-separated list of job states to exclude from results
-      - in: query
-        name: sort
-        schema:
-          type: string
-          enum:
-          - random
-          - newest_first
-          - oldest_first
-          - priority
-          default: oldest_first
-        description: Sort order for job results and pickup priority
-      - in: query
-        name: tags
-        schema:
-          type: string
-          pattern: ^[a-zA-Z0-9-_]+(,[a-zA-Z0-9-_]+)*$
-        description: Filter by comma-separated tags (alphanumeric, hyphens, underscores
-          only)
-      responses:
-        '200':
-          description: Successfully retrieved list of jobs matching the specified
-            criteria
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Job'
-        '400':
-          description: Invalid query parameters - malformed date filters or invalid
-            pagination values
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-      tags: &id003
-      - Render Management
-    post:
-      summary: Create new job
-      description: Submit a new render job with template, assets, and configuration
-        options
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JobCreation'
-      responses:
-        '201':
-          description: Job successfully created and queued for processing
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Job'
-        '400':
-          description: Invalid request - missing required fields or invalid template
-            configuration
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: *id003
-  /jobs/{id}:
-    get:
-      summary: Get job details
-      description: Retrieve complete information about a specific job including status,
-        progress, assets, and statistics
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique job identifier
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully retrieved job details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Job'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Job not found - the specified job ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-      - Render Management
-  /templates:
-    get:
-      summary: List all templates
-      description: Retrieve all templates available to the authenticated team with
-        their metadata and processing status
-      responses:
-        '200':
-          description: Successfully retrieved list of templates
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
+                $ref: '#/components/schemas/TemplateCreation'
+        responses:
+          '201':
+            description: Template successfully created with upload information
+            content:
+              application/json:
+                schema:
                   $ref: '#/components/schemas/Template'
-        '401':
-          description: Unauthorized - invalid or missing API token
+          '400':
+            description: Invalid request - missing required fields or invalid template
+              type
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ValidationErrorResponse'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  - - /templates/{id}
+    - get:
+        summary: Get template details
+        description: Retrieve complete information about a specific template including
+          compositions, layers, and processing status
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique template identifier
+          schema:
+            type: string
+        responses:
+          '200':
+            description: Successfully retrieved template details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Template'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Template not found - the specified template ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+      patch:
+        summary: Update template
+        description: Update modifiable properties of an existing template
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique template identifier to update
+          schema:
+            type: string
+        requestBody:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: &id004
-      - Template Management
-    post:
-      summary: Create or update template
-      description: Create a new template or update an existing one with specified
-        type and display name
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TemplateCreation'
-      responses:
-        '201':
-          description: Template successfully created with upload information
+                oneOf:
+                - $ref: '#/components/schemas/TemplateUpdate'
+        responses:
+          '200':
+            description: Template successfully updated
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Template'
+          '400':
+            description: Invalid request - malformed update data or invalid display
+              name
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ValidationErrorResponse'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Template not found - the specified template ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+      delete:
+        summary: Delete template
+        description: Permanently remove a template and all associated data (cannot
+          be undone, affects existing jobs)
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique template identifier to delete
+          schema:
+            type: string
+        responses:
+          '204':
+            description: Template successfully deleted
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Template not found - the specified template ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '409':
+            description: Conflict - template is currently in use by active jobs and
+              cannot be deleted
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  - - /templates/{id}/upload
+    - put:
+        summary: Get fresh upload URL for template file
+        description: Generate a new presigned upload URL for uploading or replacing
+          the template file (previous URLs expire)
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique template identifier to get upload URL for
+          schema:
+            type: string
+        responses:
+          '200':
+            description: Successfully generated fresh upload URL with credentials
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/TemplateUploadInfo'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Template not found - the specified template ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+      get:
+        summary: Get download URL for template file
+        description: Generate a presigned download URL for accessing the template
+          file securely
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique template identifier to get download URL for
+          schema:
+            type: string
+        responses:
+          '200':
+            description: Successfully generated download URL
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                      description: Presigned download URL with temporary access (expires
+                        after set time)
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Template not found - the specified template ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '410':
+            description: Template file no longer available - file may have been deleted
+              or expired
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  - - /jobs
+    - get:
+        summary: List jobs
+        description: Retrieve a filtered and paginated list of render jobs with various
+          query options for job management and monitoring
+        parameters:
+        - in: query
+          name: minimal
+          schema:
+            type: string
+            enum:
+            - 'true'
+            - 'false'
+          description: Return minimal job data (excludes detailed stats and assets
+            for performance)
+        - in: query
+          name: from
+          schema:
+            type: integer
+            minimum: 0
+          description: Starting offset for pagination (0-indexed)
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+          description: Maximum number of jobs to return in a single request
+        - in: query
+          name: from_date
+          schema:
+            type: string
+            format: date-time
+          description: Filter jobs created after this date (ISO 8601 format)
+        - in: query
+          name: to_date
+          schema:
+            type: string
+            format: date-time
+          description: Filter jobs created before this date (ISO 8601 format)
+        - in: query
+          name: states
+          schema:
+            type: string
+          description: Comma-separated list of job states to include (e.g., "queued,processing,finished")
+        - in: query
+          name: exclude_states
+          schema:
+            type: string
+          description: Comma-separated list of job states to exclude from results
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+            - random
+            - newest_first
+            - oldest_first
+            - priority
+            default: oldest_first
+          description: Sort order for job results and pickup priority
+        - in: query
+          name: tags
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9-_]+(,[a-zA-Z0-9-_]+)*$
+          description: Filter by comma-separated tags (alphanumeric, hyphens, underscores
+            only)
+        responses:
+          '200':
+            description: Successfully retrieved list of jobs matching the specified
+              criteria
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Job'
+          '400':
+            description: Invalid query parameters - malformed date filters or invalid
+              pagination values
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '401':
+            description: Unauthorized - invalid or missing API token
+      post:
+        summary: Create new job
+        description: Submit a new render job with template, assets, and configuration
+          options
+        requestBody:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Template'
-        '400':
-          description: Invalid request - missing required fields or invalid template
-            type
+                $ref: '#/components/schemas/JobCreation'
+        responses:
+          '201':
+            description: Job successfully created and queued for processing
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Job'
+          '400':
+            description: Invalid request - missing required fields or invalid template
+              configuration
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ValidationErrorResponse'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Template not found - the specified template ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  - - /jobs/{id}
+    - get:
+        summary: Get job details
+        description: Retrieve complete information about a specific job including
+          status, progress, assets, and statistics
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique job identifier
+          schema:
+            type: string
+        responses:
+          '200':
+            description: Successfully retrieved job details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Job'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Job not found - the specified job ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  - - /fonts
+    - get:
+        summary: List all fonts for team
+        description: Retrieve all fonts available to the authenticated team, including
+          metadata and upload information
+        responses:
+          '200':
+            description: Successfully retrieved list of fonts
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Font'
+          '401':
+            description: Unauthorized - invalid or missing API token
+      post:
+        summary: Upload new font
+        description: Upload a new font file to make it available for use in rendering
+          jobs
+        requestBody:
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: *id004
-  /templates/{id}:
-    get:
-      summary: Get template details
-      description: Retrieve complete information about a specific template including
-        compositions, layers, and processing status
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully retrieved template details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Template'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: &id005
-      - Template Management
-    patch:
-      summary: Update template
-      description: Update modifiable properties of an existing template
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier to update
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - $ref: '#/components/schemas/TemplateUpdate'
-      responses:
-        '200':
-          description: Template successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Template'
-        '400':
-          description: Invalid request - malformed update data or invalid display
-            name
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: *id005
-    delete:
-      summary: Delete template
-      description: Permanently remove a template and all associated data (cannot be
-        undone, affects existing jobs)
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier to delete
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Template successfully deleted
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Conflict - template is currently in use by active jobs and
-            cannot be deleted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: *id005
-  /templates/{id}/upload:
-    put:
-      summary: Get fresh upload URL for template file
-      description: Generate a new presigned upload URL for uploading or replacing
-        the template file (previous URLs expire)
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier to get upload URL for
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully generated fresh upload URL with credentials
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TemplateUploadInfo'
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: &id006
-      - Template Management
-    get:
-      summary: Get download URL for template file
-      description: Generate a presigned download URL for accessing the template file
-        securely
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Unique template identifier to get download URL for
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Successfully generated download URL
-          content:
-            application/json:
+            multipart/form-data:
               schema:
                 type: object
                 properties:
-                  url:
+                  familyName:
                     type: string
-                    description: Presigned download URL with temporary access (expires
-                      after set time)
-        '401':
-          description: Unauthorized - invalid or missing API token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Template not found - the specified template ID does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '410':
-          description: Template file no longer available - file may have been deleted
-            or expired
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags: *id006
+                    default: null
+                    description: Optional font family name override (auto-detected
+                      if not provided)
+                  font:
+                    type: string
+                    format: binary
+                    description: Font file to upload (supports TTF, OTF, and other
+                      common font formats)
+        responses:
+          '201':
+            description: Font successfully uploaded and processed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Font'
+          '400':
+            description: Invalid request - malformed font file or missing required
+              fields
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '413':
+            description: File too large - font file exceeds size limits
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  - - /fonts/{id}
+    - get:
+        summary: Get font metadata
+        description: Retrieve detailed information about a specific font including
+          family name, file info, and upload timestamp
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique font identifier
+          schema:
+            type: string
+        responses:
+          '200':
+            description: Successfully retrieved font details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Font'
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Font not found - the specified font ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+      delete:
+        summary: Delete font
+        description: Permanently remove a font from the team's available fonts (cannot
+          be undone)
+        parameters:
+        - in: path
+          name: id
+          required: true
+          description: Unique font identifier to delete
+          schema:
+            type: string
+        responses:
+          '204':
+            description: Font successfully deleted
+          '401':
+            description: Unauthorized - invalid or missing API token
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '404':
+            description: Font not found - the specified font ID does not exist
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '409':
+            description: Conflict - font is currently in use by active jobs and cannot
+              be deleted
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
