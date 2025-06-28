@@ -2,9 +2,8 @@
 title: "Tracking Render Jobs"
 description: "Tracking rendering jobs statuses"
 openapi: "GET /jobs/{id}"
+description: "This guide explains how to track the status of a render job, either by polling the API or configuring a webhook for real-time delivery."
 ---
-
-This guide explains how to track the status of a render job, either by polling the API or configuring a webhook for real-time delivery.
 
 ## Job Status Lifecycle
 
@@ -39,6 +38,8 @@ When the job completes (success or failure), Nexrender Cloud will `POST` to the 
   }
 }
 ```
+
+
 ```json Example Webhook Payload (Failure)
 {
   "id": "01JTRDF7HCR8QAHYW8GPCP4S9Y",
@@ -49,6 +50,7 @@ When the job completes (success or failure), Nexrender Cloud will `POST` to the 
   }
 }
 ```
+
 </CodeGroup>
 
 <Note>
