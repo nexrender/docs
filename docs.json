@@ -90,8 +90,8 @@
   },
 
   "logo": {
-    "light": "/logo/textlogo.svg",
-    "dark": "/logo/textlogo.svg"
+    "light": "/nx-text-logo-light.svg",
+    "dark": "/nx-text-logo-dark.svg"
   },
 
   "navbar": {
