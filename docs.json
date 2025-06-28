@@ -16,8 +16,8 @@
   },
 
   "logo": {
-    "light": "https://nx-website-assets.nexrender.com/nx-logo-text-light.svg",
-    "dark": "https://nx-website-assets.nexrender.com/nx-logo-text-dark.svg"
+    "light": "https://nx-website-assets.nexrender.com/nx-logo-text-dark.svg",
+    "dark": "https://nx-website-assets.nexrender.com/nx-logo-text-light.svg"
   },
 
 "headScripts": [
