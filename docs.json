@@ -20,6 +20,16 @@
     "dark": "https://nx-website-assets.nexrender.com/nx-logo-text-dark.svg"
   },
 
+"headScripts": [
+    {
+      "src": "https://www.googletagmanager.com/gtag/js?id=G-WR9FJ0LMZF",
+      "async": true
+    },
+    {
+      "content": "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-WR9FJ0LMZF');"
+    }
+  ],
+  
   "navigation": {
     "dropdowns": [
       {
