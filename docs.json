@@ -15,11 +15,6 @@
     "library": "lucide"
   },
 
-  "logo": {
-    "light": "https://nx-website-assets.nexrender.com/nx-logo-text-dark.svg",
-    "dark": "https://nx-website-assets.nexrender.com/nx-logo-text-light.svg"
-  },
-
 "headScripts": [
     {
       "src": "https://www.googletagmanager.com/gtag/js?id=G-WR9FJ0LMZF",
@@ -100,8 +95,8 @@
   },
 
   "logo": {
-    "light": "/nx-text-logo-light.svg",
-    "dark": "/nx-text-logo-dark.svg"
+    "light": "/images/logo/nx-text-logo-dark.png",
+    "dark": "/images/logo/nx-text-logo-light.png"
   },
 
   "navbar": {
