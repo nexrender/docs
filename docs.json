@@ -95,8 +95,8 @@
   },
 
   "logo": {
-    "light": "/images/logo/nx-text-logo-dark.png",
-    "dark": "/images/logo/nx-text-logo-light.png"
+    "light": "/logo/nx-text-logo-dark.png",
+    "dark": "/logo/nx-text-logo-light.png"
   },
 
   "navbar": {
