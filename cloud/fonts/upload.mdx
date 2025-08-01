@@ -23,7 +23,10 @@ When your AE project uses a font like `Roboto-Bold.ttf`, Nexrender Cloud will:
 - Scan uploaded fonts for a filename match
 - Install that font before rendering begins
 
-You don't need to reference fonts explicitly in the render job — just make sure the font name and case match the one used in After Effects.
+You don't need to reference fonts explicitly in the render job — just make sure the font name and case match the one used in After Effects. 
+
+When you are referencing the font in the render job, please make sure name is the same as for the uploaded font.
+
 
 > You can check expected font filenames via `GET /templates/:id` if layer fonts are introspected.
 
